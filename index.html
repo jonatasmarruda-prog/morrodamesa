@@ -3,149 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reserva de Ônibus</title>
+<title>Bem-vindos ao Morro da Mesa</title>
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
+        background: linear-gradient(to bottom, #4CAF50, #81C784);
         margin: 0;
         padding: 0;
-        color: #333;
-        font-size: 18px;
-    }
-    header {
-        background-color: #4CAF50;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
         color: #fff;
         text-align: center;
-        padding: 20px 0;
-    }
-    header img {
-        width: 80px;
-        margin-bottom: 10px;
     }
     .container {
-        max-width: 650px;
-        margin: 30px auto;
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-width: 700px;
+        padding: 30px;
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 15px;
     }
-    h2 {
-        text-align: center;
-        color: #4CAF50;
-        font-size: 26px;
-    }
-    label {
-        display: block;
-        margin: 18px 0 6px;
-        font-weight: bold;
-    }
-    input[type="text"], input[type="email"], input[type="file"], input[type="number"] {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 12px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-    }
-    .instructions {
-        font-size: 1em;
-        color: #555;
-        margin-bottom: 15px;
-    }
-    button {
-        background-color: #4CAF50;
-        color: #fff;
-        padding: 14px;
-        width: 100%;
-        border: none;
-        border-radius: 6px;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #45a049;
-    }
-    .notice {
-        background-color: #ffefc1;
-        padding: 12px;
-        border-left: 5px solid #f0c000;
+    h1 {
+        font-size: 50px;
         margin-bottom: 20px;
-        font-size: 18px;
+    }
+    p {
+        font-size: 24px;
+        margin-bottom: 40px;
+    }
+    .btn {
+        display: inline-block;
+        background-color: #FFD700;
+        color: #333;
+        padding: 20px 40px;
+        font-size: 26px;
+        font-weight: bold;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .btn:hover {
+        background-color: #FFC107;
+        color: #000;
     }
 </style>
 </head>
 <body>
-<header>
-    <img src="https://cdn-icons-png.flaticon.com/512/61/61194.png" alt="Ônibus">
-    <h1>Reserva de Ônibus</h1>
-</header>
-
 <div class="container">
-    <h2>Faça sua reserva</h2>
-    
-    <div class="notice" id="notice">
-        Restam <span id="vagas">45</span> vagas. Valor: R$ 68,00 por pessoa. Pagamento via PIX até 48h antes do passeio.
-    </div>
-
-    <form id="reservaForm" action="#" method="post" enctype="multipart/form-data">
-        <label for="nome">Nome completo:</label>
-        <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
-
-        <label for="email">E-mail:</label>
-        <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
-
-        <label for="telefone">Telefone:</label>
-        <input type="text" id="telefone" name="telefone" placeholder="Digite seu telefone" required>
-
-        <label for="quantidade">Quantidade de vagas:</label>
-        <input type="number" id="quantidade" name="quantidade" min="1" max="45" required>
-
-        <label for="pix">Pagamento via PIX:</label>
-        <div class="instructions">
-            Copie a chave PIX abaixo e faça o pagamento:<br>
-            <strong>PIX: trilheiros.roomt@gmail.com</strong><br>
-            Após o pagamento, envie o comprovante abaixo.
-        </div>
-
-        <label for="comprovante">Comprovante de pagamento:</label>
-        <input type="file" id="comprovante" name="comprovante" accept="image/*" required>
-
-        <button type="submit">Enviar Reserva</button>
-    </form>
+    <h1>Bem-vindos ao Morro da Mesa</h1>
+    <p>Para confirmar sua vaga no ônibus, clique no botão abaixo:</p>
+    <a href="reserva.html" class="btn">Confirmar Vaga</a>
 </div>
-
-<script>
-let vagas = 45;
-
-const form = document.getElementById('reservaForm');
-const notice = document.getElementById('notice');
-const vagasSpan = document.getElementById('vagas');
-
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const quantidade = parseInt(document.getElementById('quantidade').value);
-
-    if (quantidade > vagas) {
-        alert('Quantidade maior que as vagas disponíveis!');
-        return;
-    }
-
-    vagas -= quantidade;
-
-    if (vagas <= 0) {
-        vagas = 0;
-        notice.textContent = 'Lotado! Não há mais vagas disponíveis.';
-        document.querySelector('button').disabled = true;
-    } else {
-        vagasSpan.textContent = vagas;
-        alert(`Reserva confirmada! Restam ${vagas} vagas.`);
-    }
-
-    // Aqui você poderia adicionar código para enviar o formulário ao servidor
-    form.reset();
-});
-</script>
 </body>
 </html>
