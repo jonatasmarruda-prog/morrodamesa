@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Reserva Ônibus Trilheiros</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Reserva de Vagas - Ônibus Trilheiros</h1>
+  <p>Vagas restantes: <span id="vagas">45</span></p>
+
+  <form id="formReserva">
+    <input type="text" id="nome" placeholder="Nome completo" required>
+    <input type="tel" id="telefone" placeholder="Telefone" required>
+    <input type="number" id="quantidade" value="1" min="1" required>
+    <input type="file" id="comprovante" accept="image/*" required>
+    <button type="submit">Confirmar reserva</button>
+  </form>
+
+  <p id="mensagem"></p>
+  <script src="script.js"></script>
+</body>
+</html>

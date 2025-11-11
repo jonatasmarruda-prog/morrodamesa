@@ -1,0 +1,22 @@
+let vagasRestantes = 45;
+
+document.getElementById('formReserva').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const quantidade = Number(document.getElementById('quantidade').value);
+
+  if(quantidade > vagasRestantes){
+    document.getElementById('mensagem').textContent = `Restam apenas ${vagasRestantes} vagas.`;
+    return;
+  }
+
+  vagasRestantes -= quantidade;
+  document.getElementById('vagas').textContent = vagasRestantes;
+  document.getElementById('mensagem').textContent = "Reserva confirmada com sucesso!";
+
+  if(vagasRestantes <= 0){
+    document.getElementById('mensagem').textContent = "Ônibus lotado!";
+    document.getElementById('formReserva').style.display = "none";
+  }
+});
+
