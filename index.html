@@ -1,127 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trilheiros de Rondonópolis - Reserva de Vaga Ônibus</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-  }
-  h1 {
-    font-size: 2.2em;
-    color: #2e7d32;
-    margin-bottom: 15px;
-  }
-  iframe {
-    width: 100%;
-    max-width: 600px;
-    height: 900px;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
-  }
-  .mensagem {
-    font-size: 1.4em;
-    color: #2e7d32;
-    margin-top: 25px;
-    margin-bottom: 10px;
-  }
-  .whatsapp-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 12px 25px;
-    font-size: 1.2em;
-    color: #ffffff;
-    background-color: #25D366;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: background 0.3s;
-  }
-  .whatsapp-btn:hover {
-    background-color: #1ebe57;
-  }
-  .pix-section {
-    margin-top: 25px;
-    padding: 15px;
-    background-color: #f1f8e9;
-    border-radius: 12px;
-    display: inline-block;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  }
-  input[type="number"] {
-    width: 60px;
-    padding: 5px;
-    font-size: 1em;
-    text-align: center;
-    margin-left: 8px;
-  }
-  #copiarPix {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 10px;
-  }
-  #copiarPix:hover {
-    background-color: #43a047;
-  }
-</style>
-</head>
-<body>
+const scriptURL = "COLE_AQUI_O_URL_DO_APPS_SCRIPT"; // URL do Apps Script
 
-<h1>Trilheiros de Rondonópolis - Reserva de Vaga Ônibus</h1>
+async function atualizarVagas() {
+  const res = await fetch(scriptURL);
+  const data = await res.json();
+  vagasRestantes = data.vagasRestantes;
+  totalVagas = data.totalVagas;
+  vagasRestantesSpan.innerText = vagasRestantes;
+  atualizarBarra();
+  atualizarQuantidadeOptions();
+}
 
-<!-- Formulário Google -->
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScl2YPzO2MZNeaFKkImFz5oSD8JL2z5qBtS11l3kl9RCQgvSg/viewform?embedded=true">
-Carregando…
-</iframe>
+async function enviarWhatsApp() {
+  const nomes = document.getElementById('nomes').value.trim();
+  const qtd = parseInt(quantidadeSelect.value);
 
-<!-- Instruções -->
-<p class="mensagem">
-Muito bem! Você confirmou a vaga. Agora, envie seu comprovante pelo WhatsApp:
-</p>
-
-<!-- Botão WhatsApp -->
-<a class="whatsapp-btn" href="https://wa.me/5566996926174" target="_blank">
-  Enviar Comprovante
-</a>
-
-<!-- Seção PIX -->
-<div class="pix-section">
-  <h3>Pagamento via PIX</h3>
-  <label for="qtd">Quantidade de vagas:</label>
-  <input type="number" id="qtd" min="1" max="45" value="1" onchange="calcularValor()">
-  <p id="valor">Valor total: R$ 68,00</p>
-  <button id="copiarPix" onclick="copiarPix()">Copiar chave PIX</button>
-</div>
-
-<script>
-  const chavePix = "trilheiros.roomt@gmail.com";
-  const valorPorVaga = 68;
-
-  function calcularValor() {
-    const qtd = document.getElementById("qtd").value;
-    const total = valorPorVaga * qtd;
-    document.getElementById("valor").innerText = "Valor total: R$ " + total.toFixed(2).replace(".", ",");
+  if (!nomes) {
+    alert("Preencha o nome!");
+    return;
   }
 
-  function copiarPix() {
-    const qtd = document.getElementById("qtd").value;
-    const total = valorPorVaga * qtd;
-    const mensagem = `Envie R$ ${total.toFixed(2).replace(".", ",")} para o PIX: ${chavePix}`;
-    navigator.clipboard.writeText(mensagem).then(() => {
-      alert("Chave PIX copiada com o valor total!");
-    });
-  }
-</script>
+  // Chama o Apps Script para reservar as vagas
+  const res = await fetch(`${scriptURL}?qtd=${qtd}&action=reservarVagas`);
+  const data = await res.json();
 
-</body>
-</html>
+  if (!data.success) {
+    alert(data.message);
+    await atualizarVagas();
+    return;
+  }
+
+  vagasRestantes = data.vagasRestantes;
+  vagasRestantesSpan.innerText = vagasRestantes;
+  atualizarBarra();
+  atualizarQuantidadeOptions();
+
+  const valorTotal = qtd * valorPorPessoa;
+  const mensagem = `Olá, segue a minha reserva:\nNome(s): ${nomes}\nQuantidade de vagas: ${qtd}\nValor total: R$ ${valorTotal}\nComprovante do PIX anexado.`;
+  const numeroWhatsApp = "5566996926174";
+  window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, "_blank");
+
+  if (vagasRestantes <= 0) {
+    alert("Vagas lotadas! Entre em contato via WhatsApp para verificar outro ônibus.");
+  }
+}
+
