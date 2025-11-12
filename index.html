@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -95,7 +95,6 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
   font-weight: bold;
   display: none;
 }
-.icon { width: 22px; vertical-align: middle; margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -107,7 +106,7 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
   <label for="nome">Nome completo (ou nomes das pessoas que vão reservar):</label>
   <input type="text" id="nome" placeholder="Ex: João, Maria e Carlos" required>
 
-  <label for="email">E-mail para confirmação:</label>
+  <label for="email">E-mail para registro:</label>
   <input type="email" id="email" placeholder="Ex: exemplo@dominio.com" required>
 
   <label for="quantidade">Quantidade de vagas:</label>
@@ -130,14 +129,13 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
 
   <div class="pix-section">
     <div class="pix-key">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Logo_Pix.png" class="icon" alt="PIX">
       Chave PIX: <strong>trilheiros.roomt@gmail.com</strong>
     </div>
     <button class="copy-btn" onclick="copiarPix()">Copiar chave PIX</button>
     <div id="confirmacao" class="copiado">✅ Chave copiada com sucesso!</div>
   </div>
 
-  <p>Após fazer o pagamento, clique abaixo para enviar sua confirmação via WhatsApp com nome, e-mail, quantidade e comprovante.</p>
+  <p>Após fazer o pagamento, clique abaixo para enviar sua confirmação via WhatsApp com nome, quantidade e valor.</p>
 
   <button class="send-btn" onclick="enviarWhatsApp()">Enviar pelo WhatsApp</button>
   <button class="duvida-btn" onclick="duvidaWhatsApp()">Dúvida / Pergunta</button>
@@ -149,13 +147,14 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
 <script>
 const precoPorPessoa = 68;
 const limiteVagas = 45;
-let vagasPreenchidas = 0;
 
 const quantidadeInput = document.getElementById("quantidade");
 const valorTotal = document.getElementById("valorTotal");
 const vagasRestantes = document.getElementById("vagasRestantes");
 const confirmacao = document.getElementById("confirmacao");
 const mensagemConfirm = document.getElementById("mensagemConfirm");
+
+let vagasPreenchidas = 0; // valor inicial, será atualizado em tempo real
 
 quantidadeInput.addEventListener("change", atualizarValor);
 
@@ -165,12 +164,14 @@ function atualizarValor() {
   valorTotal.textContent = `Valor total: R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
+// Copiar PIX
 function copiarPix() {
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
   confirmacao.style.display = "block";
   setTimeout(() => confirmacao.style.display = "none", 2500);
 }
 
+// Enviar WhatsApp
 function enviarWhatsApp() {
   const nome = document.getElementById("nome").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -186,16 +187,16 @@ function enviarWhatsApp() {
     return;
   }
 
+  // Atualiza contador local
   vagasPreenchidas += qtd;
   vagasRestantes.textContent = `Vagas restantes: ${limiteVagas - vagasPreenchidas}`;
 
   const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
-  const mensagem = `Olá, segue minha reserva.%0A%0ANome(s): ${nome}%0AE-mail: ${email}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}%0A%0AComprovante em anexo.`;
+  const mensagem = `Olá, segue minha reserva.%0A%0ANome(s): ${nome}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}%0A%0AComprovante em anexo.`;
   const numero = "5566996926174";
   const link = `https://wa.me/${numero}?text=${mensagem}`;
   window.open(link, "_blank");
 
-  // Exibir mensagem de confirmação visual
   mensagemConfirm.style.display = "block";
   setTimeout(() => mensagemConfirm.style.display = "none", 5000);
 
@@ -209,14 +210,28 @@ function enviarWhatsApp() {
   .catch(err => console.error("Erro ao registrar:", err));
 }
 
+// Botão dúvidas
 function duvidaWhatsApp() {
   const mensagem = encodeURIComponent("Olá, tenho uma dúvida sobre a reserva do ônibus.");
   const numero = "5566996926174";
   window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
 }
 
+// Atualizar contador em tempo real via Apps Script
+function atualizarContadorTempoReal() {
+  fetch("URL_DO_SCRIPT?acao=contador")
+    .then(res => res.json())
+    .then(data => {
+      vagasPreenchidas = data.vagasPreenchidas || 0;
+      vagasRestantes.textContent = `Vagas restantes: ${limiteVagas - vagasPreenchidas}`;
+    })
+    .catch(err => console.error("Erro ao atualizar contador:", err));
+}
+
+// Atualiza ao abrir e a cada 10 segundos
+atualizarContadorTempoReal();
+setInterval(atualizarContadorTempoReal, 10000);
 atualizarValor();
-vagasRestantes.textContent = `Vagas restantes: ${limiteVagas}`;
 </script>
 
 </body>
