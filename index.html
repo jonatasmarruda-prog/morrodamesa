@@ -1,179 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reserva de Ônibus - Trilheiros de Rondonópolis</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva de Ônibus</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      max-width: 420px;
-      width: 100%;
+      background-color: #0a0a0a;
+      color: white;
       text-align: center;
+      padding: 20px;
     }
     h1 {
-      color: #0066cc;
-      margin-bottom: 5px;
+      color: #fff;
+      font-size: 32px;
+      margin-bottom: 10px;
     }
     h2 {
-      color: #333;
-      font-size: 18px;
-      margin-top: 0;
+      color: white;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+    .container {
+      background: #1c1c1c;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 420px;
+      margin: 0 auto;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     }
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
       text-align: left;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ccc;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
-      border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;
+      border: none;
+      font-size: 15px;
     }
     button {
-      width: 100%;
       margin-top: 20px;
       background-color: #25D366;
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
       font-size: 16px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #1EBE5D;
+      background-color: #1da955;
     }
-    p {
-      font-size: 14px;
-      color: #444;
-      margin-top: 5px;
-      text-align: left;
+    .total {
+      font-size: 16px;
+      color: #00ff90;
+      margin-top: 10px;
     }
-    .info {
-      font-size: 14px;
-      color: #333;
+    .pix-section {
+      background: #2c2c2c;
+      padding: 15px;
+      border-radius: 10px;
       margin-top: 20px;
-      text-align: center;
     }
-    .success {
-      display: none;
-      background-color: #e6ffe6;
-      border: 1px solid #25D366;
-      color: #1c7a1c;
-      padding: 12px;
+    .pix-key {
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .copy-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 18px;
       border-radius: 8px;
-      margin-top: 20px;
-      text-align: center;
-      font-weight: bold;
-      animation: fadeIn 0.6s ease;
+      font-size: 14px;
+      cursor: pointer;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .copy-btn:hover {
+      background-color: #0064d1;
     }
-
-    /* Botão flutuante do WhatsApp */
-    .whatsapp-float {
-      position: fixed;
-      width: 60px;
-      height: 60px;
-      bottom: 20px;
-      right: 20px;
-      background-color: #25D366;
-      color: #FFF;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 32px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      z-index: 100;
-      transition: transform 0.2s ease-in-out;
-      text-decoration: none;
+    .copiado {
+      display: none;
+      color: #00ff90;
+      font-size: 14px;
+      margin-top: 8px;
     }
-    .whatsapp-float:hover {
-      transform: scale(1.1);
-      background-color: #1EBE5D;
-    }
-    .whatsapp-float i {
-      margin-top: 14px;
+    .icon {
+      width: 22px;
+      vertical-align: middle;
+      margin-right: 6px;
     }
   </style>
 </head>
 <body>
+  <h1>Reserva de Ônibus</h1>
+  <h2>Trilheiros de Rondonópolis</h2>
+
   <div class="container">
-    <h1>Reserva de Ônibus</h1>
-    <h2>Trilheiros de Rondonópolis</h2>
+    <label for="nome">Nome completo (ou nomes das pessoas que vão reservar):</label>
+    <input type="text" id="nome" placeholder="Ex: João, Maria e Carlos" required>
 
-    <label for="nome">Nome completo</label>
-    <p>Digite o nome da pessoa ou das pessoas que farão a reserva do ônibus.</p>
-    <input type="text" id="nome" placeholder="Ex: João e Maria Silva">
+    <label for="quantidade">Quantidade de vagas:</label>
+    <select id="quantidade">
+      <option value="">Selecione</option>
+      <option value="1">1 vaga</option>
+      <option value="2">2 vagas</option>
+      <option value="3">3 vagas</option>
+      <option value="4">4 vagas</option>
+      <option value="5">5 vagas</option>
+      <option value="6">6 vagas</option>
+      <option value="7">7 vagas</option>
+      <option value="8">8 vagas</option>
+      <option value="9">9 vagas</option>
+      <option value="10">10 vagas</option>
+    </select>
 
-    <label for="quantidade">Quantidade de vagas</label>
-    <p>Informe quantas vagas deseja reservar.</p>
-    <input type="number" id="quantidade" min="1" placeholder="Ex: 2">
+    <div class="total" id="valorTotal">Valor total: R$ 0,00</div>
 
-    <label for="valor">Valor total</label>
-    <p>Preencha o valor total pago referente às vagas reservadas.</p>
-    <input type="number" id="valor" placeholder="Ex: 136">
-
-    <p>Após realizar o pagamento, clique abaixo para enviar a confirmação no WhatsApp com os dados preenchidos.  
-    Na conversa, anexe também o comprovante do pagamento.</p>
-
-    <button onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
-
-    <div id="successMessage" class="success">
-      ✅ Sua mensagem foi gerada com sucesso!  
-      O WhatsApp será aberto, basta confirmar o envio e anexar o comprovante.
+    <div class="pix-section">
+      <div class="pix-key">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Logo_Pix.png" class="icon" alt="PIX">
+        Chave PIX: <strong>trilheiros.roomt@gmail.com</strong>
+      </div>
+      <button class="copy-btn" onclick="copiarPix()">Copiar chave PIX</button>
+      <div id="confirmacao" class="copiado">✅ Chave copiada com sucesso!</div>
     </div>
 
-    <p class="info">Após o envio, aguarde a confirmação com Jonatas pelo WhatsApp.</p>
+    <p>Após fazer o pagamento, clique abaixo para enviar sua confirmação via WhatsApp com nome, quantidade e comprovante.</p>
+
+    <button onclick="enviarWhatsApp()">Enviar pelo WhatsApp</button>
   </div>
 
-  <!-- Botão flutuante do WhatsApp -->
-  <a href="https://wa.me/5566996926174?text=Olá%20Jonatas!%20Gostaria%20de%20tirar%20uma%20dúvida%20sobre%20a%20reserva%20do%20ônibus." class="whatsapp-float" target="_blank" title="Fale com Jonatas no WhatsApp">
-    <i>💬</i>
-  </a>
-
   <script>
+    const precoPorPessoa = 68;
+    const quantidadeInput = document.getElementById("quantidade");
+    const valorTotal = document.getElementById("valorTotal");
+
+    quantidadeInput.addEventListener("change", () => {
+      const qtd = parseInt(quantidadeInput.value) || 0;
+      const total = qtd * precoPorPessoa;
+      valorTotal.textContent = `Valor total: R$ ${total.toFixed(2).replace('.', ',')}`;
+    });
+
+    function copiarPix() {
+      const chave = "trilheiros.roomt@gmail.com";
+      navigator.clipboard.writeText(chave);
+      const confirmacao = document.getElementById("confirmacao");
+      confirmacao.style.display = "block";
+      setTimeout(() => confirmacao.style.display = "none", 2500);
+    }
+
     function enviarWhatsApp() {
       const nome = document.getElementById("nome").value.trim();
-      const quantidade = document.getElementById("quantidade").value.trim();
-      const valor = document.getElementById("valor").value.trim();
-
-      if (!nome || !quantidade || !valor) {
-        alert("Por favor, preencha todos os campos antes de enviar.");
+      const qtd = document.getElementById("quantidade").value;
+      if (!nome || !qtd) {
+        alert("Preencha o nome e a quantidade de vagas antes de enviar.");
         return;
       }
-
-      const mensagem = `Olá Jonatas! Quero confirmar minha reserva do ônibus:%0A%0A🧍‍♂️ Nome: ${nome}%0A🎟 Quantidade de vagas: ${quantidade}%0A💰 Valor total pago: R$ ${valor}%0A%0AComprovante anexado.`;
-
-      const telefone = "5566996926174"; // seu número com DDI
-      const url = `https://wa.me/${telefone}?text=${mensagem}`;
-      
-      const msg = document.getElementById("successMessage");
-      msg.style.display = "block";
-
-      setTimeout(() => {
-        window.open(url, "_blank");
-      }, 800);
+      const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
+      const mensagem = `Olá, segue minha reserva.%0A%0ANome(s): ${nome}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}%0A%0AComprovante em anexo.`;
+      const numero = "5566996926174"; // seu número WhatsApp
+      const link = `https://wa.me/${numero}?text=${mensagem}`;
+      window.open(link, "_blank");
     }
   </script>
 </body>
 </html>
+
