@@ -1,141 +1,147 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reserva de Ônibus - Trilheiros de Rondonópolis</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-  }
-  h1 {
-    font-size: 2.2em;
-    color: #2e7d32;
-    margin-bottom: 10px;
-  }
-  h2 {
-    color: #388e3c;
-    margin-top: 0;
-  }
-  .contador {
-    font-size: 1.2em;
-    background: #fff;
-    display: inline-block;
-    padding: 10px 25px;
-    border-radius: 10px;
-    margin: 15px 0;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
-  form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 400px;
-    margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
-  input, button {
-    width: 90%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 1em;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  button {
-    background: #2e7d32;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #1b5e20;
-  }
-  .pix {
-    margin-top: 20px;
-    font-size: 1.1em;
-    background: #fff;
-    padding: 10px;
-    border-radius: 10px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva de Ônibus - Trilheiros de Rondonópolis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #0a5c2b;
+      color: white;
+      padding: 15px 0;
+    }
+    main {
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-bottom: 5px;
+    }
+    h2 {
+      color: #555;
+      font-size: 18px;
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .pix-btn {
+      background: #0077cc;
+      color: white;
+    }
+    .whatsapp-btn {
+      background: #25d366;
+      color: white;
+    }
+    .valor {
+      font-weight: bold;
+      color: #0a5c2b;
+      margin-top: 10px;
+    }
+    footer {
+      margin-top: 25px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Reserva de Ônibus</h1>
+    <h2>Trilheiros de Rondonópolis</h2>
+  </header>
 
-<h1>Reserva de Ônibus</h1>
-<h2>Trilheiros de Rondonópolis</h2>
+  <main>
+    <p>Preencha seus dados para confirmar sua reserva. Valor por pessoa: <strong>R$ 68,00</strong></p>
 
-<div class="contador" id="contador">
-  Carregando vagas...
-</div>
+    <label for="nome">Nome completo:</label>
+    <input type="text" id="nome" placeholder="Digite seu nome" required />
 
-<form id="reservaForm">
-  <label>Nome completo:</label><br>
-  <input type="text" id="nome" required><br>
+    <label for="quantidade">Quantidade de vagas:</label>
+    <select id="quantidade" required>
+      <option value="">Selecione</option>
+      <option value="1">1 vaga</option>
+      <option value="2">2 vagas</option>
+      <option value="3">3 vagas</option>
+      <option value="4">4 vagas</option>
+      <option value="5">5 vagas</option>
+    </select>
 
-  <label>Quantidade de vagas:</label><br>
-  <input type="number" id="vagas" min="1" max="10" required><br>
+    <p class="valor" id="valorTotal">Total: R$ 0,00</p>
 
-  <button type="button" onclick="enviarReserva()">Confirmar e Enviar no WhatsApp</button>
-</form>
+    <label>Chave PIX:</label>
+    <p id="pixChave">trilheiros.roomt@gmail.com</p>
+    <button class="pix-btn" onclick="copiarPix()">Copiar chave PIX</button>
 
-<div class="pix">
-  <p>💳 Valor por pessoa: <b>R$ 68,00</b></p>
-  <p>🔑 Chave Pix: <b>trilheiros.roomt@gmail.com</b> <button onclick="copiarPix()">Copiar</button></p>
-</div>
+    <button class="whatsapp-btn" onclick="enviarWhatsApp()">Enviar via WhatsApp</button>
+  </main>
 
-<script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbzt8E7M3UHirzIVm2Y-GIkqs8G7tJP_ltJ-DxNiBT55pmdyDtu2Fjaq3gxpDag2LWt2Lw/exec";
-const limite = 45;
-const numeroWhatsApp = "5566996926174";
+  <footer>
+    © 2025 Trilheiros de Rondonópolis
+  </footer>
 
-function atualizarContador() {
-  fetch(scriptURL)
-    .then(r => r.json())
-    .then(d => {
-      if (d.total >= limite) {
-        document.getElementById("contador").innerHTML = "🚫 Vagas lotadas! Entre em contato via WhatsApp para verificar nova turma.";
-        document.getElementById("reservaForm").style.display = "none";
-      } else {
-        const vagasRestantes = limite - d.total;
-        document.getElementById("contador").innerHTML = `✅ Vagas preenchidas: ${d.total} | Vagas disponíveis: ${vagasRestantes}`;
+  <script>
+    const valorPorPessoa = 68;
+
+    document.getElementById('quantidade').addEventListener('change', function() {
+      const qtd = parseInt(this.value) || 0;
+      const total = qtd * valorPorPessoa;
+      document.getElementById('valorTotal').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+    });
+
+    function copiarPix() {
+      const pix = document.getElementById('pixChave').textContent;
+      navigator.clipboard.writeText(pix);
+      alert('Chave PIX copiada com sucesso!');
+    }
+
+    function enviarWhatsApp() {
+      const nome = document.getElementById('nome').value.trim();
+      const qtd = document.getElementById('quantidade').value;
+      if (!nome || !qtd) {
+        alert('Por favor, preencha seu nome e selecione a quantidade de vagas.');
+        return;
       }
-    })
-    .catch(() => {
-      document.getElementById("contador").innerHTML = "Erro ao carregar contador.";
-    });
-}
 
-function enviarReserva() {
-  const nome = document.getElementById("nome").value.trim();
-  const vagas = parseInt(document.getElementById("vagas").value);
-  if (!nome || !vagas) {
-    alert("Preencha seu nome e a quantidade de vagas.");
-    return;
-  }
+      const total = qtd * valorPorPessoa;
+      const mensagem = `Olá, segue a minha reserva:%0A%0A👤 Nome: ${nome}%0A🎟 Quantidade de vagas: ${qtd}%0A💰 Valor total: R$ ${total.toFixed(2).replace('.', ',')}%0A📎 Envio o comprovante do pagamento neste chat.%0A%0AChave PIX: trilheiros.roomt@gmail.com`;
 
-  fetch(scriptURL + `?nome=${encodeURIComponent(nome)}&vagas=${vagas}`)
-    .then(r => r.text())
-    .then(() => {
-      const valorTotal = vagas * 68;
-      const msg = `Olá, segue minha reserva.%0A%0ANome: ${nome}%0AQuantidade de vagas: ${vagas}%0AValor total: R$ ${valorTotal},00%0AComprovante em anexo.`;
-      window.open(`https://wa.me/${numeroWhatsApp}?text=${msg}`, "_blank");
-      atualizarContador();
-    });
-}
-
-function copiarPix() {
-  navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
-  alert("Chave Pix copiada!");
-}
-
-atualizarContador();
-</script>
-
+      const telefone = '5566996926174'; // Seu número em formato internacional
+      const link = `https://wa.me/${telefone}?text=${mensagem}`;
+      window.open(link, '_blank');
+    }
+  </script>
 </body>
 </html>
+
 
