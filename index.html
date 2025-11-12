@@ -1,147 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reserva de Ônibus - Trilheiros de Rondonópolis</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #f8f9fa;
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 100%;
       text-align: center;
     }
-    header {
-      background: #0a5c2b;
-      color: white;
-      padding: 15px 0;
-    }
-    main {
-      max-width: 500px;
-      margin: 30px auto;
-      background: white;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
     h1 {
+      color: #0066cc;
       margin-bottom: 5px;
     }
     h2 {
-      color: #555;
+      color: #333;
       font-size: 18px;
       margin-top: 0;
     }
     label {
       display: block;
-      text-align: left;
       margin-top: 15px;
       font-weight: bold;
+      text-align: left;
     }
-    input, select {
+    input {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-size: 16px;
     }
     button {
-      margin-top: 15px;
-      padding: 12px;
       width: 100%;
+      margin-top: 20px;
+      background-color: #25D366;
+      color: white;
       border: none;
-      border-radius: 5px;
+      padding: 12px;
+      border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
     }
-    .pix-btn {
-      background: #0077cc;
-      color: white;
+    button:hover {
+      background-color: #1EBE5D;
     }
-    .whatsapp-btn {
-      background: #25d366;
-      color: white;
-    }
-    .valor {
-      font-weight: bold;
-      color: #0a5c2b;
-      margin-top: 10px;
-    }
-    footer {
-      margin-top: 25px;
-      color: #666;
+    p {
       font-size: 14px;
+      color: #444;
+      margin-top: 5px;
+      text-align: left;
+    }
+    .info {
+      font-size: 14px;
+      color: #333;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .success {
+      display: none;
+      background-color: #e6ffe6;
+      border: 1px solid #25D366;
+      color: #1c7a1c;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Botão flutuante do WhatsApp */
+    .whatsapp-float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25D366;
+      color: #FFF;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 32px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      z-index: 100;
+      transition: transform 0.2s ease-in-out;
+      text-decoration: none;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      background-color: #1EBE5D;
+    }
+    .whatsapp-float i {
+      margin-top: 14px;
     }
   </style>
 </head>
 <body>
-  <header>
+  <div class="container">
     <h1>Reserva de Ônibus</h1>
     <h2>Trilheiros de Rondonópolis</h2>
-  </header>
 
-  <main>
-    <p>Preencha seus dados para confirmar sua reserva. Valor por pessoa: <strong>R$ 68,00</strong></p>
+    <label for="nome">Nome completo</label>
+    <p>Digite o nome da pessoa ou das pessoas que farão a reserva do ônibus.</p>
+    <input type="text" id="nome" placeholder="Ex: João e Maria Silva">
 
-    <label for="nome">Nome completo:</label>
-    <input type="text" id="nome" placeholder="Digite seu nome" required />
+    <label for="quantidade">Quantidade de vagas</label>
+    <p>Informe quantas vagas deseja reservar.</p>
+    <input type="number" id="quantidade" min="1" placeholder="Ex: 2">
 
-    <label for="quantidade">Quantidade de vagas:</label>
-    <select id="quantidade" required>
-      <option value="">Selecione</option>
-      <option value="1">1 vaga</option>
-      <option value="2">2 vagas</option>
-      <option value="3">3 vagas</option>
-      <option value="4">4 vagas</option>
-      <option value="5">5 vagas</option>
-    </select>
+    <label for="valor">Valor total</label>
+    <p>Preencha o valor total pago referente às vagas reservadas.</p>
+    <input type="number" id="valor" placeholder="Ex: 136">
 
-    <p class="valor" id="valorTotal">Total: R$ 0,00</p>
+    <p>Após realizar o pagamento, clique abaixo para enviar a confirmação no WhatsApp com os dados preenchidos.  
+    Na conversa, anexe também o comprovante do pagamento.</p>
 
-    <label>Chave PIX:</label>
-    <p id="pixChave">trilheiros.roomt@gmail.com</p>
-    <button class="pix-btn" onclick="copiarPix()">Copiar chave PIX</button>
+    <button onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
 
-    <button class="whatsapp-btn" onclick="enviarWhatsApp()">Enviar via WhatsApp</button>
-  </main>
+    <div id="successMessage" class="success">
+      ✅ Sua mensagem foi gerada com sucesso!  
+      O WhatsApp será aberto, basta confirmar o envio e anexar o comprovante.
+    </div>
 
-  <footer>
-    © 2025 Trilheiros de Rondonópolis
-  </footer>
+    <p class="info">Após o envio, aguarde a confirmação com Jonatas pelo WhatsApp.</p>
+  </div>
+
+  <!-- Botão flutuante do WhatsApp -->
+  <a href="https://wa.me/5566996926174?text=Olá%20Jonatas!%20Gostaria%20de%20tirar%20uma%20dúvida%20sobre%20a%20reserva%20do%20ônibus." class="whatsapp-float" target="_blank" title="Fale com Jonatas no WhatsApp">
+    <i>💬</i>
+  </a>
 
   <script>
-    const valorPorPessoa = 68;
-
-    document.getElementById('quantidade').addEventListener('change', function() {
-      const qtd = parseInt(this.value) || 0;
-      const total = qtd * valorPorPessoa;
-      document.getElementById('valorTotal').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
-    });
-
-    function copiarPix() {
-      const pix = document.getElementById('pixChave').textContent;
-      navigator.clipboard.writeText(pix);
-      alert('Chave PIX copiada com sucesso!');
-    }
-
     function enviarWhatsApp() {
-      const nome = document.getElementById('nome').value.trim();
-      const qtd = document.getElementById('quantidade').value;
-      if (!nome || !qtd) {
-        alert('Por favor, preencha seu nome e selecione a quantidade de vagas.');
+      const nome = document.getElementById("nome").value.trim();
+      const quantidade = document.getElementById("quantidade").value.trim();
+      const valor = document.getElementById("valor").value.trim();
+
+      if (!nome || !quantidade || !valor) {
+        alert("Por favor, preencha todos os campos antes de enviar.");
         return;
       }
 
-      const total = qtd * valorPorPessoa;
-      const mensagem = `Olá, segue a minha reserva:%0A%0A👤 Nome: ${nome}%0A🎟 Quantidade de vagas: ${qtd}%0A💰 Valor total: R$ ${total.toFixed(2).replace('.', ',')}%0A📎 Envio o comprovante do pagamento neste chat.%0A%0AChave PIX: trilheiros.roomt@gmail.com`;
+      const mensagem = `Olá Jonatas! Quero confirmar minha reserva do ônibus:%0A%0A🧍‍♂️ Nome: ${nome}%0A🎟 Quantidade de vagas: ${quantidade}%0A💰 Valor total pago: R$ ${valor}%0A%0AComprovante anexado.`;
 
-      const telefone = '5566996926174'; // Seu número em formato internacional
-      const link = `https://wa.me/${telefone}?text=${mensagem}`;
-      window.open(link, '_blank');
+      const telefone = "5566996926174"; // seu número com DDI
+      const url = `https://wa.me/${telefone}?text=${mensagem}`;
+      
+      const msg = document.getElementById("successMessage");
+      msg.style.display = "block";
+
+      setTimeout(() => {
+        window.open(url, "_blank");
+      }, 800);
     }
   </script>
 </body>
 </html>
-
-
