@@ -209,66 +209,88 @@ footer {
   <footer>© 2025 Trilheiros de Rondonópolis</footer>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <script>
 
-const precoPorPessoa = 69;
-const limiteVagas = 44;
-let vagasPreenchidas = 0;
+// Configuração Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAETThu9TN_AE98od3OHlNqcnUYN67vWLo",
+  authDomain: "reservadeonibus-77120.firebaseapp.com",
+  databaseURL: "https://reservadeonibus-77120-default-rtdb.firebaseio.com",
+  projectId: "reservadeonibus-77120",
+  storageBucket: "reservadeonibus-77120.firebasestorage.app",
+  messagingSenderId: "889422660714",
+  appId: "1:889422660714:web:df412730943f90e2d93613",
+  measurementId: "G-Y2WRY9NCMS"
+};
 
-const quantidadeInput = document.getElementById("quantidade");
-const valorTotal = document.getElementById("valorTotal");
-const vagasRestantes = document.getElementById("vagasRestantes");
-const lotadoAviso = document.getElementById("lotadoAviso");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const precoPorPessoa = 69;
 const sendBtn = document.getElementById("sendBtn");
+const pixSection = document.getElementById("pixSection");
 const obs = document.getElementById("obs");
 const zapBtn = document.getElementById("zapBtn");
-const pixSection = document.getElementById("pixSection");
+const lotadoAviso = document.getElementById("lotadoAviso");
+const vagasRestantes = document.getElementById("vagasRestantes");
 
-quantidadeInput.addEventListener("change", atualizarValor);
-
-function atualizarValor() {
-  const qtd = parseInt(quantidadeInput.value) || 0;
+// Atualiza valor total
+document.getElementById("quantidade").addEventListener("change", () => {
+  const qtd = parseInt(quantidade.value) || 0;
   const total = qtd * precoPorPessoa;
   valorTotal.textContent = `Valor total: R$ ${total.toFixed(2).replace('.', ',')}`;
-}
+});
 
+// Atualização em tempo real do Firebase
+db.ref("vagasRestantes").on("value", snapshot => {
+  const restantes = snapshot.val();
+  vagasRestantes.textContent = `Vagas restantes: ${restantes}`;
+  if (restantes <= 0) {
+    sendBtn.disabled = true;
+    pixSection.style.display = "none";
+    zapBtn.style.display = "none";
+    obs.style.display = "none";
+    lotadoAviso.style.display = "block";
+  }
+});
+
+// Copiar PIX
 function copiarPix() {
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
   document.getElementById("confirmacao").style.display = "block";
   setTimeout(() => document.getElementById("confirmacao").style.display = "none", 2500);
 }
 
+// Confirmar reserva
 function confirmarReserva() {
   const nome = document.getElementById("nome").value.trim();
-  const qtd = parseInt(quantidadeInput.value);
+  const qtd = parseInt(quantidade.value);
 
   if (!nome || !qtd) {
     alert("Preencha nome e quantidade de vagas.");
     return;
   }
 
-  if (vagasPreenchidas + qtd > limiteVagas) {
-    lotadoAviso.style.display = "block";
-    sendBtn.disabled = true;
-    zapBtn.style.display = "none";
-    obs.style.display = "none";
-    pixSection.style.display = "none";
-    return;
-  }
-
-  vagasPreenchidas += qtd;
-  atualizarContadorTela();
+  db.ref("vagasRestantes").transaction(restantes => {
+    if (restantes === null) return 44;
+    if (restantes - qtd < 0) return restantes;
+    return restantes - qtd;
+  });
 
   alert("Reserva confirmada.");
-
   pixSection.style.display = "block";
   obs.style.display = "block";
   zapBtn.style.display = "block";
 }
 
+// WhatsApp
 function enviarWhatsApp() {
   const nome = document.getElementById("nome").value.trim();
-  const qtd = parseInt(quantidadeInput.value);
+  const qtd = parseInt(quantidade.value);
   const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
 
   const mensagem =
@@ -278,21 +300,6 @@ function enviarWhatsApp() {
   const numero = "5566996926174";
   window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
 }
-
-function atualizarContadorTela() {
-  const restantes = Math.max(limiteVagas - vagasPreenchidas, 0);
-  vagasRestantes.textContent = `Vagas restantes: ${restantes}`;
-
-  if (vagasPreenchidas >= limiteVagas) {
-    sendBtn.disabled = true;
-    zapBtn.style.display = "none";
-    obs.style.display = "none";
-    lotadoAviso.style.display = "block";
-    pixSection.style.display = "none";
-  }
-}
-
-atualizarValor();
 
 </script>
 
