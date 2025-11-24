@@ -77,25 +77,7 @@ button.send-btn {
 }
 button.send-btn:disabled { background: #888; cursor: not-allowed; }
 button.send-btn:hover:not(:disabled) { background: #1ebf5a; }
-button.duvida-btn {
-  margin-top: 12px;
-  width: 100%;
-  padding: 12px;
-  background: #f59e0b;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-}
-button.duvida-btn:hover { background: #d97706; }
 footer { margin-top: 18px; font-size: 13px; color: #888; }
-.confirm-msg {
-  margin-top: 12px;
-  color: #00ff90;
-  font-weight: bold;
-  display: none;
-}
 .esgotado-msg {
   margin-top: 12px;
   color: #ff4d4d;
@@ -110,11 +92,8 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
 <h2>Trilheiros de Rondonópolis</h2>
 
 <div class="container">
-  <label for="nome">Nome completo (ou nomes das pessoas que vão reservar):</label>
-  <input type="text" id="nome" placeholder="Ex: João, Maria e Carlos" required>
-
-  <label for="email">E-mail para registro:</label>
-  <input type="email" id="email" placeholder="Ex: exemplo@dominio.com" required>
+  <label for="nome">Nome completo:</label>
+  <input type="text" id="nome" placeholder="Ex: João Silva" required>
 
   <label for="quantidade">Quantidade de vagas:</label>
   <select id="quantidade">
@@ -132,36 +111,22 @@ footer { margin-top: 18px; font-size: 13px; color: #888; }
   </select>
 
   <div class="total" id="valorTotal">Valor total: R$ 0,00</div>
-  <div class="vagas" id="vagasRestantes">Vagas restantes: 45</div>
-  <div class="esgotado-msg" id="esgotadoMsg">❌ Vagas esgotadas! Entre em contato via WhatsApp para verificar outras opções.</div>
+  <div class="vagas" id="vagasRestantes">Vagas restantes: 44</div>
+  <div class="esgotado-msg" id="esgotadoMsg">🚌 Ônibus lotado. Todas as vagas foram preenchidas.</div>
 
-  <div class="pix-section">
-    <div class="pix-key">
-      Chave PIX: <strong>trilheiros.roomt@gmail.com</strong>
-    </div>
-    <button class="copy-btn" onclick="copiarPix()">Copiar chave PIX</button>
-    <div id="confirmacao" class="copiado">✅ Chave copiada com sucesso!</div>
-  </div>
-
-  <p>Após fazer o pagamento, clique abaixo para enviar sua confirmação via WhatsApp com nome, quantidade e valor.</p>
-
-  <button id="sendBtn" class="send-btn" onclick="enviarWhatsApp()">Enviar pelo WhatsApp</button>
-  <button class="duvida-btn" onclick="duvidaWhatsApp()">Dúvida / Pergunta</button>
-  <div id="mensagemConfirm" class="confirm-msg">✅ Reserva registrada com sucesso! Verifique seu WhatsApp e envie o comprovante.</div>
+  <button id="sendBtn" class="send-btn" onclick="confirmarReserva()">Confirmar Reserva</button>
 
   <footer>© 2025 Trilheiros de Rondonópolis</footer>
 </div>
 
 <script>
-const precoPorPessoa = 68;
-const limiteVagas = 45;
+const precoPorPessoa = 69;
+const limiteVagas = 44;
 let vagasPreenchidas = 0;
 
 const quantidadeInput = document.getElementById("quantidade");
 const valorTotal = document.getElementById("valorTotal");
 const vagasRestantes = document.getElementById("vagasRestantes");
-const confirmacao = document.getElementById("confirmacao");
-const mensagemConfirm = document.getElementById("mensagemConfirm");
 const esgotadoMsg = document.getElementById("esgotadoMsg");
 const sendBtn = document.getElementById("sendBtn");
 
@@ -173,79 +138,36 @@ function atualizarValor() {
   valorTotal.textContent = `Valor total: R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
-function copiarPix() {
-  navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
-  confirmacao.style.display = "block";
-  setTimeout(() => confirmacao.style.display = "none", 2500);
-}
-
-function enviarWhatsApp() {
+function confirmarReserva() {
   const nome = document.getElementById("nome").value.trim();
-  const email = document.getElementById("email").value.trim();
   const qtd = parseInt(document.getElementById("quantidade").value);
 
-  if (!nome || !email || !qtd) {
-    alert("Preencha nome, e-mail e quantidade de vagas antes de enviar.");
+  if (!nome || !qtd) {
+    alert("Preencha nome e quantidade de vagas.");
     return;
   }
 
   if (vagasPreenchidas + qtd > limiteVagas) {
-    alert("Desculpe, não há vagas suficientes disponíveis.");
+    alert("Ônibus lotado. Todas as vagas foram preenchidas.");
     return;
   }
 
   vagasPreenchidas += qtd;
   atualizarContadorTela();
 
-  const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
-  const mensagem = `Olá, segue minha reserva.%0A%0ANome(s): ${nome}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}%0A%0AComprovante em anexo.`;
-  const numero = "5566996926174";
-  const link = `https://wa.me/${numero}?text=${mensagem}`;
-  window.open(link, "_blank");
-
-  mensagemConfirm.style.display = "block";
-  setTimeout(() => mensagemConfirm.style.display = "none", 5000);
-
-  fetch("URL_DO_SCRIPT?nome=" + encodeURIComponent(nome) +
-        "&email=" + encodeURIComponent(email) +
-        "&quantidade=" + qtd +
-        "&valor=" + encodeURIComponent(total))
-  .then(res => res.text())
-  .then(data => console.log("Registro salvo:", data))
-  .catch(err => console.error("Erro ao registrar:", err));
-}
-
-function duvidaWhatsApp() {
-  const mensagem = encodeURIComponent("Olá, tenho uma dúvida sobre a reserva do ônibus.");
-  const numero = "5566996926174";
-  window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+  alert("Reserva confirmada.");
 }
 
 function atualizarContadorTela() {
-  vagasRestantes.textContent = `Vagas restantes: ${limiteVagas - vagasPreenchidas}`;
+  const restantes = limiteVagas - vagasPreenchidas;
+  vagasRestantes.textContent = `Vagas restantes: ${restantes}`;
+
   if (vagasPreenchidas >= limiteVagas) {
     sendBtn.disabled = true;
     esgotadoMsg.style.display = "block";
-  } else {
-    sendBtn.disabled = false;
-    esgotadoMsg.style.display = "none";
   }
 }
 
-// Atualizar contador em tempo real via planilha
-function atualizarContadorTempoReal() {
-  fetch("URL_DO_SCRIPT?acao=contador")
-    .then(res => res.json())
-    .then(data => {
-      vagasPreenchidas = data.vagasPreenchidas || 0;
-      atualizarContadorTela();
-    })
-    .catch(err => console.error("Erro ao atualizar contador:", err));
-}
-
-// Atualiza ao abrir e a cada 10 segundos
-atualizarContadorTempoReal();
-setInterval(atualizarContadorTempoReal, 10000);
 atualizarValor();
 </script>
 
