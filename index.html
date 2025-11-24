@@ -186,20 +186,20 @@ footer {
   <div class="total" id="valorTotal">Valor total: R$ 0,00</div>
   <div class="vagas" id="vagasRestantes">Vagas restantes: 44</div>
 
-  <p id="lotadoAviso">🚌 Ônibus lotado. Todas as vagas foram preenchidas.</p>
+  <p id="lotadoAviso">Ônibus lotado. Todas as vagas foram preenchidas.</p>
 
-  <div class="pix-section">
+  <div id="pixSection" class="pix-section" style="display:none;">
     <div class="pix-key">
       Chave PIX: <strong>trilheiros.roomt@gmail.com</strong>
     </div>
     <button class="copy-btn" onclick="copiarPix()">Copiar chave PIX</button>
-    <div id="confirmacao" class="copiado">✅ Chave copiada com sucesso.</div>
+    <div id="confirmacao" class="copiado">Chave copiada com sucesso.</div>
   </div>
 
   <button id="sendBtn" class="send-btn" onclick="confirmarReserva()">Confirmar reserva</button>
 
   <p id="obs" class="observacao">
-    Para concluir sua reserva, envie seu nome e o comprovante de pagamento pelo WhatsApp.
+    Para concluir sua reserva, envie seu nome e comprovante pelo WhatsApp.
   </p>
 
   <button id="zapBtn" class="send-btn" style="display:none; background:#128C7E; color:white;" onclick="enviarWhatsApp()">
@@ -222,6 +222,7 @@ const lotadoAviso = document.getElementById("lotadoAviso");
 const sendBtn = document.getElementById("sendBtn");
 const obs = document.getElementById("obs");
 const zapBtn = document.getElementById("zapBtn");
+const pixSection = document.getElementById("pixSection");
 
 quantidadeInput.addEventListener("change", atualizarValor);
 
@@ -251,6 +252,7 @@ function confirmarReserva() {
     sendBtn.disabled = true;
     zapBtn.style.display = "none";
     obs.style.display = "none";
+    pixSection.style.display = "none";
     return;
   }
 
@@ -259,6 +261,7 @@ function confirmarReserva() {
 
   alert("Reserva confirmada.");
 
+  pixSection.style.display = "block";
   obs.style.display = "block";
   zapBtn.style.display = "block";
 }
@@ -269,7 +272,7 @@ function enviarWhatsApp() {
   const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
 
   const mensagem =
-    `Olá, tudo bem? Envio meu nome e comprovante para confirmar minha reserva do ônibus.%0A%0A` +
+    `Olá, envio meu nome e comprovante para confirmar minha reserva.%0A%0A` +
     `Nome: ${nome}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}`;
 
   const numero = "5566996926174";
@@ -285,6 +288,7 @@ function atualizarContadorTela() {
     zapBtn.style.display = "none";
     obs.style.display = "none";
     lotadoAviso.style.display = "block";
+    pixSection.style.display = "none";
   }
 }
 
