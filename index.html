@@ -48,16 +48,24 @@ button {
   font-size: 18px;
   font-weight: bold;
   margin-top: 12px;
+  cursor: pointer;
 }
 .btn {
   background: linear-gradient(180deg,#2e9cff,#0066ff);
   color: #fff;
+  animation: pulse 1.5s infinite;
+}
+.btn-copiado {
+  background: linear-gradient(180deg,#00c853,#009624) !important;
 }
 .btn-wpp {
   background: linear-gradient(180deg,#25d366,#128c7e);
 }
-.bloqueado {
-  background: #555 !important;
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 </style>
 </head>
@@ -81,16 +89,20 @@ src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-
 <textarea id="nomes" placeholder="Digite o nome das pessoas (um por linha)"></textarea>
 
 <div style="margin-top:10px;background:#0f2f3a;padding:10px;border-radius:10px;text-align:center">
-💳 Após preencher os nomes, realize o pagamento via Pix.<br>
-📲 Depois clique no botão para enviar o comprovante.
+💳 Clique no botão abaixo para copiar o Pix e confirmar sua vaga.
 </div>
 
 <input type="number" id="qtd" value="1" min="1">
 
-<button id="btnPix" class="btn" onclick="confirmar()">💳 GARANTIR MINHA VAGA</button>
+<button id="btnPix" class="btn" onclick="confirmar()">
+📋 COPIAR PIX • GARANTIR VAGA
+</button>
+
+<div id="msgPix" style="display:none;margin-top:12px;text-align:center;color:#00ffcc;font-weight:bold;">
+✅ Pix copiado com sucesso! Agora envie o comprovante 👇
+</div>
 
 <div id="final" style="display:none;text-align:center;margin-top:15px">
-  <p style="color:#00ffd5;font-weight:bold;">✅ Pagamento iniciado!</p>
   <button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
 </div>
 
@@ -109,18 +121,18 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
 const vagasRef = db.ref("vagas/total");
 
 vagasRef.on("value", snap => {
-  const vagas = snap.val();
-  document.getElementById("vagas").innerText = vagas;
+  const v = snap.val();
+  document.getElementById("vagas").innerText = v;
 
-  if (vagas <= 0) {
-    document.getElementById("btnPix").disabled = true;
-    document.getElementById("btnPix").innerText = "🚫 VAGAS ESGOTADAS";
-    document.getElementById("btnPix").classList.add("bloqueado");
+  if (v <= 0) {
+    const btn = document.getElementById("btnPix");
+    btn.disabled = true;
+    btn.innerText = "🚫 VAGAS ESGOTADAS";
+    btn.classList.remove("btn");
   }
 });
 
@@ -139,6 +151,12 @@ function confirmar() {
   });
 
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
+
+  document.getElementById("msgPix").style.display = "block";
+
+  const btn = document.getElementById("btnPix");
+  btn.innerHTML = "✅ PIX COPIADO";
+  btn.classList.add("btn-copiado");
 
   document.getElementById("final").style.display = "block";
 
