@@ -8,8 +8,8 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(180deg,#0b1f2a,#0f2f3a,#143f4a);
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg,#0f2027,#203a43,#2c5364);
   color: #fff;
 }
 
@@ -21,23 +21,22 @@ body {
 
 .banner {
   width: 100%;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.8);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.7);
   margin-bottom: 15px;
 }
 
 .card {
-  background: #0e1c24;
+  background: #111;
   border-radius: 18px;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.7);
+  box-shadow: 0 15px 30px rgba(0,0,0,.7);
 }
 
 h1 {
   text-align: center;
   color: #00ffd5;
   margin-bottom: 5px;
-  text-shadow: 0 0 10px rgba(0,255,213,.4);
 }
 
 .sub {
@@ -47,7 +46,7 @@ h1 {
 }
 
 .info {
-  background: #102a35;
+  background: #0f2b35;
   border-radius: 12px;
   padding: 10px;
   margin: 12px 0;
@@ -59,12 +58,19 @@ h1 {
   margin: 5px 0;
 }
 
+.alerta {
+  color: #ffd700;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 input {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
   border-radius: 10px;
   border: none;
+  margin-top: 10px;
   font-size: 16px;
 }
 
@@ -81,31 +87,27 @@ button {
 }
 
 .btn-pix {
-  background: linear-gradient(145deg,#00d2ff,#0066ff);
+  background: linear-gradient(145deg,#00d2ff,#0072ff);
   color: #fff;
-  box-shadow: 0 6px 0 #003c99;
+  box-shadow: 0 6px 0 #004c99;
 }
 
 .btn-pix:active {
   transform: translateY(4px);
-  box-shadow: 0 2px 0 #003c99;
+  box-shadow: 0 2px 0 #004c99;
 }
 
-.btn-zap {
+.btn-whats {
   background: linear-gradient(145deg,#25d366,#128c7e);
   color: #fff;
   box-shadow: 0 6px 0 #0a5c3b;
   display: none;
 }
 
-.btn-zap:active {
-  transform: translateY(4px);
-}
-
 .msg {
   margin-top: 10px;
-  color: #00ffd5;
   text-align: center;
+  color: #00ffd5;
 }
 
 .footer {
@@ -121,12 +123,13 @@ button {
 
 <div class="container">
 
-<img class="banner" src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
+<img class="banner"
+src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
 <div class="card">
 
 <h1>🌄 Trilha Mirante da Janela</h1>
-<p class="sub">Aventura • Natureza • Experiência única</p>
+<p class="sub">Aventura • Natureza • Vista incrível</p>
 
 <div class="info">
   <span>📅 25 de Janeiro</span>
@@ -134,21 +137,23 @@ button {
   <span>💰 Valor: R$ 15,00 por pessoa</span>
 </div>
 
+<p class="alerta">⚠️ Vagas limitadas — garanta a sua!</p>
+
 <input type="text" id="nome" placeholder="Digite seu nome">
 <input type="number" id="qtd" value="1" min="1">
 
-<button class="btn-pix" onclick="copiarPix()">💳 COPIAR PIX</button>
+<button class="btn-pix" onclick="copiarPix()">💳 GARANTIR MINHA VAGA</button>
 
 <p class="msg" id="msg"></p>
 
-<a id="btnWhats" class="btn-zap" target="_blank">
+<a id="btnWhats" class="btn-whats" target="_blank">
 📲 ENVIAR COMPROVANTE
 </a>
 
 </div>
 
 <div class="footer">
-  Após o pagamento, envie o comprovante para confirmação da vaga.
+Após o pagamento, envie o comprovante para confirmação da vaga.
 </div>
 
 </div>
@@ -159,7 +164,7 @@ function copiarPix() {
   const qtd = document.getElementById("qtd").value;
 
   if (!nome) {
-    alert("Informe seu nome.");
+    alert("Por favor, informe seu nome.");
     return;
   }
 
@@ -168,16 +173,16 @@ function copiarPix() {
   document.getElementById("msg").innerText =
     "✅ Pix copiado! Agora envie o comprovante.";
 
-  const texto =
+  const mensagem =
     "Olá! 😊%0A" +
     "Pagamento da *Trilha Mirante da Janela* 🌄%0A" +
-    "Nome: " + nome + "%0A" +
-    "Vagas: " + qtd + "%0A" +
-    "Valor: R$ " + (qtd * 15).toFixed(2).replace(".", ",") + "%0A";
+    "👤 Nome: " + nome + "%0A" +
+    "👥 Vagas: " + qtd + "%0A" +
+    "💰 Valor: R$ " + (qtd * 15).toFixed(2).replace(".", ",") + "%0A";
 
   document.getElementById("btnWhats").style.display = "block";
   document.getElementById("btnWhats").href =
-    "https://wa.me/5566996926174?text=" + texto;
+    "https://wa.me/5566996926174?text=" + mensagem;
 }
 </script>
 
