@@ -9,15 +9,41 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{margin:0;background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);font-family:Arial;color:#fff}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);
+  font-family:Arial;
+  color:#fff;
+}
 .container{max-width:420px;margin:auto;padding:15px}
 .banner{width:100%;border-radius:15px;margin-bottom:15px}
 .card{background:#111;border-radius:18px;padding:20px}
 h1{text-align:center;color:#00ffd5}
 .info{text-align:center}
 .vagas{text-align:center;color:#00ffcc;font-weight:bold}
-textarea,select{width:100%;padding:12px;border-radius:10px;border:none;margin-top:10px}
-button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;font-weight:bold;margin-top:12px;cursor:pointer}
+textarea,input,select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+label{
+  font-size:14px;
+  color:#9be7ff;
+  margin-top:8px;
+  display:block;
+}
+button{
+  width:100%;
+  padding:16px;
+  border-radius:40px;
+  border:none;
+  font-size:18px;
+  font-weight:bold;
+  margin-top:12px;
+  cursor:pointer;
+}
 .btn{background:linear-gradient(180deg,#2e9cff,#0066ff);color:#fff}
 .btn-wpp{background:linear-gradient(180deg,#25d366,#128c7e)}
 </style>
@@ -26,23 +52,22 @@ button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;fon
 <body>
 
 <div class="container">
+
 <img class="banner" src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
 <div class="card">
-<h1>🌄 Trilha Mirante da Janela</h1>
 
+<h1>🌄 Trilha Mirante da Janela</h1>
 <p class="info">📅 25 de Janeiro • ⏰ 4h</p>
 <p class="info">💰 R$ 15,00 por pessoa</p>
 
 <p class="vagas">🎟️ Vagas restantes: <span id="vagas">...</span></p>
 
-<textarea id="nomes" placeholder="Digite o nome das pessoas (um por linha)"></textarea>
-
 <div style="margin-top:10px;background:#0f2f3a;padding:10px;border-radius:10px;text-align:center">
-💳 Selecione a quantidade de vagas
+Selecione a quantidade de vagas:
 </div>
 
-<select id="qtd" onchange="atualizarTotal()">
+<select id="qtd" onchange="gerarCampos(); atualizarTotal();">
   <option value="1">1 vaga</option>
   <option value="2">2 vagas</option>
   <option value="3">3 vagas</option>
@@ -55,6 +80,8 @@ button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;fon
   <option value="10">10 vagas</option>
 </select>
 
+<div id="camposNomes"></div>
+
 <p id="totalValor" style="text-align:center;color:#00ffd5;font-weight:bold">
 💰 Total: R$ 15,00
 </p>
@@ -63,13 +90,21 @@ button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;fon
 📋 COPIAR PIX • GARANTIR VAGA
 </button>
 
-<div id="msgPix" style="display:none;margin-top:12px;text-align:center;color:#00ffcc;font-weight:bold">
-✅ Pix copiado com sucesso!<br>
-📲 Agora envie o comprovante para confirmar sua vaga.
+<div id="msgPix" style="
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  background:#0f2f3a;
+  border-radius:10px;
+  text-align:center;
+  color:#00ffcc;
+  font-weight:bold;">
+  ✅ Pix copiado com sucesso!<br>
+  📲 Agora envie o comprovante.
 </div>
 
 <div id="final" style="display:none;text-align:center;margin-top:15px">
-<button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
+  <button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
 </div>
 
 </div>
@@ -90,16 +125,29 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const vagasRef = db.ref("vagas/total");
 
-// Atualiza vagas em tempo real
+// Atualiza vagas
 vagasRef.on("value", snap => {
   const v = snap.val();
   document.getElementById("vagas").innerText = v;
-
   if (v <= 0) {
     document.getElementById("btnPix").disabled = true;
     document.getElementById("btnPix").innerText = "🚫 VAGAS ESGOTADAS";
   }
 });
+
+// Cria campos
+function gerarCampos() {
+  const qtd = parseInt(document.getElementById("qtd").value);
+  const div = document.getElementById("camposNomes");
+  div.innerHTML = "";
+
+  for (let i = 1; i <= qtd; i++) {
+    div.innerHTML += `
+      <label>Nome do participante ${i}</label>
+      <input type="text" class="nomePessoa" placeholder="Digite o nome do participante ${i}" required>
+    `;
+  }
+}
 
 // Atualiza valor
 function atualizarTotal() {
@@ -108,15 +156,20 @@ function atualizarTotal() {
     "💰 Total: R$ " + (qtd * 15).toFixed(2).replace(".", ",");
 }
 
-// Confirmação
+// Confirma
 function confirmar() {
-  const nomes = document.getElementById("nomes").value.trim();
-  const qtd = parseInt(document.getElementById("qtd").value);
+  const nomesInputs = document.querySelectorAll(".nomePessoa");
+  let nomes = "";
 
-  if (!nomes) {
-    alert("Informe os nomes.");
-    return;
+  for (let i = 0; i < nomesInputs.length; i++) {
+    if (!nomesInputs[i].value.trim()) {
+      alert("Preencha todos os nomes.");
+      return;
+    }
+    nomes += "- " + nomesInputs[i].value + "\n";
   }
+
+  const qtd = nomesInputs.length;
 
   vagasRef.transaction(v => v >= qtd ? v - qtd : v);
 
@@ -129,7 +182,7 @@ function confirmar() {
 Olá! 😊
 Confirmação da Trilha Mirante da Janela 🌄
 
-👥 Nomes:
+👥 Participantes:
 ${nomes}
 
 🎟️ Vagas: ${qtd}
@@ -142,6 +195,9 @@ ${nomes}
     window.open("https://wa.me/5566996926174?text=" + texto);
   };
 }
+
+// inicia com 1 campo
+gerarCampos();
 </script>
 
 </body>
