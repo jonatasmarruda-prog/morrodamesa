@@ -39,7 +39,6 @@ body {
 h1 {
   text-align: center;
   color: #00ffd5;
-  margin-bottom: 5px;
 }
 
 .info {
@@ -69,30 +68,25 @@ textarea, input {
   font-size: 16px;
 }
 
-/* BOTÃO 3D */
-.btn-3d {
+button {
   width: 100%;
   padding: 16px;
+  margin-top: 14px;
   border-radius: 40px;
   border: none;
   font-size: 18px;
   font-weight: bold;
-  color: #fff;
   cursor: pointer;
-  margin-top: 14px;
+}
+
+.btn-3d {
   background: linear-gradient(180deg,#2e9cff,#0066ff);
+  color: #fff;
   box-shadow:
     inset 0 2px 0 rgba(255,255,255,0.4),
     0 6px 0 rgba(0,0,0,0.3),
     0 10px 15px rgba(0,0,0,0.4);
   animation: pulse 1.5s infinite;
-}
-
-.btn-3d:active {
-  transform: translateY(4px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    0 3px 0 rgba(0,0,0,0.3);
 }
 
 .btn-whats {
@@ -117,7 +111,8 @@ textarea, input {
 
 <div class="container">
 
-<img class="banner" src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
+<img class="banner"
+src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
 <div class="card">
 
@@ -128,26 +123,33 @@ textarea, input {
 
 <p class="vagas">🎟️ Vagas restantes: <span id="vagas">...</span></p>
 
-<p class="alerta">
-📝 Informe o nome de todas as pessoas (uma por linha)
-</p>
+<p class="alerta">📝 Informe o nome de todos os participantes</p>
 
 <textarea id="nomes" rows="4"
 placeholder="Ex:
 Maria Silva
 João Pereira"></textarea>
 
-<input type="number" id="qtd" value="1" min="1">
+<input type="number" id="qtd" value="1" min="1" onchange="atualizarTotal()">
+
+<p id="total" style="text-align:center;font-weight:bold;color:#00ffd5;">
+💰 Total: R$ 15,00
+</p>
 
 <button id="btnPix" class="btn-3d" onclick="reservar()">
 💳 GARANTIR MINHA VAGA
 </button>
 
-<p id="msg"></p>
+<div id="avisoPagamento" style="display:none;margin-top:15px;text-align:center;">
+  <p style="color:#00ffd5;font-weight:bold;">
+    ✅ Pagamento realizado!
+  </p>
+  <p>Agora envie o comprovante pelo WhatsApp.</p>
 
-<button id="btnWhats" class="btn-3d btn-whats">
-📲 ENVIAR COMPROVANTE
-</button>
+  <button id="btnWhats" class="btn-3d btn-whats">
+    📲 ENVIAR COMPROVANTE
+  </button>
+</div>
 
 </div>
 </div>
@@ -179,6 +181,13 @@ ref.on("value", snap => {
   }
 });
 
+function atualizarTotal() {
+  const qtd = document.getElementById("qtd").value;
+  const total = qtd * valor;
+  document.getElementById("total").innerText =
+    "💰 Total: R$ " + total.toFixed(2).replace(".", ",");
+}
+
 function reservar() {
   const nomes = document.getElementById("nomes").value.trim();
   const qtd = parseInt(document.getElementById("qtd").value);
@@ -188,27 +197,28 @@ function reservar() {
     return;
   }
 
-  ref.transaction(v => v >= qtd ? v - qtd : v);
+  const total = qtd * valor;
 
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
+
+  document.getElementById("avisoPagamento").style.display = "block";
 
   const msg =
     "Olá! 😊%0A" +
     "Confirmação da *Trilha Mirante da Janela* 🌄%0A%0A" +
     "👥 Nome(s):%0A" + nomes.replace(/\n/g, "%0A") + "%0A%0A" +
     "🎟️ Vagas: " + qtd + "%0A" +
-    "💰 Valor: R$ " + (qtd * valor).toFixed(2).replace(".", ",") + "%0A";
+    "💰 Valor: R$ " + total.toFixed(2).replace(".", ",") + "%0A";
 
-  document.getElementById("msg").innerText =
-    "✅ Pix copiado! Envie o comprovante abaixo.";
-
-  const btn = document.getElementById("btnWhats");
-  btn.style.display = "block";
-  btn.onclick = () => {
-    window.open("https://wa.me/5566996926174?text=" + msg, "_blank");
+  document.getElementById("btnWhats").onclick = () => {
+    window.open(
+      "https://wa.me/5566996926174?text=" + msg,
+      "_blank"
+    );
   };
 }
 </script>
 
 </body>
 </html>
+
