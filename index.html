@@ -9,7 +9,12 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{margin:0;background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);font-family:Arial;color:#fff}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);
+  font-family:Arial;
+  color:#fff;
+}
 .container{max-width:420px;margin:auto;padding:15px}
 .banner{width:100%;border-radius:15px;margin-bottom:15px}
 .card{background:#111;border-radius:18px;padding:20px}
@@ -30,8 +35,8 @@ button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;fon
 <img class="banner" src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
 <div class="card">
-<h1>🌄 Trilha Mirante da Janela</h1>
 
+<h1>🌄 Trilha Mirante da Janela</h1>
 <p class="info">📅 25 de Janeiro • ⏰ 4h</p>
 <p class="info">💰 R$ 15,00 por pessoa</p>
 
@@ -53,12 +58,22 @@ button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;fon
 📋 COPIAR PIX • GARANTIR VAGA
 </button>
 
-<div id="msgPix" style="display:none;margin-top:12px;text-align:center;color:#00ffcc;font-weight:bold">
-✅ Pix copiado com sucesso! Agora envie o comprovante 👇
+<div id="msgPix" style="
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  background:#0f2f3a;
+  border-radius:10px;
+  text-align:center;
+  color:#00ffcc;
+  font-weight:bold;
+">
+  ✅ Pix copiado com sucesso!<br>
+  📲 Agora envie o comprovante para confirmar sua vaga.
 </div>
 
 <div id="final" style="display:none;text-align:center;margin-top:15px">
-<button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
+  <button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
 </div>
 
 </div>
@@ -79,9 +94,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const vagasRef = db.ref("vagas/total");
 
+// Atualiza vagas
 vagasRef.on("value", snap => {
   const v = snap.val();
   document.getElementById("vagas").innerText = v;
+
   if (v <= 0) {
     const btn = document.getElementById("btnPix");
     btn.disabled = true;
@@ -89,12 +106,14 @@ vagasRef.on("value", snap => {
   }
 });
 
+// Atualiza valor
 function atualizarTotal() {
   const qtd = parseInt(document.getElementById("qtd").value || 1);
   document.getElementById("totalValor").innerText =
     "💰 Total: R$ " + (qtd * 15).toFixed(2).replace(".", ",");
 }
 
+// Confirmação
 function confirmar() {
   const nomes = document.getElementById("nomes").value.trim();
   const qtd = parseInt(document.getElementById("qtd").value);
@@ -111,12 +130,18 @@ function confirmar() {
   document.getElementById("msgPix").style.display = "block";
   document.getElementById("final").style.display = "block";
 
-  const texto =
-    "Olá! 😊%0A" +
-    "Confirmação da Trilha Mirante da Janela 🌄%0A%0A" +
-    "👥 Nomes:%0A" + nomes.replace(/\n/g,"%0A") +
-    "%0A🎟️ Vagas: " + qtd +
-    "%0A💰 Valor: R$ " + (qtd * 15).toFixed(2);
+  const mensagem = `
+Olá! 😊
+Confirmação da Trilha Mirante da Janela 🌄
+
+👥 Nomes:
+${nomes}
+
+🎟️ Vagas: ${qtd}
+💰 Valor: R$ ${(qtd * 15).toFixed(2)}
+`;
+
+  const texto = encodeURIComponent(mensagem);
 
   document.getElementById("btnWpp").onclick = () => {
     window.open("https://wa.me/5566996926174?text=" + texto);
@@ -126,4 +151,3 @@ function confirmar() {
 
 </body>
 </html>
-
