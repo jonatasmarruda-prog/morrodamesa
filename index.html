@@ -1,306 +1,162 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reserva de Ônibus</title>
+  <meta charset="UTF-8">
+  <title>Trilha Mirante da Janela</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #0a0a0a;
-  color: white;
-  text-align: center;
-  padding: 15px;
-  margin: 0;
-}
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-.logo {
-  width: 120px;
-  margin: 10px auto 15px auto;
-  display: block;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f7f5;
+      margin: 0;
+      padding: 15px;
+      text-align: center;
+    }
 
-.header h1 {
-  font-size: 24px;
-  margin: 5px 0;
-  color: #00ff90;
-}
+    .container {
+      background: #fff;
+      max-width: 420px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-.header h2 {
-  font-size: 18px;
-  margin: 5px 0;
-  color: #f5d76e;
-}
+    img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
 
-.header h3 {
-  font-size: 14px;
-  margin: 5px 0;
-  color: #ccc;
-}
+    h1 { color: #2b6e5e; }
 
-.container {
-  background: #1c1c1c;
-  padding: 20px;
-  border-radius: 15px;
-  max-width: 420px;
-  margin: 0 auto;
-  box-shadow: 0 0 12px rgba(255,255,255,0.1);
-}
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
 
-label {
-  display: block;
-  text-align: left;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #ccc;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  background: #222;
-  color: #fff;
-}
+    .pix { background: #2b6e5e; color: #fff; }
+    .zap { background: #25D366; color: #fff; }
+    .bloqueado { background: #999; }
 
-.total, .vagas {
-  font-size: 16px;
-  color: #00ff90;
-  margin-top: 12px;
-  font-weight: bold;
-}
-
-button.send-btn {
-  margin-top: 18px;
-  width: 100%;
-  padding: 12px;
-  background: #25d366;
-  color: #062b17;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button.send-btn:disabled {
-  background: #888;
-  cursor: not-allowed;
-}
-
-button.send-btn:hover:not(:disabled) {
-  background: #1ebf5a;
-}
-
-.observacao {
-  margin-top: 15px;
-  font-size: 15px;
-  color: #f5d76e;
-  font-weight: bold;
-  display: none;
-}
-
-#lotadoAviso {
-  display: none;
-  color: #ff4d4d;
-  font-weight: bold;
-  font-size: 16px;
-  margin-top: 15px;
-}
-
-.pix-section {
-  background: #2c2c2c;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 18px;
-}
-
-.pix-key {
-  font-size: 15px;
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.copy-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.copy-btn:hover {
-  background-color: #0064d1;
-}
-
-.copiado {
-  display: none;
-  color: #00ff90;
-  font-size: 14px;
-  margin-top: 8px;
-}
-
-footer {
-  margin-top: 18px;
-  font-size: 12px;
-  color: #888;
-}
-</style>
+    .msg { margin-top: 10px; font-weight: bold; color: green; }
+    .alerta { color: red; font-weight: bold; margin-top: 10px; }
+  </style>
 </head>
+
 <body>
-
-<img src="https://i.imgur.com/MwHr761.png" class="logo" alt="Logo">
-
-<div class="header">
-  <h1>Reserva de ônibus</h1>
-  <h2>Morro da Mesa</h2>
-  <h3>30 de novembro . 44 vagas</h3>
-</div>
 
 <div class="container">
 
-  <label for="nome">Nome completo:</label>
-  <input type="text" id="nome" placeholder="Ex: João Silva" required>
+  <img src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
-  <label for="quantidade">Quantidade de vagas:</label>
-  <select id="quantidade">
-    <option value="">Selecione</option>
-    <option value="1">1 vaga</option>
-    <option value="2">2 vagas</option>
-    <option value="3">3 vagas</option>
-    <option value="4">4 vagas</option>
-    <option value="5">5 vagas</option>
-    <option value="6">6 vagas</option>
-    <option value="7">7 vagas</option>
-    <option value="8">8 vagas</option>
-    <option value="9">9 vagas</option>
-    <option value="10">10 vagas</option>
-  </select>
+  <h1>🌄 Trilha Mirante da Janela</h1>
 
-  <div class="total" id="valorTotal">Valor total: R$ 0,00</div>
-  <div class="vagas" id="vagasRestantes">Vagas restantes: 44</div>
+  <p>📅 25 de Janeiro</p>
+  <p>⏰ Saída: 4h da manhã</p>
+  <p>💰 Valor: R$ 15,00 por pessoa</p>
 
-  <p id="lotadoAviso">Ônibus lotado. Todas as vagas foram preenchidas.</p>
+  <p>🎟️ Vagas restantes: <strong id="vagas">...</strong></p>
 
-  <div id="pixSection" class="pix-section" style="display:none;">
-    <div class="pix-key">
-      Chave PIX: <strong>trilheiros.roomt@gmail.com</strong>
-    </div>
-    <button class="copy-btn" onclick="copiarPix()">Copiar chave PIX</button>
-    <div id="confirmacao" class="copiado">Chave copiada com sucesso.</div>
-  </div>
+  <input type="text" id="nome" placeholder="Nome(s)">
+  <input type="number" id="qtd" value="1" min="1">
 
-  <button id="sendBtn" class="send-btn" onclick="confirmarReserva()">Confirmar reserva</button>
+  <p id="total">Total: R$ 15,00</p>
 
-  <p id="obs" class="observacao">
-    Para concluir sua reserva, envie seu nome e comprovante pelo WhatsApp.
-  </p>
+  <button class="pix" id="btnPix" onclick="copiarPix()">💳 Copiar Pix</button>
 
-  <button id="zapBtn" class="send-btn" style="display:none; background:#128C7E; color:white;" onclick="enviarWhatsApp()">
-    Enviar no WhatsApp
+  <div class="msg" id="msgPix"></div>
+
+  <button class="zap" id="btnZap" style="display:none;" onclick="enviarWhats()">
+    📲 Enviar comprovante
   </button>
 
-  <footer>© 2025 Trilheiros de Rondonópolis</footer>
+  <div class="alerta" id="alerta"></div>
+
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
 <script>
+  // 🔥 CONFIGURAÇÃO FIREBASE (SUBSTITUA PELOS SEUS DADOS)
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "trilha-mirante.firebaseapp.com",
+    databaseURL: "https://trilha-mirante-default-rtdb.firebaseio.com",
+    projectId: "trilha-mirante",
+    storageBucket: "trilha-mirante.appspot.com",
+    messagingSenderId: "SEU_ID",
+    appId: "SEU_APP_ID"
+  };
 
-// Configuração Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyAETThu9TN_AE98od3OHlNqcnUYN67vWLo",
-  authDomain: "reservadeonibus-77120.firebaseapp.com",
-  databaseURL: "https://reservadeonibus-77120-default-rtdb.firebaseio.com",
-  projectId: "reservadeonibus-77120",
-  storageBucket: "reservadeonibus-77120.firebasestorage.app",
-  messagingSenderId: "889422660714",
-  appId: "1:889422660714:web:df412730943f90e2d93613",
-  measurementId: "G-Y2WRY9NCMS"
-};
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("vagas");
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+  const valor = 15;
+  const pix = "trilheiros.roomt@gmail.com";
 
-const precoPorPessoa = 69;
-const sendBtn = document.getElementById("sendBtn");
-const pixSection = document.getElementById("pixSection");
-const obs = document.getElementById("obs");
-const zapBtn = document.getElementById("zapBtn");
-const lotadoAviso = document.getElementById("lotadoAviso");
-const vagasRestantes = document.getElementById("vagasRestantes");
+  ref.on("value", snap => {
+    const vagas = snap.val();
+    document.getElementById("vagas").innerText = vagas;
 
-// Atualiza valor total
-document.getElementById("quantidade").addEventListener("change", () => {
-  const qtd = parseInt(quantidade.value) || 0;
-  const total = qtd * precoPorPessoa;
-  valorTotal.textContent = `Valor total: R$ ${total.toFixed(2).replace('.', ',')}`;
-});
-
-// Atualização em tempo real do Firebase
-db.ref("vagasRestantes").on("value", snapshot => {
-  const restantes = snapshot.val();
-  vagasRestantes.textContent = `Vagas restantes: ${restantes}`;
-  if (restantes <= 0) {
-    sendBtn.disabled = true;
-    pixSection.style.display = "none";
-    zapBtn.style.display = "none";
-    obs.style.display = "none";
-    lotadoAviso.style.display = "block";
-  }
-});
-
-// Copiar PIX
-function copiarPix() {
-  navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
-  document.getElementById("confirmacao").style.display = "block";
-  setTimeout(() => document.getElementById("confirmacao").style.display = "none", 2500);
-}
-
-// Confirmar reserva
-function confirmarReserva() {
-  const nome = document.getElementById("nome").value.trim();
-  const qtd = parseInt(quantidade.value);
-
-  if (!nome || !qtd) {
-    alert("Preencha nome e quantidade de vagas.");
-    return;
-  }
-
-  db.ref("vagasRestantes").transaction(restantes => {
-    if (restantes === null) return 44;
-    if (restantes - qtd < 0) return restantes;
-    return restantes - qtd;
+    if (vagas <= 0) {
+      document.getElementById("btnPix").disabled = true;
+      document.getElementById("btnPix").innerText = "VAGAS ESGOTADAS";
+    }
   });
 
-  alert("Reserva confirmada.");
-  pixSection.style.display = "block";
-  obs.style.display = "block";
-  zapBtn.style.display = "block";
-}
+  function copiarPix() {
+    const qtd = parseInt(document.getElementById("qtd").value);
 
-// WhatsApp
-function enviarWhatsApp() {
-  const nome = document.getElementById("nome").value.trim();
-  const qtd = parseInt(quantidade.value);
-  const total = (qtd * precoPorPessoa).toFixed(2).replace('.', ',');
+    ref.transaction(v => {
+      if (v >= qtd) return v - qtd;
+      else return;
+    });
 
-  const mensagem =
-    `Olá, envio meu nome e comprovante para confirmar minha reserva.%0A%0A` +
-    `Nome: ${nome}%0AQuantidade de vagas: ${qtd}%0AValor total: R$ ${total}`;
+    navigator.clipboard.writeText(pix);
 
-  const numero = "5566996926174";
-  window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
-}
+    document.getElementById("msgPix").innerHTML =
+      "✅ Pix copiado! Envie o comprovante abaixo 👇";
 
+    document.getElementById("btnZap").style.display = "block";
+  }
+
+  function enviarWhats() {
+    const nome = document.getElementById("nome").value;
+    const qtd = document.getElementById("qtd").value;
+    const total = qtd * valor;
+
+    const msg =
+      "Olá! 😊%0A" +
+      "Confirmação da *Trilha Mirante da Janela* 🌄%0A%0A" +
+      "👤 Nome(s): " + nome + "%0A" +
+      "👥 Vagas: " + qtd + "%0A" +
+      "💰 Valor: R$ " + total.toFixed(2).replace('.', ',') + "%0A%0A" +
+      "Pagamento realizado via Pix ✅";
+
+    window.open(
+      "https://wa.me/5566996926174?text=" + msg,
+      "_blank"
+    );
+  }
 </script>
 
 </body>
