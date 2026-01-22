@@ -5,67 +5,52 @@
 <title>Trilha Mirante da Janela</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
 <style>
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
   background: linear-gradient(180deg,#0f2027,#203a43,#2c5364);
+  font-family: Arial, sans-serif;
   color: #fff;
+  margin: 0;
 }
-
 .container {
   max-width: 420px;
   margin: auto;
   padding: 15px;
 }
-
 .banner {
   width: 100%;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.7);
   margin-bottom: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.7);
 }
-
 .card {
   background: #111;
   border-radius: 18px;
   padding: 20px;
-  box-shadow: 0 15px 30px rgba(0,0,0,.7);
 }
-
 h1 {
   text-align: center;
   color: #00ffd5;
-  margin-bottom: 5px;
 }
-
-.sub {
-  text-align: center;
-  font-size: 15px;
-  opacity: 0.9;
-}
-
 .info {
-  background: #0f2b35;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 12px 0;
   text-align: center;
-}
-
-.info span {
-  display: block;
   margin: 5px 0;
 }
-
+.vagas {
+  text-align: center;
+  color: #00ffcc;
+  font-weight: bold;
+  margin: 10px 0;
+}
 .alerta {
   color: #ffd700;
   text-align: center;
   font-weight: bold;
-  margin-bottom: 10px;
 }
-
-input {
+textarea, input {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
@@ -73,48 +58,35 @@ input {
   margin-top: 10px;
   font-size: 16px;
 }
-
 button {
   width: 100%;
-  margin-top: 14px;
   padding: 15px;
+  margin-top: 12px;
   border-radius: 12px;
   border: none;
   font-size: 17px;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.2s;
 }
-
 .btn-pix {
   background: linear-gradient(145deg,#00d2ff,#0072ff);
   color: #fff;
   box-shadow: 0 6px 0 #004c99;
+  animation: piscar 1.5s infinite;
 }
-
-.btn-pix:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #004c99;
+@keyframes piscar {
+  0% {opacity:1;}
+  50% {opacity:0.7;}
+  100% {opacity:1;}
 }
-
 .btn-whats {
   background: linear-gradient(145deg,#25d366,#128c7e);
   color: #fff;
-  box-shadow: 0 6px 0 #0a5c3b;
   display: none;
 }
-
-.msg {
-  margin-top: 10px;
-  text-align: center;
-  color: #00ffd5;
-}
-
-.footer {
-  margin-top: 15px;
-  text-align: center;
-  font-size: 13px;
-  opacity: 0.8;
+.bloqueado {
+  background: #555;
+  cursor: not-allowed;
 }
 </style>
 </head>
@@ -129,63 +101,91 @@ src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-
 <div class="card">
 
 <h1>🌄 Trilha Mirante da Janela</h1>
-<p class="sub">Aventura • Natureza • Vista incrível</p>
 
-<div class="info">
-  <span>📅 25 de Janeiro</span>
-  <span>⏰ Saída: 4h da manhã</span>
-  <span>💰 Valor: R$ 15,00 por pessoa</span>
-</div>
+<p class="info">📅 25 de Janeiro • ⏰ 4h da manhã</p>
+<p class="info">💰 Valor: R$ 15,00 por pessoa</p>
 
-<p class="alerta">⚠️ Vagas limitadas — garanta a sua!</p>
+<p class="vagas">🎟️ Vagas restantes: <span id="vagas">...</span></p>
 
-<input type="text" id="nome" placeholder="Digite seu nome">
+<p class="alerta">
+⚠️ Informe o nome de todas as pessoas que irão participar
+</p>
+
+<textarea id="nomes" rows="4"
+placeholder="Digite o nome das pessoas (uma por linha)"></textarea>
+
 <input type="number" id="qtd" value="1" min="1">
 
-<button class="btn-pix" onclick="copiarPix()">💳 GARANTIR MINHA VAGA</button>
+<button id="btnPix" class="btn-pix" onclick="reservar()">
+💳 GARANTIR MINHA VAGA
+</button>
 
-<p class="msg" id="msg"></p>
+<p id="msg"></p>
 
 <a id="btnWhats" class="btn-whats" target="_blank">
 📲 ENVIAR COMPROVANTE
 </a>
 
 </div>
-
-<div class="footer">
-Após o pagamento, envie o comprovante para confirmação da vaga.
-</div>
-
 </div>
 
 <script>
-function copiarPix() {
-  const nome = document.getElementById("nome").value;
-  const qtd = document.getElementById("qtd").value;
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "trilha-mirante.firebaseapp.com",
+  databaseURL: "https://trilha-mirante-default-rtdb.firebaseio.com",
+  projectId: "trilha-mirante",
+  storageBucket: "trilha-mirante.appspot.com",
+  messagingSenderId: "SEU_ID",
+  appId: "SEU_APP_ID"
+};
 
-  if (!nome) {
-    alert("Por favor, informe seu nome.");
+firebase.initializeApp(firebaseConfig);
+const ref = firebase.database().ref("vagas");
+
+const valor = 15;
+
+ref.on("value", snap => {
+  const vagas = snap.val();
+  document.getElementById("vagas").innerText = vagas;
+
+  if (vagas <= 0) {
+    document.getElementById("btnPix").disabled = true;
+    document.getElementById("btnPix").innerText = "🚫 VAGAS ESGOTADAS";
+    document.getElementById("btnPix").classList.add("bloqueado");
+  }
+});
+
+function reservar() {
+  const nomes = document.getElementById("nomes").value.trim();
+  const qtd = parseInt(document.getElementById("qtd").value);
+
+  if (!nomes) {
+    alert("⚠️ Informe o nome das pessoas.");
     return;
   }
 
+  ref.transaction(v => v >= qtd ? v - qtd : v);
+
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
 
-  document.getElementById("msg").innerText =
-    "✅ Pix copiado! Agora envie o comprovante.";
-
-  const mensagem =
+  const msg =
     "Olá! 😊%0A" +
-    "Pagamento da *Trilha Mirante da Janela* 🌄%0A" +
-    "👤 Nome: " + nome + "%0A" +
-    "👥 Vagas: " + qtd + "%0A" +
-    "💰 Valor: R$ " + (qtd * 15).toFixed(2).replace(".", ",") + "%0A";
+    "Confirmação da *Trilha Mirante da Janela* 🌄%0A%0A" +
+    "👥 Nome(s):%0A" + nomes.replace(/\n/g, "%0A") + "%0A%0A" +
+    "🎟️ Vagas: " + qtd + "%0A" +
+    "💰 Valor: R$ " + (qtd * valor).toFixed(2).replace(".", ",") + "%0A";
+
+  document.getElementById("msg").innerText =
+    "✅ Pix copiado! Envie o comprovante abaixo.";
 
   document.getElementById("btnWhats").style.display = "block";
   document.getElementById("btnWhats").href =
-    "https://wa.me/5566996926174?text=" + mensagem;
+    "https://wa.me/5566996926174?text=" + msg;
 }
 </script>
 
 </body>
 </html>
+
 
