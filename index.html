@@ -9,92 +9,27 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body {
-  margin: 0;
-  background: linear-gradient(180deg,#0f2027,#203a43,#2c5364);
-  font-family: Arial;
-  color: #fff;
-}
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 15px;
-}
-.banner {
-  width: 100%;
-  border-radius: 15px;
-  margin-bottom: 15px;
-}
-.card {
-  background: #111;
-  border-radius: 18px;
-  padding: 20px;
-}
-h1 { text-align:center; color:#00ffd5; }
-.info { text-align:center; }
-.vagas { text-align:center; color:#00ffcc; font-weight:bold; }
-
-textarea, input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  margin-top: 10px;
-}
-
-button {
-  width: 100%;
-  padding: 16px;
-  border-radius: 40px;
-  border: none;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 12px;
-  cursor: pointer;
-}
-
-.btn {
-  background: linear-gradient(180deg,#2e9cff,#0066ff);
-  color: #fff;
-  animation: pulse 1.5s infinite;
-}
-
-.btn-copiado {
-  background: linear-gradient(180deg,#00c853,#009624) !important;
-  animation: none;
-}
-
-.btn-wpp {
-  background: linear-gradient(180deg,#25d366,#128c7e);
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.piscar {
-  animation: piscar 1s infinite;
-}
-
-@keyframes piscar {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
+body{margin:0;background:linear-gradient(180deg,#0f2027,#203a43,#2c5364);font-family:Arial;color:#fff}
+.container{max-width:420px;margin:auto;padding:15px}
+.banner{width:100%;border-radius:15px;margin-bottom:15px}
+.card{background:#111;border-radius:18px;padding:20px}
+h1{text-align:center;color:#00ffd5}
+.info{text-align:center}
+.vagas{text-align:center;color:#00ffcc;font-weight:bold}
+textarea,input{width:100%;padding:12px;border-radius:10px;border:none;margin-top:10px}
+button{width:100%;padding:16px;border-radius:40px;border:none;font-size:18px;font-weight:bold;margin-top:12px;cursor:pointer}
+.btn{background:linear-gradient(180deg,#2e9cff,#0066ff);color:#fff}
+.btn-wpp{background:linear-gradient(180deg,#25d366,#128c7e)}
+.btn-copiado{background:linear-gradient(180deg,#00c853,#009624)}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
-<img class="banner"
-src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
+<img class="banner" src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-amarelo-laranja.png">
 
 <div class="card">
-
 <h1>🌄 Trilha Mirante da Janela</h1>
 
 <p class="info">📅 25 de Janeiro • ⏰ 4h</p>
@@ -108,30 +43,22 @@ src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-
 💳 Clique no botão abaixo para copiar o Pix e confirmar sua vaga.
 </div>
 
-<input type="number" id="qtd" value="1" min="1">
+<input type="number" id="qtd" value="1" min="1" oninput="atualizarTotal()">
+
+<p id="totalValor" style="text-align:center;color:#00ffd5;font-weight:bold">
+💰 Total: R$ 15,00
+</p>
 
 <button id="btnPix" class="btn" onclick="confirmar()">
 📋 COPIAR PIX • GARANTIR VAGA
 </button>
 
-<div id="msgPix" style="
-  display:none;
-  margin-top:12px;
-  padding:12px;
-  background:#0f2f3a;
-  border-radius:10px;
-  text-align:center;
-  color:#00ffcc;
-  font-weight:bold;
-">
-  ✅ Pix copiado com sucesso!<br>
-  📲 Agora envie o comprovante para confirmar sua vaga.
+<div id="msgPix" style="display:none;margin-top:12px;text-align:center;color:#00ffcc;font-weight:bold">
+✅ Pix copiado com sucesso! Agora envie o comprovante 👇
 </div>
 
 <div id="final" style="display:none;text-align:center;margin-top:15px">
-  <button id="btnWpp" class="btn btn-wpp">
-    📲 ENVIAR COMPROVANTE
-  </button>
+<button id="btnWpp" class="btn btn-wpp">📲 ENVIAR COMPROVANTE</button>
 </div>
 
 </div>
@@ -155,45 +82,33 @@ const vagasRef = db.ref("vagas/total");
 vagasRef.on("value", snap => {
   const v = snap.val();
   document.getElementById("vagas").innerText = v;
-
   if (v <= 0) {
     const btn = document.getElementById("btnPix");
     btn.disabled = true;
     btn.innerText = "🚫 VAGAS ESGOTADAS";
-    btn.classList.remove("btn");
   }
 });
+
+function atualizarTotal() {
+  const qtd = parseInt(document.getElementById("qtd").value || 1);
+  document.getElementById("totalValor").innerText =
+    "💰 Total: R$ " + (qtd * 15).toFixed(2).replace(".", ",");
+}
 
 function confirmar() {
   const nomes = document.getElementById("nomes").value.trim();
   const qtd = parseInt(document.getElementById("qtd").value);
-  const botao = document.getElementById("btnPix");
 
   if (!nomes) {
     alert("Informe os nomes.");
     return;
   }
 
-  // trava botão
-  botao.disabled = true;
-  botao.classList.add("btn-copiado");
-  botao.innerHTML = "✅ PIX COPIADO";
+  vagasRef.transaction(v => v >= qtd ? v - qtd : v);
 
-  // reduz vagas
-  vagasRef.transaction(v => {
-    if (v >= qtd) return v - qtd;
-    else return v;
-  });
-
-  // copia pix
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
 
-  // mostra mensagem
-  const msg = document.getElementById("msgPix");
-  msg.style.display = "block";
-  msg.classList.add("piscar");
-
-  // mostra botão whatsapp
+  document.getElementById("msgPix").style.display = "block";
   document.getElementById("final").style.display = "block";
 
   const texto =
@@ -211,3 +126,4 @@ function confirmar() {
 
 </body>
 </html>
+
