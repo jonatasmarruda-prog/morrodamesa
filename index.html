@@ -5,9 +5,6 @@
 <title>Trilha Mirante da Janela</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
 <style>
 body {
   margin: 0;
@@ -44,12 +41,6 @@ h1 {
 .info {
   text-align: center;
   margin: 6px 0;
-}
-
-.vagas {
-  text-align: center;
-  color: #00ffcc;
-  font-weight: bold;
 }
 
 .alerta {
@@ -90,7 +81,6 @@ button {
 
 .btn-whats {
   background: linear-gradient(180deg,#25d366,#128c7e);
-  display: none;
 }
 
 @keyframes pulse {
@@ -115,14 +105,13 @@ src="https://i.postimg.cc/wvfkLJcn/Post-para-instagram-dia-do-turismo-divertido-
 <p class="info">📅 25 de Janeiro • ⏰ 4h da manhã</p>
 <p class="info">💰 R$ 15,00 por pessoa</p>
 
-<p class="vagas">🎟️ Vagas limitadas</p>
-
 <p class="alerta">📝 Informe o nome de todos os participantes</p>
 
 <textarea id="nomes" rows="4"
 placeholder="Ex:
 Maria Silva
-João Pereira"></textarea>
+João Pereira"
+oninput="validarFormulario()"></textarea>
 
 <input type="number" id="qtd" value="1" min="1" onchange="atualizarTotal()">
 
@@ -130,14 +119,26 @@ João Pereira"></textarea>
 💰 Total: R$ 15,00
 </p>
 
-<button class="btn-3d" onclick="reservar()">
+<div id="aviso" style="
+  margin-top:12px;
+  padding:12px;
+  background:#0f2f3a;
+  border-radius:10px;
+  text-align:center;
+  opacity:0;
+  transition:0.4s;
+">
+  <p style="color:#00ffd5;font-weight:bold;">💳 Atenção</p>
+  <p>Após preencher os nomes, realize o pagamento via Pix.<br>
+  Depois clique no botão abaixo para enviar o comprovante.</p>
+</div>
+
+<button id="btnPix" class="btn-3d" onclick="reservar()" disabled>
 💳 GARANTIR MINHA VAGA
 </button>
 
-<div id="msgPagamento" style="display:none;margin-top:15px;text-align:center;">
-  <p style="color:#00ffd5;font-weight:bold;">
-    ✅ Pagamento iniciado!
-  </p>
+<div id="finalMsg" style="display:none;margin-top:15px;text-align:center;">
+  <p style="color:#00ffd5;font-weight:bold;">✅ Pagamento iniciado!</p>
   <p>Agora envie o comprovante pelo WhatsApp.</p>
 
   <button id="btnWhats" class="btn-3d btn-whats">
@@ -157,18 +158,27 @@ function atualizarTotal() {
     "💰 Total: R$ " + (qtd * valor).toFixed(2).replace(".", ",");
 }
 
+function validarFormulario() {
+  const nomes = document.getElementById("nomes").value.trim();
+  const aviso = document.getElementById("aviso");
+  const botao = document.getElementById("btnPix");
+
+  if (nomes.length > 2) {
+    aviso.style.opacity = "1";
+    botao.disabled = false;
+  } else {
+    aviso.style.opacity = "0";
+    botao.disabled = true;
+  }
+}
+
 function reservar() {
   const nomes = document.getElementById("nomes").value.trim();
   const qtd = document.getElementById("qtd").value;
 
-  if (!nomes) {
-    alert("Informe o nome das pessoas.");
-    return;
-  }
-
   navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
 
-  document.getElementById("msgPagamento").style.display = "block";
+  document.getElementById("finalMsg").style.display = "block";
 
   const msg =
     "Olá! 😊%0A" +
