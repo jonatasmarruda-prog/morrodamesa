@@ -8,88 +8,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  background:#0b0b0b;
-  font-family:'Poppins',sans-serif;
-  color:#fff;
-}
-.container{
-  max-width:480px;
-  margin:auto;
-  padding:15px;
-}
-.card{
-  background:#141414;
-  border-radius:22px;
-  padding:18px;
-  box-shadow:0 0 25px rgba(0,0,0,.7);
-}
-.banner img{
-  width:100%;
-  border-radius:18px;
-  margin-bottom:15px;
-}
-.titulo{
-  font-size:22px;
-  font-weight:700;
-  text-align:center;
-  margin-bottom:10px;
-}
-.descricao{
-  font-size:14px;
-  color:#ddd;
-  line-height:1.6;
-  margin-bottom:12px;
-}
-.box-info{
-  background:#1e1e1e;
-  border-radius:14px;
-  padding:12px;
-  font-size:14px;
-  margin-bottom:15px;
-}
-label{
-  margin-top:12px;
-  display:block;
-  font-weight:600;
-}
-select,input{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  background:#2a2a2a;
-  color:#fff;
-}
-.contador{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.contador button{
-  width:46px;
-  height:46px;
-  border:none;
-  border-radius:14px;
-  background:#333;
-  color:#fff;
-  font-size:22px;
-}
-.info{
-  text-align:center;
-  margin-top:10px;
-  color:#bbb;
-}
-.total{
-  font-size:26px;
-  font-weight:700;
-  text-align:center;
-  margin-top:10px;
-  color:#00ff9c;
-}
+body{margin:0;background:#0b0b0b;font-family:Poppins,sans-serif;color:#fff}
+.container{max-width:480px;margin:auto;padding:15px}
+.card{background:#141414;border-radius:22px;padding:18px;box-shadow:0 0 25px rgba(0,0,0,.7)}
+.banner img{width:100%;border-radius:18px;margin-bottom:15px}
 
-/* BOTÕES NEON */
+.titulo{text-align:center;font-size:22px;font-weight:700}
+.descricao{font-size:14px;color:#ddd;line-height:1.6;margin:10px 0}
+
+.box-info{background:#1f1f1f;padding:12px;border-radius:14px;margin-bottom:15px;font-size:14px}
+
+label{margin-top:12px;display:block;font-weight:600}
+select,input{width:100%;padding:14px;border-radius:14px;border:none;background:#2a2a2a;color:#fff}
+
+.contador{display:flex;justify-content:space-between;align-items:center}
+.contador button{width:46px;height:46px;border:none;border-radius:14px;background:#333;color:#fff;font-size:22px}
+
+.info{text-align:center;margin-top:10px;color:#ccc;font-size:14px}
+.total{font-size:24px;font-weight:700;text-align:center;margin-top:10px;color:#00ff9c}
+
 .btn{
   width:100%;
   margin-top:14px;
@@ -104,33 +41,20 @@ select,input{
   transition:.2s;
 }
 .btn:hover{transform:scale(1.03)}
-.pix{
-  background:linear-gradient(135deg,#00ff9c,#00c96b);
+
+.pix{background:linear-gradient(135deg,#00ff9c,#00c96b)}
+.whats{background:linear-gradient(135deg,#25d366,#1ebd5c);display:none}
+
+.alerta{margin-top:10px;text-align:center;color:#ffcc00;font-weight:600;display:none}
+.esgotado{margin-top:10px;background:#550000;padding:12px;border-radius:14px;text-align:center;display:none}
+
+.pulse{
+  animation:pulse .6s ease;
 }
-.cartao{
-  background:linear-gradient(135deg,#3fa9ff,#0059ff);
-}
-.whats{
-  background:linear-gradient(135deg,#2dff7a,#1ebd5c);
-  display:none;
-}
-.aviso{
-  display:none;
-  margin-top:12px;
-  padding:12px;
-  background:#2b1f00;
-  color:#ffcc00;
-  border-radius:14px;
-  text-align:center;
-}
-.esgotado{
-  display:none;
-  margin-top:12px;
-  padding:14px;
-  background:#550000;
-  border-radius:14px;
-  text-align:center;
-  font-weight:700;
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+  100%{transform:scale(1)}
 }
 </style>
 
@@ -148,30 +72,35 @@ function atualizar(){
 
   total.innerText = "💰 Total: R$ " + (valor * qtd);
 
-  infoVagas.innerText =
-    tipo === "onibus"
-      ? "🚌 Vagas restantes: " + vagasOnibus + " / 44"
-      : "🚗 Vagas restantes: " + vagasCarro + " / 36";
+  const totalGeral = vagasOnibus + vagasCarro;
 
-  if((tipo==="onibus" && vagasOnibus<=0) || (tipo==="carro" && vagasCarro<=0)){
-    esgotado.style.display="block";
-    btnReservar.style.display="none";
-    btnWhats.style.display="none";
-  } else {
-    esgotado.style.display="none";
-    btnReservar.style.display="block";
+  infoVagas.innerHTML = `
+  🧮 <b>Total de vagas:</b> ${totalGeral} / 80<br>
+  🚌 Ônibus: ${vagasOnibus} / 44<br>
+  🚗 Carro próprio: ${vagasCarro} / 36
+  `;
+
+  infoVagas.classList.add("pulse");
+  setTimeout(()=>infoVagas.classList.remove("pulse"),300);
+
+  alerta.style.display = (totalGeral <= 5 && totalGeral > 0) ? "block" : "none";
+
+  if(totalGeral <= 0){
+    esgotado.style.display = "block";
+    btnReservar.style.display = "none";
+    btnWhats.style.display = "none";
   }
 }
 
-function mais(){qtd++;quantidade.innerText=qtd;atualizar();}
-function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar();}}
+function mais(){qtd++;quantidade.innerText=qtd;atualizar()}
+function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar()}}
 
 function reservar(){
   const nome = document.getElementById("nome").value.trim();
   const tipo = tipoTransporte.value;
   const pagamento = formaPagamento.value;
 
-  if(!nome) return alert("⚠️ Informe seu nome para continuar.");
+  if(!nome) return alert("Informe seu nome.");
 
   if(tipo==="carro" && pagamento==="cartao")
     return alert("Carro próprio aceita apenas PIX.");
@@ -190,7 +119,7 @@ function reservar(){
 
   if(pagamento==="pix"){
     navigator.clipboard.writeText(PIX);
-    alert("✅ PIX copiado! Envie o comprovante.");
+    alert("PIX copiado! Envie o comprovante.");
   }
 
   if(pagamento==="cartao"){
@@ -199,7 +128,6 @@ function reservar(){
 
   aviso.style.display="block";
   btnWhats.style.display="block";
-
   atualizar();
 }
 
@@ -214,9 +142,7 @@ Segue o comprovante da *Trilha do Morro da Mesa* 🌄
 👤 Nome: ${nome}
 🚶 Modalidade: ${tipo}
 👥 Vagas: ${qtd}
-💰 Valor: R$ ${valor}
-
-Aguardo confirmação.`;
+💰 Valor: R$ ${valor}`;
 
   window.open("https://wa.me/5566996926174?text="+encodeURIComponent(msg));
 }
@@ -234,23 +160,21 @@ Aguardo confirmação.`;
 <div class="titulo">⛰️ Subida do Morro da Mesa – Poxoréu/MT</div>
 
 <div class="descricao">
-📅 <b>Data:</b> 22 de fevereiro<br>
-⏰ <b>Saída:</b> 02h da manhã<br>
-👣 <b>Distância:</b> 4 km<br>
-⚠️ <b>Nível:</b> Médio a difícil
+📅 22 de fevereiro • ⏰ Saída às 02h<br>
+👣 4 km • ⚠️ Nível médio a difícil
 </div>
 
 <div class="box-info">
-☕ Café da manhã individual<br>
-♻️ Cada participante leva seu lixo<br>
-🚫 Não indicado para iniciantes ou menores de 14 anos<br>
-✅ Incluso: Seguro de vida
+☕ Café individual<br>
+♻️ Levar seu lixo<br>
+🚫 Não indicado para iniciantes<br>
+✅ Seguro incluso
 </div>
 
 <label>Nome completo</label>
-<input id="nome" placeholder="Digite seu nome">
+<input id="nome">
 
-<label>Tipo de transporte</label>
+<label>Transporte</label>
 <select id="tipoTransporte" onchange="atualizar()">
   <option value="onibus">🚌 Ônibus – R$ 85</option>
   <option value="carro">🚗 Carro próprio – R$ 25</option>
@@ -264,17 +188,14 @@ Aguardo confirmação.`;
 </div>
 
 <div id="infoVagas" class="info"></div>
+<div id="alerta" class="alerta">⚠️ Últimas vagas disponíveis!</div>
 <div id="total" class="total"></div>
 
-<label>Forma de pagamento</label>
+<label>Pagamento</label>
 <select id="formaPagamento">
   <option value="pix">💚 PIX</option>
   <option value="cartao">💳 Cartão (ônibus)</option>
 </select>
-
-<div id="aviso" class="aviso">
-📢 Após o pagamento, envie o comprovante no WhatsApp para garantir sua vaga.
-</div>
 
 <button id="btnReservar" class="btn pix" onclick="reservar()">CONFIRMAR PAGAMENTO</button>
 
@@ -288,3 +209,4 @@ Aguardo confirmação.`;
 <script>atualizar();</script>
 </body>
 </html>
+
