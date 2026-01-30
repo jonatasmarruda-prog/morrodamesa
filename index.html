@@ -27,8 +27,6 @@ body{
   border-radius:18px;
   margin-bottom:15px;
 }
-
-/* FORM */
 label{margin-top:12px;display:block;font-weight:bold}
 select,input{
   width:100%;
@@ -39,8 +37,6 @@ select,input{
   color:#fff;
   font-size:16px;
 }
-
-/* CONTADOR */
 .contador{
   display:flex;
   justify-content:space-between;
@@ -55,36 +51,8 @@ select,input{
   color:#fff;
   font-size:24px;
 }
-
-/* INFO */
-.info{
-  margin-top:10px;
-  font-size:15px;
-  text-align:center;
-  color:#ccc;
-}
-
-/* VALOR */
-.total{
-  font-size:22px;
-  font-weight:900;
-  text-align:center;
-  margin-top:10px;
-}
-
-/* AVISO */
-.aviso{
-  display:none;
-  margin-top:12px;
-  padding:12px;
-  background:#2b1f00;
-  color:#ffcc00;
-  border-radius:14px;
-  text-align:center;
-  font-weight:bold;
-}
-
-/* BOTÕES */
+.info{margin-top:10px;text-align:center;color:#ccc}
+.total{font-size:22px;font-weight:bold;text-align:center;margin-top:10px}
 .btn{
   width:100%;
   margin-top:14px;
@@ -96,142 +64,148 @@ select,input{
   color:#fff;
   cursor:pointer;
 }
-.pix{background:#32c500;}
-.cartao{background:#1e88e5;}
-.whats{background:#25d366; display:none;}
-
-.esgotado{
-  background:#550000;
-  padding:14px;
+.pix{background:#32c500}
+.whats{background:#25d366;display:none}
+.aviso{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  background:#2b1f00;
+  color:#ffcc00;
   border-radius:14px;
   text-align:center;
-  margin-top:12px;
   font-weight:bold;
+}
+.esgotado{
   display:none;
+  margin-top:12px;
+  padding:14px;
+  background:#550000;
+  border-radius:14px;
+  text-align:center;
+  font-weight:bold;
 }
 </style>
 
 <script>
 const PIX = "trilheiros.roomt@gmail.com";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlVHhoiv_SDSukrAMpkBWpoUmjSn8aEa1ksEGrrH0/exec";
 
-// VAGAS REAIS
-let vagasOnibus = localStorage.getItem("vagasOnibus") 
-  ? parseInt(localStorage.getItem("vagasOnibus")) 
-  : 44;
-
-let vagasCarro = localStorage.getItem("vagasCarro") 
-  ? parseInt(localStorage.getItem("vagasCarro")) 
-  : 36;
-
+let vagasOnibus = localStorage.getItem("vagasOnibus") ? parseInt(localStorage.getItem("vagasOnibus")) : 44;
+let vagasCarro = localStorage.getItem("vagasCarro") ? parseInt(localStorage.getItem("vagasCarro")) : 36;
 let qtd = 1;
 
 function atualizar(){
   const tipo = tipoTransporte.value;
-  let valor = tipo === "onibus" ? 80 : 35;
+  const valor = tipo === "onibus" ? 80 : 35;
 
   total.innerText = "💰 Total: R$ " + (valor * qtd);
 
   if(tipo === "onibus"){
-    infoVagas.innerText = "🚌 Vagas restantes no ônibus: " + vagasOnibus;
-  } else {
-    infoVagas.innerText = "🚗 Vagas restantes (carro próprio): " + vagasCarro;
+    infoVagas.innerText = "🚌 Vagas restantes: " + vagasOnibus;
+  }else{
+    infoVagas.innerText = "🚗 Vagas restantes: " + vagasCarro;
   }
 
   if((tipo === "onibus" && vagasOnibus <= 0) ||
      (tipo === "carro" && vagasCarro <= 0)){
     esgotado.style.display = "block";
     btnReservar.disabled = true;
-  } else {
+  }else{
     esgotado.style.display = "none";
     btnReservar.disabled = false;
   }
 }
 
-function mais(){
-  qtd++;
-  quantidade.innerText = qtd;
-  atualizar();
-}
+function mais(){qtd++;quantidade.innerText=qtd;atualizar()}
+function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar()}}
 
-function menos(){
-  if(qtd > 1){
-    qtd--;
-    quantidade.innerText = qtd;
-    atualizar();
-  }
+function salvarNaPlanilha(nome, transporte, quantidade, pagamento, valor){
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      nome:nome,
+      transporte:transporte,
+      quantidade:quantidade,
+      pagamento:pagamento,
+      valor:valor
+    })
+  });
 }
 
 function reservar(){
+  const nome = document.getElementById("nome").value;
   const tipo = tipoTransporte.value;
   const pagamento = formaPagamento.value;
 
-  if(tipo === "carro" && pagamento === "cartao"){
+  if(!nome){alert("Digite seu nome.");return;}
+
+  if(tipo==="carro" && pagamento==="cartao"){
     alert("Para carro próprio o pagamento é somente via PIX.");
     return;
   }
 
-  if(tipo === "onibus" && pagamento === "cartao" && qtd > 1){
+  if(tipo==="onibus" && pagamento==="cartao" && qtd>1){
     alert("Para mais de uma vaga no cartão, fale com o Jonatas.");
     return;
   }
 
-  if(tipo === "onibus" && qtd > vagasOnibus){
-    alert("Vagas insuficientes no ônibus.");
-    return;
-  }
+  if(tipo==="onibus" && qtd>vagasOnibus) return alert("Vagas insuficientes.");
+  if(tipo==="carro" && qtd>vagasCarro) return alert("Vagas insuficientes.");
 
-  if(tipo === "carro" && qtd > vagasCarro){
-    alert("Vagas insuficientes para carro próprio.");
-    return;
-  }
-
-  if(tipo === "onibus"){
+  if(tipo==="onibus"){
     vagasOnibus -= qtd;
     localStorage.setItem("vagasOnibus", vagasOnibus);
-  } else {
+  }else{
     vagasCarro -= qtd;
     localStorage.setItem("vagasCarro", vagasCarro);
   }
 
-  if(pagamento === "pix"){
-    navigator.clipboard.writeText(PIX);
-    alert("PIX copiado! Faça o pagamento e envie o comprovante.");
-  }
+  const valorUnit = tipo==="onibus"?80:35;
+  const total = valorUnit*qtd;
 
-  aviso.style.display = "block";
-  btnWhats.style.display = "block";
+  salvarNaPlanilha(
+    nome,
+    tipo==="onibus"?"Ônibus":"Carro próprio",
+    qtd,
+    pagamento,
+    total
+  );
+
+  navigator.clipboard.writeText(PIX);
+  aviso.style.display="block";
+  btnWhats.style.display="block";
+
   atualizar();
 }
 
 function enviarWhats(){
   const nome = document.getElementById("nome").value;
-  const tipo = tipoTransporte.value === "onibus" ? "Ônibus" : "Carro próprio";
-  const valor = tipo === "Ônibus" ? 80 : 35;
-  const total = valor * qtd;
+  const tipo = tipoTransporte.value==="onibus"?"Ônibus":"Carro próprio";
+  const valor = (tipo==="Ônibus"?80:35)*qtd;
 
   const msg =
 `Olá! 👋
-Segue o comprovante da *Trilha do Morro da Mesa* 🌄
+Segue o comprovante da Trilha do Morro da Mesa 🌄
 
 👤 Nome: ${nome}
 🚶 Modalidade: ${tipo}
 👥 Vagas: ${qtd}
-💰 Valor total: R$ ${total}
+💰 Valor: R$ ${valor}
 
-Aguardo confirmação da vaga.`;
+Aguardo confirmação.`;
 
-  window.open("https://wa.me/5566996926174?text=" + encodeURIComponent(msg));
+  window.open("https://wa.me/5566996926174?text="+encodeURIComponent(msg));
 }
 </script>
 </head>
 
 <body>
 <div class="container">
-
 <div class="card">
 
 <div class="banner">
-  <img src="https://i.postimg.cc/FzLnkVc2/Orange-and-Black-Modern-Mountain-Bike-Event-Instagram-Post.png">
+<img src="https://i.postimg.cc/FzLnkVc2/Orange-and-Black-Modern-Mountain-Bike-Event-Instagram-Post.png">
 </div>
 
 <label>Nome completo</label>
@@ -243,11 +217,11 @@ Aguardo confirmação da vaga.`;
   <option value="carro">🚗 Carro próprio</option>
 </select>
 
-<label>Quantidade de vagas</label>
+<label>Quantidade</label>
 <div class="contador">
-  <button onclick="menos()">−</button>
-  <span id="quantidade">1</span>
-  <button onclick="mais()">+</button>
+<button onclick="menos()">−</button>
+<span id="quantidade">1</span>
+<button onclick="mais()">+</button>
 </div>
 
 <div id="infoVagas" class="info"></div>
@@ -256,24 +230,18 @@ Aguardo confirmação da vaga.`;
 <label>Forma de pagamento</label>
 <select id="formaPagamento">
   <option value="pix">💚 PIX</option>
-  <option value="cartao">💳 Cartão (somente ônibus)</option>
+  <option value="cartao">💳 Cartão (ônibus)</option>
 </select>
 
 <div id="aviso" class="aviso">
-📢 Após o pagamento, clique abaixo e envie o comprovante para garantir sua vaga.
+📢 Após o pagamento, clique abaixo e envie o comprovante no WhatsApp.
 </div>
 
-<button id="btnReservar" class="btn pix" onclick="reservar()">
-CONFIRMAR PAGAMENTO
-</button>
+<button id="btnReservar" class="btn pix" onclick="reservar()">CONFIRMAR PAGAMENTO</button>
 
-<div id="esgotado" class="esgotado">
-❌ VAGAS ESGOTADAS
-</div>
+<div id="esgotado" class="esgotado">❌ VAGAS ESGOTADAS</div>
 
-<button id="btnWhats" class="btn whats" onclick="enviarWhats()">
-ENVIAR COMPROVANTE
-</button>
+<button id="btnWhats" class="btn whats" onclick="enviarWhats()">ENVIAR COMPROVANTE</button>
 
 </div>
 </div>
@@ -281,5 +249,7 @@ ENVIAR COMPROVANTE
 <script>atualizar();</script>
 </body>
 </html>
+
+
 
 
