@@ -1,58 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morro da Mesa</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#0b0b0b;
+  font-family:'Poppins',sans-serif;
+  color:#fff;
+}
+.container{
+  max-width:480px;
+  margin:auto;
+  padding:15px;
+}
+.card{
+  background:#141414;
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 0 25px rgba(0,0,0,.7);
+}
+.banner img{
+  width:100%;
+  border-radius:18px;
+  margin-bottom:15px;
+}
+.titulo{
+  font-size:22px;
+  font-weight:700;
+  text-align:center;
+  margin-bottom:10px;
+}
+.descricao{
+  font-size:14px;
+  color:#ddd;
+  line-height:1.6;
+  margin-bottom:12px;
+}
+.box-info{
+  background:#1e1e1e;
+  border-radius:14px;
+  padding:12px;
+  font-size:14px;
+  margin-bottom:15px;
+}
+label{
+  margin-top:12px;
+  display:block;
+  font-weight:600;
+}
+select,input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+}
+.contador{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.contador button{
+  width:46px;
+  height:46px;
+  border:none;
+  border-radius:14px;
+  background:#333;
+  color:#fff;
+  font-size:22px;
+}
+.info{
+  text-align:center;
+  margin-top:10px;
+  color:#bbb;
+}
+.total{
+  font-size:26px;
+  font-weight:700;
+  text-align:center;
+  margin-top:10px;
+  color:#00ff9c;
+}
+
+/* BOTÕES NEON */
+.btn{
+  width:100%;
+  margin-top:14px;
+  padding:18px;
+  border-radius:50px;
+  border:none;
+  font-size:18px;
+  font-weight:700;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(0,255,150,.7);
+  transition:.2s;
+}
+.btn:hover{transform:scale(1.03)}
+.pix{
+  background:linear-gradient(135deg,#00ff9c,#00c96b);
+}
+.cartao{
+  background:linear-gradient(135deg,#3fa9ff,#0059ff);
+}
+.whats{
+  background:linear-gradient(135deg,#2dff7a,#1ebd5c);
+  display:none;
+}
+.aviso{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  background:#2b1f00;
+  color:#ffcc00;
+  border-radius:14px;
+  text-align:center;
+}
+.esgotado{
+  display:none;
+  margin-top:12px;
+  padding:14px;
+  background:#550000;
+  border-radius:14px;
+  text-align:center;
+  font-weight:700;
+}
+</style>
+
+<script>
+const PIX = "trilheiros.roomt@gmail.com";
+const LINK_CARTAO = "https://mpago.li/1Hafude";
+
+let vagasOnibus = localStorage.getItem("vagasOnibus") ? parseInt(localStorage.getItem("vagasOnibus")) : 44;
+let vagasCarro  = localStorage.getItem("vagasCarro")  ? parseInt(localStorage.getItem("vagasCarro"))  : 36;
+let qtd = 1;
+
+function atualizar(){
+  const tipo = tipoTransporte.value;
+  const valor = tipo === "onibus" ? 85 : 25;
+
+  total.innerText = "💰 Total: R$ " + (valor * qtd);
+
+  infoVagas.innerText =
+    tipo === "onibus"
+      ? "🚌 Vagas restantes: " + vagasOnibus + " / 44"
+      : "🚗 Vagas restantes: " + vagasCarro + " / 36";
+
+  if((tipo==="onibus" && vagasOnibus<=0) || (tipo==="carro" && vagasCarro<=0)){
+    esgotado.style.display="block";
+    btnReservar.style.display="none";
+    btnWhats.style.display="none";
+  } else {
+    esgotado.style.display="none";
+    btnReservar.style.display="block";
+  }
+}
+
+function mais(){qtd++;quantidade.innerText=qtd;atualizar();}
+function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar();}}
+
 function reservar(){
-  const nome = document.getElementById("nome").value;
+  const nome = document.getElementById("nome").value.trim();
   const tipo = tipoTransporte.value;
   const pagamento = formaPagamento.value;
 
-  if(!nome){
-    alert("Digite seu nome.");
-    return;
+  if(!nome) return alert("⚠️ Informe seu nome para continuar.");
+
+  if(tipo==="carro" && pagamento==="cartao")
+    return alert("Carro próprio aceita apenas PIX.");
+
+  if(tipo==="onibus" && pagamento==="cartao" && qtd>1)
+    return alert("Para mais de uma vaga no cartão, fale com o Jonatas.");
+
+  if(tipo==="onibus" && qtd>vagasOnibus) return;
+  if(tipo==="carro" && qtd>vagasCarro) return;
+
+  if(tipo==="onibus") vagasOnibus -= qtd;
+  else vagasCarro -= qtd;
+
+  localStorage.setItem("vagasOnibus",vagasOnibus);
+  localStorage.setItem("vagasCarro",vagasCarro);
+
+  if(pagamento==="pix"){
+    navigator.clipboard.writeText(PIX);
+    alert("✅ PIX copiado! Envie o comprovante.");
   }
 
-  // Regras
-  if(tipo === "carro" && pagamento === "cartao"){
-    alert("Para carro próprio o pagamento é somente via PIX.");
-    return;
+  if(pagamento==="cartao"){
+    window.open(LINK_CARTAO,"_blank");
   }
 
-  if(tipo === "onibus" && pagamento === "cartao" && qtd > 1){
-    alert("Para mais de uma vaga no cartão, fale com o Jonatas.");
-    return;
-  }
-
-  if(tipo === "onibus" && qtd > vagasOnibus){
-    alert("Vagas insuficientes.");
-    return;
-  }
-
-  if(tipo === "carro" && qtd > vagasCarro){
-    alert("Vagas insuficientes.");
-    return;
-  }
-
-  // Desconta vagas
-  if(tipo === "onibus"){
-    vagasOnibus -= qtd;
-    localStorage.setItem("vagasOnibus", vagasOnibus);
-  } else {
-    vagasCarro -= qtd;
-    localStorage.setItem("vagasCarro", vagasCarro);
-  }
-
-  // 👉 PIX SEMPRE COPIA (ônibus ou carro)
-  if(pagamento === "pix"){
-    navigator.clipboard.writeText("trilheiros.roomt@gmail.com");
-    alert("PIX copiado! Agora envie o comprovante.");
-  }
-
-  // 👉 Cartão abre link
-  if(pagamento === "cartao"){
-    window.open("https://mpago.li/1Hafude", "_blank");
-  }
-
-  aviso.style.display = "block";
-  btnWhats.style.display = "block";
+  aviso.style.display="block";
+  btnWhats.style.display="block";
 
   atualizar();
 }
 
+function enviarWhats(){
+  const nome=document.getElementById("nome").value;
+  const tipo=tipoTransporte.value==="onibus"?"Ônibus":"Carro próprio";
+  const valor=(tipo==="Ônibus"?85:25)*qtd;
 
+  const msg=`Olá! 👋
+Segue o comprovante da *Trilha do Morro da Mesa* 🌄
+
+👤 Nome: ${nome}
+🚶 Modalidade: ${tipo}
+👥 Vagas: ${qtd}
+💰 Valor: R$ ${valor}
+
+Aguardo confirmação.`;
+
+  window.open("https://wa.me/5566996926174?text="+encodeURIComponent(msg));
+}
+</script>
+</head>
+
+<body>
+<div class="container">
+<div class="card">
+
+<div class="banner">
+<img src="https://i.postimg.cc/FzLnkVc2/Orange-and-Black-Modern-Mountain-Bike-Event-Instagram-Post.png">
+</div>
+
+<div class="titulo">⛰️ Subida do Morro da Mesa – Poxoréu/MT</div>
+
+<div class="descricao">
+📅 <b>Data:</b> 22 de fevereiro<br>
+⏰ <b>Saída:</b> 02h da manhã<br>
+👣 <b>Distância:</b> 4 km<br>
+⚠️ <b>Nível:</b> Médio a difícil
+</div>
+
+<div class="box-info">
+☕ Café da manhã individual<br>
+♻️ Cada participante leva seu lixo<br>
+🚫 Não indicado para iniciantes ou menores de 14 anos<br>
+✅ Incluso: Seguro de vida
+</div>
+
+<label>Nome completo</label>
+<input id="nome" placeholder="Digite seu nome">
+
+<label>Tipo de transporte</label>
+<select id="tipoTransporte" onchange="atualizar()">
+  <option value="onibus">🚌 Ônibus – R$ 85</option>
+  <option value="carro">🚗 Carro próprio – R$ 25</option>
+</select>
+
+<label>Quantidade</label>
+<div class="contador">
+<button onclick="menos()">−</button>
+<span id="quantidade">1</span>
+<button onclick="mais()">+</button>
+</div>
+
+<div id="infoVagas" class="info"></div>
+<div id="total" class="total"></div>
+
+<label>Forma de pagamento</label>
+<select id="formaPagamento">
+  <option value="pix">💚 PIX</option>
+  <option value="cartao">💳 Cartão (ônibus)</option>
+</select>
+
+<div id="aviso" class="aviso">
+📢 Após o pagamento, envie o comprovante no WhatsApp para garantir sua vaga.
+</div>
+
+<button id="btnReservar" class="btn pix" onclick="reservar()">CONFIRMAR PAGAMENTO</button>
+
+<div id="esgotado" class="esgotado">❌ VAGAS ESGOTADAS</div>
+
+<button id="btnWhats" class="btn whats" onclick="enviarWhats()">ENVIAR COMPROVANTE</button>
+
+</div>
+</div>
+
+<script>atualizar();</script>
+</body>
+</html>
