@@ -20,19 +20,18 @@ select,input{width:100%;padding:14px;border-radius:14px;border:none;background:#
 .total{font-size:24px;font-weight:700;text-align:center;margin-top:10px;color:#00ff88}
 .btn{width:100%;margin-top:14px;padding:18px;border-radius:40px;border:none;font-size:18px;font-weight:700;color:#fff}
 .pix{background:#00c96b}
+.cartao{background:#1e88e5}
 .whats{background:#25d366;display:none}
 .aviso{display:none;margin-top:12px;padding:12px;background:#2b1f00;color:#ffcc00;border-radius:14px;text-align:center}
-.esgotado{display:none;margin-top:12px;padding:14px;background:#550000;border-radius:14px;text-align:center}
+.esgotado{display:none;margin-top:12px;padding:14px;background:#550000;border-radius:14px;text-align:center;font-weight:700}
 </style>
 
 <script>
 const PIX = "trilheiros.roomt@gmail.com";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlVHhoiv_SDSukrAMpkBWpoUmjSn8aEa1ksEGrrH0/exec";
+const LINK_CARTAO = "https://mpago.li/1Hafude";
 
-/* 🔴 TESTE — SOMENTE 1 VAGA */
 let vagasOnibus = localStorage.getItem("vagasOnibus") ? parseInt(localStorage.getItem("vagasOnibus")) : 1;
-let vagasCarro = localStorage.getItem("vagasCarro") ? parseInt(localStorage.getItem("vagasCarro")) : 1;
-
+let vagasCarro  = localStorage.getItem("vagasCarro")  ? parseInt(localStorage.getItem("vagasCarro"))  : 1;
 let qtd = 1;
 
 function atualizar(){
@@ -48,22 +47,16 @@ function atualizar(){
 
   if((tipo==="onibus" && vagasOnibus<=0) || (tipo==="carro" && vagasCarro<=0)){
     esgotado.style.display="block";
-    btnReservar.disabled=true;
+    btnReservar.style.display="none";
+    btnWhats.style.display="none";
   } else {
     esgotado.style.display="none";
-    btnReservar.disabled=false;
+    btnReservar.style.display="block";
   }
 }
 
 function mais(){qtd++;quantidade.innerText=qtd;atualizar()}
 function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar()}}
-
-function salvarNaPlanilha(nome, transporte, quantidade, pagamento, valor){
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify({nome,transporte,quantidade,pagamento,valor})
-  });
-}
 
 function reservar(){
   const nome = document.getElementById("nome").value;
@@ -73,36 +66,31 @@ function reservar(){
   if(!nome) return alert("Digite seu nome");
 
   if(tipo==="carro" && pagamento==="cartao")
-    return alert("Carro próprio aceita apenas PIX");
+    return alert("Carro próprio aceita apenas PIX.");
 
   if(tipo==="onibus" && pagamento==="cartao" && qtd>1)
-    return alert("Mais de uma vaga no cartão, fale com o Jonatas");
+    return alert("Para mais de uma vaga no cartão, fale com o Jonatas.");
 
-  if(tipo==="onibus" && qtd>vagasOnibus) return alert("Sem vagas disponíveis");
-  if(tipo==="carro" && qtd>vagasCarro) return alert("Sem vagas disponíveis");
+  if(tipo==="onibus" && qtd>vagasOnibus) return;
+  if(tipo==="carro" && qtd>vagasCarro) return;
 
-  if(tipo==="onibus"){
-    vagasOnibus -= qtd;
-    localStorage.setItem("vagasOnibus",vagasOnibus);
-  }else{
-    vagasCarro -= qtd;
-    localStorage.setItem("vagasCarro",vagasCarro);
+  if(tipo==="onibus") vagasOnibus -= qtd;
+  else vagasCarro -= qtd;
+
+  localStorage.setItem("vagasOnibus",vagasOnibus);
+  localStorage.setItem("vagasCarro",vagasCarro);
+
+  if(pagamento==="pix"){
+    navigator.clipboard.writeText(PIX);
+    alert("PIX copiado! Agora envie o comprovante.");
   }
 
-  const valor = (tipo==="onibus"?85:25)*qtd;
+  if(pagamento==="cartao"){
+    window.open(LINK_CARTAO,"_blank");
+  }
 
-  salvarNaPlanilha(
-    nome,
-    tipo==="onibus"?"Ônibus":"Carro próprio",
-    qtd,
-    pagamento,
-    valor
-  );
-
-  navigator.clipboard.writeText(PIX);
   aviso.style.display="block";
   btnWhats.style.display="block";
-
   atualizar();
 }
 
@@ -173,4 +161,5 @@ Segue o comprovante da Trilha do Morro da Mesa 🌄
 <script>atualizar();</script>
 </body>
 </html>
+
 
