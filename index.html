@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confirmação no ônibus – Trilha Morro da Mesa | 22 de fevereiro</title>
   <style>
-    :root{ --ok:#22c55e; --no:#ef4444; --bg:#020617; --text:#e5e7eb; --muted:#9ca3af; }
+    :root{ --ok:#22c55e; --no:#ef4444; --text:#e5e7eb; --muted:#9ca3af; }
     *{box-sizing:border-box}
     body{
       margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -31,6 +31,11 @@
     }
     .item.no{background: linear-gradient(180deg, rgba(239,68,68,.35), rgba(239,68,68,.15)); border-color: rgba(239,68,68,.7)}
     .item.ok{background: linear-gradient(180deg, rgba(34,197,94,.35), rgba(34,197,94,.15)); border-color: rgba(34,197,94,.8)}
+    .reset{
+      width:100%; margin:14px 0 6px; padding:12px; border-radius:12px;
+      border:1px dashed rgba(255,255,255,.35); background: transparent;
+      color:#e5e7eb; font-weight:700; opacity:.6;
+    }
   </style>
 </head>
 <body>
@@ -46,6 +51,7 @@
 
   <main>
     <div id="list" class="list"></div>
+    <button id="resetBtn" class="reset">Resetar confirmações</button>
   </main>
 
   <!-- Firebase SDKs -->
@@ -111,9 +117,14 @@
     }
 
     ref.on("value", (snap) => render(snap.val() || {}));
+
+    document.getElementById("resetBtn").onclick = () => {
+      if (confirm("Tem certeza que deseja zerar TODAS as confirmações?")) {
+        ref.remove();
+      }
+    };
   </script>
 </body>
 </html>
-
 
 
