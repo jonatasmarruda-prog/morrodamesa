@@ -1,148 +1,222 @@
+```html
 <!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lista de Presença Ônibus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Lista de Presença Ônibus - Trilha Morro da Mesa</title>
 
 <style>
 :root{
---verde:#16a34a;
---vermelho:#dc2626;
---fundo1:#0f172a;
---fundo2:#111827;
---texto:#ffffff;
+--bg1:#020617;
+--bg2:#0f172a;
+--card:#111827;
+--line:rgba(255,255,255,.08);
+--txt:#ffffff;
 --muted:#cbd5e1;
+--green:#16a34a;
+--green2:#22c55e;
+--red:#dc2626;
+--red2:#ef4444;
+--shadow:0 10px 30px rgba(0,0,0,.28);
 }
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html{
+scroll-behavior:smooth;
 }
 
 body{
-font-family:Arial, Helvetica, sans-serif;
-background:linear-gradient(180deg,var(--fundo1),var(--fundo2));
-color:var(--texto);
+font-family:Inter,Arial,Helvetica,sans-serif;
+background:
+radial-gradient(circle at top left,#1e293b 0%,transparent 35%),
+linear-gradient(180deg,var(--bg2),var(--bg1));
+color:var(--txt);
 min-height:100vh;
 }
 
 header{
-padding:18px;
-text-align:center;
-background:#0b1220;
 position:sticky;
 top:0;
-z-index:10;
-border-bottom:1px solid rgba(255,255,255,.08);
+z-index:50;
+padding:14px 14px 16px;
+background:rgba(2,6,23,.92);
+backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);
+box-shadow:var(--shadow);
 }
 
-h1{
-font-size:28px;
-margin-bottom:8px;
+.topo{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:10px;
 }
 
-p{
-font-size:14px;
+.logo{
+width:48px;
+height:48px;
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+background:linear-gradient(135deg,#1d4ed8,#06b6d4);
+box-shadow:var(--shadow);
+flex-shrink:0;
+}
+
+.titulos h1{
+font-size:20px;
+line-height:1.1;
+font-weight:900;
+}
+
+.titulos p{
+font-size:13px;
 color:var(--muted);
+margin-top:3px;
 }
 
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:10px;
-margin-top:15px;
+gap:8px;
 }
 
 .card{
-background:rgba(255,255,255,.08);
-padding:12px;
-border-radius:12px;
-font-size:14px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+border-radius:16px;
+padding:10px 6px;
+text-align:center;
 }
 
 .card b{
 display:block;
 font-size:22px;
-margin-bottom:4px;
-color:#fff;
+font-weight:900;
+margin-bottom:2px;
+}
+
+.card span{
+font-size:12px;
+color:var(--muted);
 }
 
 main{
 max-width:760px;
 margin:auto;
-padding:15px;
+padding:14px;
+padding-bottom:28px;
+}
+
+.searchWrap{
+position:sticky;
+top:166px;
+z-index:40;
+padding-bottom:10px;
+background:linear-gradient(180deg,rgba(15,23,42,.95),rgba(15,23,42,.55),transparent);
 }
 
 .search{
 width:100%;
-padding:14px;
+height:54px;
 border:none;
 outline:none;
-border-radius:12px;
-font-size:16px;
-margin-bottom:15px;
+border-radius:16px;
+padding:0 16px;
+font-size:17px;
+font-weight:700;
+background:#ffffff;
+color:#111827;
+box-shadow:var(--shadow);
 }
 
 .list{
 display:grid;
-grid-template-columns:1fr;
 gap:10px;
 }
 
 .item{
-padding:18px;
-border-radius:12px;
-font-weight:700;
-font-size:16px;
-cursor:pointer;
-user-select:none;
-transition:none;
-box-shadow:none;
-transform:none;
+min-height:64px;
+padding:14px 16px;
+border-radius:18px;
 display:flex;
 align-items:center;
 justify-content:center;
 text-align:center;
-min-height:58px;
-letter-spacing:.3px;
+font-size:18px;
+font-weight:900;
+letter-spacing:.2px;
+cursor:pointer;
+user-select:none;
+box-shadow:var(--shadow);
+transition:opacity .15s ease;
+border:2px solid transparent;
+}
+
+.item:active{
+opacity:.85;
 }
 
 .item.ok{
-background:var(--verde);
-border:2px solid var(--verde);
-color:#fff;
+background:linear-gradient(180deg,var(--green2),var(--green));
+border-color:#15803d;
 }
 
 .item.no{
-background:var(--vermelho);
-border:2px solid var(--vermelho);
-color:#fff;
+background:linear-gradient(180deg,var(--red2),var(--red));
+border-color:#b91c1c;
 }
 
-.item:hover{
-opacity:.95;
+.item small{
+display:block;
+font-size:12px;
+font-weight:700;
+opacity:.9;
+margin-top:2px;
 }
 
 .reset{
+margin-top:16px;
 width:100%;
-margin-top:18px;
-padding:15px;
+height:54px;
 border:none;
-border-radius:12px;
+border-radius:16px;
 font-size:16px;
-font-weight:bold;
+font-weight:900;
 cursor:pointer;
 background:#334155;
 color:#fff;
+box-shadow:var(--shadow);
 }
 
 footer{
 text-align:center;
-padding:20px;
-font-size:13px;
+padding:18px;
+font-size:12px;
 color:#94a3b8;
+}
+
+.vazio{
+padding:18px;
+text-align:center;
+color:#cbd5e1;
+font-weight:700;
+}
+
+@media (min-width:700px){
+.titulos h1{font-size:24px;}
+.searchWrap{top:174px;}
+.item{font-size:19px;}
 }
 </style>
 </head>
@@ -150,28 +224,49 @@ color:#94a3b8;
 <body>
 
 <header>
-<h1>🚌 Lista de Presença</h1>
-<p>Toque no nome para confirmar</p>
+
+<div class="topo">
+<div class="logo">🚌</div>
+
+<div class="titulos">
+<h1>Lista de Presença Ônibus</h1>
+<p>Trilha Morro da Mesa</p>
+</div>
+</div>
 
 <div class="stats">
-<div class="card"><b id="okCount">0</b>Presentes</div>
-<div class="card"><b id="noCount">0</b>Faltando</div>
-<div class="card"><b id="totalCount">0</b>Total</div>
+<div class="card">
+<b id="okCount">0</b>
+<span>Presentes</span>
 </div>
+
+<div class="card">
+<b id="noCount">0</b>
+<span>Faltando</span>
+</div>
+
+<div class="card">
+<b id="totalCount">0</b>
+<span>Total</span>
+</div>
+</div>
+
 </header>
 
 <main>
 
-<input type="text" class="search" id="search" placeholder="Buscar nome...">
+<div class="searchWrap">
+<input class="search" id="search" type="text" placeholder="🔎 Buscar nome...">
+</div>
 
 <div class="list" id="list"></div>
 
-<button class="reset" onclick="resetar()">Resetar Lista</button>
+<button class="reset" onclick="resetar()">♻️ Resetar Lista</button>
 
 </main>
 
 <footer>
-Sistema de embarque 🚍
+Sistema de embarque premium 🚍
 </footer>
 
 <script>
@@ -180,7 +275,7 @@ const nomes = [
 ];
 
 let status = {};
-nomes.forEach(nome => status[nome] = false);
+nomes.forEach(n => status[n]=false);
 
 const list = document.getElementById("list");
 const okCount = document.getElementById("okCount");
@@ -188,48 +283,73 @@ const noCount = document.getElementById("noCount");
 const totalCount = document.getElementById("totalCount");
 const search = document.getElementById("search");
 
+function vibrar(){
+if(navigator.vibrate) navigator.vibrate(30);
+}
+
 function render(){
+
 list.innerHTML = "";
 
-let filtro = search.value.toLowerCase();
+const filtro = search.value.trim().toLowerCase();
+
 let presentes = 0;
 
-nomes.forEach(nome => {
-
+nomes.forEach(nome=>{
 if(status[nome]) presentes++;
+});
 
-if(nome.toLowerCase().includes(filtro)){
+const ordenados = [...nomes].sort((a,b)=>{
+if(status[a] === status[b]) return a.localeCompare(b);
+return status[b] - status[a];
+});
 
-const item = document.createElement("div");
+const filtrados = ordenados.filter(nome =>
+nome.toLowerCase().includes(filtro)
+);
 
-item.className = "item " + (status[nome] ? "ok" : "no");
-item.innerHTML = (status[nome] ? "✅ " : "❌ ") + nome;
+if(filtrados.length === 0){
+list.innerHTML = '<div class="vazio">Nenhum nome encontrado</div>';
+}
 
-item.onclick = () => {
+filtrados.forEach(nome=>{
+
+const div = document.createElement("div");
+
+div.className = "item " + (status[nome] ? "ok":"no");
+
+div.innerHTML = status[nome]
+? "✅ " + nome
+: "❌ " + nome;
+
+div.onclick = ()=>{
 status[nome] = !status[nome];
+vibrar();
 render();
 };
 
-list.appendChild(item);
-}
+list.appendChild(div);
+
 });
 
-okCount.innerText = presentes;
-noCount.innerText = nomes.length - presentes;
-totalCount.innerText = nomes.length;
+okCount.textContent = presentes;
+noCount.textContent = nomes.length - presentes;
+totalCount.textContent = nomes.length;
+
 }
 
 function resetar(){
-if(confirm("Deseja resetar toda lista?")){
+if(confirm("Deseja resetar toda a lista?")){
 nomes.forEach(nome => status[nome] = false);
 render();
 }
 }
 
-search.addEventListener("keyup", render);
+search.addEventListener("input",render);
 
 render();
 </script>
 
 </body>
 </html>
+```
