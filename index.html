@@ -1,122 +1,317 @@
+```html
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Confirmação no ônibus – Trilha Morro da Mesa | 22 de fevereiro</title>
-  <style>
-    :root{ --ok:#22c55e; --no:#ef4444; --text:#e5e7eb; --muted:#9ca3af; }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 10% 0%, #0f766e 0%, #020617 45%);
-      color:var(--text); min-height:100vh;
-    }
-    header{
-      position:sticky; top:0; z-index:10;
-      background: rgba(2,6,23,.95); backdrop-filter: blur(10px);
-      padding:16px 14px 12px; border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    h1{margin:0 0 8px 0; font-size:1.2rem; font-weight:900}
-    .stats{display:grid; grid-template-columns: repeat(3,1fr); gap:8px; font-size:.9rem; color:var(--muted)}
-    .stat{background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 8px; text-align:center}
-    .stat b{display:block; font-size:1.2rem; color:#fff}
-    main{padding:12px 10px 24px}
-    .list{display:grid; grid-template-columns:1fr; gap:10px}
-    .item{
-      padding:16px 14px; border-radius:16px; border:2px solid transparent;
-      font-weight:900; font-size:1rem; box-shadow: 0 12px 24px rgba(0,0,0,.35);
-      user-select:none; cursor:pointer;
-    }
-    .item.no{background: linear-gradient(180deg, rgba(239,68,68,.35), rgba(239,68,68,.15)); border-color: rgba(239,68,68,.7)}
-    .item.ok{background: linear-gradient(180deg, rgba(34,197,94,.35), rgba(34,197,94,.15)); border-color: rgba(34,197,94,.8)}
-    .reset{
-      width:100%; margin:14px 0 6px; padding:12px; border-radius:12px;
-      border:1px dashed rgba(255,255,255,.35); background: transparent;
-      color:#e5e7eb; font-weight:700; opacity:.6;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lista de Presença Ônibus</title>
+
+<style>
+:root{
+--ok:#22c55e;
+--no:#ef4444;
+--bg1:#0f172a;
+--bg2:#111827;
+--text:#ffffff;
+--muted:#cbd5e1;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+background:linear-gradient(180deg,var(--bg1),var(--bg2));
+color:var(--text);
+min-height:100vh;
+}
+
+header{
+padding:20px;
+text-align:center;
+background:rgba(0,0,0,.25);
+backdrop-filter:blur(8px);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+p{
+color:var(--muted);
+font-size:14px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-top:15px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+padding:12px;
+border-radius:14px;
+font-size:14px;
+}
+
+.card b{
+display:block;
+font-size:22px;
+margin-bottom:5px;
+}
+
+main{
+padding:15px;
+max-width:700px;
+margin:auto;
+}
+
+.search{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+margin-bottom:15px;
+font-size:16px;
+}
+
+.list{
+display:grid;
+gap:10px;
+}
+
+.item{
+padding:16px;
+border-radius:14px;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+user-select:none;
+}
+
+.item.ok{
+background:rgba(34,197,94,.18);
+border:2px solid var(--ok);
+}
+
+.item.no{
+background:rgba(239,68,68,.18);
+border:2px solid var(--no);
+}
+
+.item:hover{
+transform:scale(1.01);
+}
+
+.reset{
+margin-top:20px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+background:#334155;
+color:white;
+}
+
+footer{
+text-align:center;
+padding:20px;
+font-size:13px;
+color:#94a3b8;
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>🚌 Confirmação no ônibus – Trilha Morro da Mesa (22/02)</h1>
-    <div class="stats">
-      <div class="stat"><b id="okCount">0</b>Confirmados</div>
-      <div class="stat"><b id="noCount">0</b>Não confirmados</div>
-      <div class="stat"><b id="totalCount">0</b>Total</div>
-    </div>
-    <small style="color:#cbd5f5">Toque no seu nome para confirmar/desmarcar. Atualiza pra todos.</small>
-  </header>
 
-  <main>
-    <div id="list" class="list"></div>
-    <button id="resetBtn" class="reset">Resetar confirmações</button>
-  </main>
+<header>
+<h1>🚌 Lista de Presença</h1>
+<p>Toque no nome para confirmar presença</p>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<div class="stats">
+<div class="card"><b id="okCount">0</b>Presentes</div>
+<div class="card"><b id="noCount">0</b>Faltando</div>
+<div class="card"><b id="totalCount">0</b>Total</div>
+</div>
+</header>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAUssjdtiOs0oO9yhWV3dExsj7sGaB4jEA",
-      authDomain: "onibus-morro-da-mesa.firebaseapp.com",
-      databaseURL: "https://onibus-morro-da-mesa-default-rtdb.firebaseio.com",
-      projectId: "onibus-morro-da-mesa",
-      storageBucket: "onibus-morro-da-mesa.firebasestorage.app",
-      messagingSenderId: "21597144482",
-      appId: "1:21597144482:web:93a55c39d477e67c1d5efb"
-    };
+<main>
 
-    firebase.initializeApp(firebaseConfig);
-    const ref = firebase.database().ref("presencas/morro-da-mesa-22-02");
+<input type="text" class="search" placeholder="Buscar nome..." id="search">
 
-    const nomes = [
-      "Adriana Pereira Viana","Airton Junio","Ana","Ana Claudia Ribeiro","Aryele","Bruna Maia Fernandes",
-      "Crislaine","Dayane","Débora Stürmer","Edilane Leal Michiles da Silva","Edelson Santana de Almeida","Edna Andrade",
-      "Elionaldo","Elizabete Tunes","Emelyn Padilha","Fernanda","Francieli","Gabriely Silveira",
-      "Geovana Vitória Arruda Rodrigues","Gustavo","Higor Diogo","Hugo Deleon","Ívila Gomes Cardoso Oliveira","Jakeline","Josi","Karolayne",
-      "Jaylson Medeiros da Silva","Jefferson Araújo Alves","Jéssyca Fernandes de Oliveira Silva",
-      "Jonatas Marcos","Kamila","Lavinia Barboza Inácio","Lediane","Luciene Luzia","Luiz Eduardo Rezende Camara",
-      "Maiara Alves da Silva Inocêncio","Márcia Campos de Oliveira","Marta Schorn","Míriam Pinto Moreira",
-      "Natan de Araújo Gomes","Nelson Melo","Nicoly","Paula","Patrícia Dall Agnol","Raquel Gama Zaiatz",
-      "Rafael Martins Michiles da Silva","Regina Mingareli","Renata","Robson Ferreira de Oliveira",
-      "Roseli Batista","Ronaldo","Samuel Sousa","Sara Gama Zaiatz","Sassamoto","Sejane","Selma",
-      "Simone Maria Marques","Suely Aparecida","Thaiza Alves Gouveia",
-      "Victoria Roberta Freitas dos Santos","Clau"
-    ];
+<div class="list" id="list"></div>
 
-    const list = document.getElementById("list");
-    const okCount = document.getElementById("okCount");
-    const noCount = document.getElementById("noCount");
-    const totalCount = document.getElementById("totalCount");
-    totalCount.textContent = nomes.length;
+<button class="reset" onclick="resetar()">Resetar Lista</button>
 
-    function render(data){
-      list.innerHTML = "";
-      let ok = 0, no = 0;
+</main>
 
-      nomes.forEach((nome) => {
-        const confirmed = data && data[nome] === true;
-        if (confirmed) ok++; else no++;
+<footer>
+Sistema de embarque ônibus 🚍
+</footer>
 
-        const item = document.createElement("div");
-        item.className = "item " + (confirmed ? "ok" : "no");
-        item.textContent = nome;
+<script>
+const nomes = [
+"Jonatas",
+"Sejane",
+"Aurelio",
+"Halejandro",
+"Vitoria",
+"Gabriel",
+"Flavia",
+"Angela",
+"Layza",
+"Mirian",
+"Rosângela",
+"Jociela",
+"Jefferson",
+"Debora",
+"Matheus",
+"Pedro",
+"Joao",
+"Marta",
+"Tarcisio",
+"Selma",
+"Luis Sassamot",
+"Gregoria",
+"Wilgleison",
+"Edivaldo",
+"Aline",
+"Andyell",
+"Edilma",
+"Talita",
+"Vanessa",
+"Patricia",
+"Renata",
+"Prisicila",
+"Soraya",
+"Ludimila",
+"Jessyca",
+"Bruna",
+"Joao vitor F",
+"Franciele",
+"Patricia Luciana",
+"Antonio Elias",
+"Luciene",
+"Marcella",
+"Lais",
+"Josi",
+"Fran",
+"Gean",
+"Isabele",
+"Camily",
+"Fernanda Mendes",
+"Diana",
+"Lilian",
+"Elionete",
+"Edinalva",
+"Rivair",
+"Gustavo",
+"Karol Guimaraes",
+"Thais",
+"Estela",
+"Glauciele",
+"Elvis",
+"Paulo",
+"Thaiani",
+"Thaiza",
+"Eliene",
+"Nadila",
+"Tathayane",
+"Willian Matheus",
+"Itahaem",
+"Rosaura",
+"Rafael",
+"Edilaine",
+"Graciella",
+"Debora",
+"Darlene",
+"Marilene",
+"Higor",
+"Jean",
+"Luana",
+"Luis H",
+"Amanda",
+"Marcia",
+"Yasmim",
+"Izabel",
+"Dayse",
+"Natana",
+"Letícia",
+"Eulalia"
+];
 
-        item.onclick = () => ref.child(nome).set(!confirmed);
+let status = {};
 
-        list.appendChild(item);
-      });
+nomes.forEach(nome=>{
+status[nome]=false;
+});
 
-      okCount.textContent = ok;
-      noCount.textContent = no;
-    }
+const list = document.getElementById("list");
+const okCount = document.getElementById("okCount");
+const noCount = document.getElementById("noCount");
+const totalCount = document.getElementById("totalCount");
+const search = document.getElementById("search");
 
-    ref.on("value", (snap) => render(snap.val() || {}));
-    document.getElementById("resetBtn").onclick = () => { if(confirm("Zerar tudo?")) ref.remove(); };
-  </script>
+function render(){
+list.innerHTML="";
+
+let filtro = search.value.toLowerCase();
+
+let presentes = 0;
+
+nomes.forEach(nome=>{
+
+if(nome.toLowerCase().includes(filtro)){
+
+const div = document.createElement("div");
+
+div.className = "item " + (status[nome] ? "ok":"no");
+
+div.innerHTML = status[nome] ? "✅ " + nome : "❌ " + nome;
+
+div.onclick = ()=>{
+status[nome]=!status[nome];
+render();
+};
+
+list.appendChild(div);
+}
+
+if(status[nome]) presentes++;
+
+});
+
+okCount.innerText = presentes;
+noCount.innerText = nomes.length - presentes;
+totalCount.innerText = nomes.length;
+}
+
+function resetar(){
+if(confirm("Deseja resetar presença de todos?")){
+nomes.forEach(nome=>{
+status[nome]=false;
+});
+render();
+}
+}
+
+search.addEventListener("keyup",render);
+
+render();
+</script>
+
 </body>
 </html>
-
+```
