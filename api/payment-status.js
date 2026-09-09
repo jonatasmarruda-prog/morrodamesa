@@ -8,6 +8,7 @@ function publicReservation(data) {
     tripDate: data.tripDate,
     variantName: data.variantName,
     quantity: data.quantity,
+    seats: data.seats,
     amount: data.amount,
     paymentMethod: data.paymentMethod,
     status: data.status,
@@ -17,20 +18,32 @@ function publicReservation(data) {
 
 async function reconcilePayment(db, reservationId, paymentId) {
   if (!paymentId || !/^\d+$/.test(String(paymentId))) return;
+  const docRef = db.collection('reservations').doc(reservationId);
+  const reservationDoc = await docRef.get();
+  if (!reservationDoc.exists) return;
+
   const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, { headers: mpHeaders() });
   if (!response.ok) return;
   const payment = await response.json();
   if (String(payment.external_reference || '') !== String(reservationId)) return;
+
+  const reservation = reservationDoc.data();
   const status = mapMpStatus(payment.status);
-  await db.collection('reservations').doc(reservationId).update({
-    status,
+  const expected = Number(reservation.amount || 0);
+  const paid = Number(payment.transaction_amount || 0);
+  const amountMatches = Math.abs(expected - paid) < 0.01;
+  const finalStatus = status === 'approved' && !amountMatches ? 'review' : status;
+
+  await docRef.update({
+    status: finalStatus,
     mpStatus: payment.status || status,
     mpStatusDetail: payment.status_detail || null,
     mpPaymentId: String(payment.id),
     paymentTypeId: payment.payment_type_id || null,
     paymentMethodId: payment.payment_method_id || null,
     installments: payment.installments || 1,
-    amountPaid: payment.transaction_amount || null,
+    amountPaid: paid,
+    amountMatches,
     approvedAt: payment.date_approved || null,
     updatedAt: new Date().toISOString()
   });
