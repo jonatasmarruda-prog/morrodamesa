@@ -6,6 +6,7 @@ async function mpGet(path) {
   if (!response.ok) {
     const error = new Error(data.message || `Mercado Pago respondeu ${response.status}`);
     error.status = response.status;
+    error.data = data;
     throw error;
   }
   return data;
@@ -21,6 +22,7 @@ async function mpPut(path, body) {
   if (!response.ok) {
     const error = new Error(data.message || `Mercado Pago respondeu ${response.status}`);
     error.status = response.status;
+    error.data = data;
     throw error;
   }
   return data;
@@ -38,7 +40,7 @@ async function getPreferenceById(id) {
 async function findPreference(reservationId) {
   const search = await mpGet(`/checkout/preferences/search?external_reference=${encodeURIComponent(reservationId)}&limit=10`);
   const elements = Array.isArray(search.elements) ? search.elements : [];
-  const found = elements.find((item) => String(item.external_reference || '') === reservationId) || elements[0];
+  const found = elements.find((item) => String(item.external_reference || '') === reservationId) || null;
   if (!found?.id) return null;
   return getPreferenceById(found.id);
 }
@@ -66,8 +68,7 @@ async function searchPreferenceSummaries(max = 500) {
     else offset += elements.length;
 
     const total = Number(search.total);
-    if (Number.isFinite(total) && offset >= total) break;
-    if (elements.length < pageSize) break;
+    if ((Number.isFinite(total) && offset >= total) || elements.length < pageSize) break;
   }
 
   return rows.filter((pref) => reservationPattern(pref.external_reference));
@@ -76,10 +77,9 @@ async function searchPreferenceSummaries(max = 500) {
 async function listPreferenceDetails(max = 500) {
   const summaries = await searchPreferenceSummaries(max);
   const details = [];
-  const chunkSize = 10;
 
-  for (let i = 0; i < summaries.length; i += chunkSize) {
-    const chunk = summaries.slice(i, i + chunkSize);
+  for (let i = 0; i < summaries.length; i += 10) {
+    const chunk = summaries.slice(i, i + 10);
     const fetched = await Promise.all(chunk.map(async (item) => {
       try {
         if (item.external_reference && item.payer && Array.isArray(item.items) && item.items.length && item.metadata) return item;
@@ -117,11 +117,11 @@ function phoneFromPayer(payer = {}) {
   return `${area}${number}`;
 }
 
-function preferenceAmount(pref) {
+function preferenceAmount(pref = {}) {
   return money((pref.items || []).reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 1)), 0));
 }
 
-function normalizeReservation(pref, payment = null) {
+function normalizeReservation(pref = {}, payment = null) {
   const metadata = pref.metadata || payment?.metadata || {};
   const item = pref.items?.[0] || {};
   const expected = Number(metadata.amount || preferenceAmount(pref) || payment?.transaction_amount || 0);
@@ -129,10 +129,15 @@ function normalizeReservation(pref, payment = null) {
   const amountMatches = !payment || Math.abs(expected - paid) < 0.01;
   let status = payment ? mapMpStatus(payment.status) : 'pending';
   if (status === 'approved' && !amountMatches) status = 'review';
-  if (!payment && pref.expiration_date_to && new Date(pref.expiration_date_to).getTime() < Date.now()) status = 'cancelled';
+
+  const expiresAt = pref.expiration_date_to || payment?.date_of_expiration || null;
+  if (!payment && expiresAt && new Date(expiresAt).getTime() < Date.now()) status = 'cancelled';
+  if (payment?.status === 'pending' && expiresAt && new Date(expiresAt).getTime() < Date.now()) status = 'cancelled';
 
   const payer = pref.payer || payment?.payer || {};
-  const fullName = [payer.name, payer.surname].filter(Boolean).join(' ').trim();
+  const firstName = payer.name || payer.first_name || '';
+  const lastName = payer.surname || payer.last_name || '';
+  const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
   const paymentChoice = String(metadata.payment_choice || '');
   const paymentMethod = paymentChoice === 'card' || paymentChoice === 'pix'
     ? paymentChoice
@@ -141,15 +146,15 @@ function normalizeReservation(pref, payment = null) {
   return {
     id: String(pref.external_reference || payment?.external_reference || ''),
     tripId: String(metadata.trip_id || ''),
-    tripTitle: String(metadata.trip_title || item.title || '').replace(/\s+-\s+[^-]+$/, ''),
+    tripTitle: String(metadata.trip_title || item.title || payment?.description || '').replace(/\s+-\s+[^-]+$/, ''),
     tripDate: String(metadata.trip_date || ''),
     location: String(metadata.location || ''),
     variantId: String(metadata.variant_id || ''),
-    variantName: String(metadata.variant_name || '').trim() || String(item.title || '').split(' - ').slice(1).join(' - '),
+    variantName: String(metadata.variant_name || '').trim() || String(item.title || payment?.description || '').split(' - ').slice(1).join(' - '),
     quantity: Number(metadata.quantity || item.quantity || 1),
     seatsPerUnit: Number(metadata.seats_per_unit || 1),
     seats: Number(metadata.seats || metadata.quantity || item.quantity || 1),
-    unitPrice: Number(metadata.unit_price || item.unit_price || 0),
+    unitPrice: Number(metadata.unit_price || item.unit_price || expected),
     amount: expected,
     paymentMethod,
     status,
@@ -170,8 +175,8 @@ function normalizeReservation(pref, payment = null) {
     },
     createdAt: pref.date_created || payment?.date_created || null,
     approvedAt: payment?.date_approved || null,
-    updatedAt: payment?.date_last_updated || pref.date_created || null,
-    expiresAt: pref.expiration_date_to || null
+    updatedAt: payment?.date_last_updated || pref.date_created || payment?.date_created || null,
+    expiresAt
   };
 }
 
@@ -181,16 +186,21 @@ async function listReservations(max = 500) {
     listPayments(max)
   ]);
 
-  const latestPayment = new Map();
+  const prefMap = new Map();
+  for (const pref of preferences) prefMap.set(String(pref.external_reference || ''), pref);
+
+  const paymentMap = new Map();
   for (const payment of payments) {
     const key = String(payment.external_reference || '');
-    if (!latestPayment.has(key)) latestPayment.set(key, payment);
+    if (!paymentMap.has(key)) paymentMap.set(key, payment);
   }
 
-  const rows = preferences.map((pref) => normalizeReservation(
-    pref,
-    latestPayment.get(String(pref.external_reference || '')) || null
-  ));
+  const keys = new Set([...prefMap.keys(), ...paymentMap.keys()]);
+  const rows = [];
+  for (const key of keys) {
+    if (!reservationPattern(key)) continue;
+    rows.push(normalizeReservation(prefMap.get(key) || {}, paymentMap.get(key) || null));
+  }
 
   return rows.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 }
@@ -219,15 +229,11 @@ async function reservationFitsCapacity(tripId, reservationId, capacity) {
     });
 
   let occupied = 0;
-  let found = false;
   for (const row of rows) {
     occupied += Number(row.seats || 1);
-    if (row.id === reservationId) {
-      found = true;
-      return occupied <= Number(capacity || 0);
-    }
+    if (row.id === reservationId) return occupied <= Number(capacity || 0);
   }
-  return found ? false : null;
+  return null;
 }
 
 async function expirePreference(preferenceId) {
@@ -241,6 +247,11 @@ async function expirePreference(preferenceId) {
   });
 }
 
+async function cancelPayment(paymentId) {
+  if (!paymentId) return;
+  await mpPut(`/v1/payments/${encodeURIComponent(paymentId)}`, { status: 'cancelled' });
+}
+
 module.exports = {
   findPreference,
   findPayment,
@@ -249,5 +260,6 @@ module.exports = {
   usedSeatsForTrip,
   reservationFitsCapacity,
   expirePreference,
+  cancelPayment,
   reservationPattern
 };
