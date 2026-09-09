@@ -219,11 +219,15 @@ async function reservationFitsCapacity(tripId, reservationId, capacity) {
     });
 
   let occupied = 0;
+  let found = false;
   for (const row of rows) {
     occupied += Number(row.seats || 1);
-    if (row.id === reservationId) return occupied <= Number(capacity || 0);
+    if (row.id === reservationId) {
+      found = true;
+      return occupied <= Number(capacity || 0);
+    }
   }
-  return false;
+  return found ? false : null;
 }
 
 async function expirePreference(preferenceId) {
