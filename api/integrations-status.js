@@ -8,13 +8,14 @@ module.exports = async function handler(req, res) {
   const status = {
     mercadoPago: Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
     webhook: Boolean(process.env.MERCADOPAGO_WEBHOOK_SECRET),
-    firebase: Boolean(process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY),
+    reservations: Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
     appUrl: Boolean(process.env.APP_URL),
-    adminSession: Boolean(process.env.ADMIN_PASSWORD && process.env.ADMIN_SESSION_SECRET)
+    adminSession: Boolean(process.env.ADMIN_SESSION_SECRET || process.env.MERCADOPAGO_WEBHOOK_SECRET)
   };
 
   return json(res, 200, {
     status,
-    readyForPayments: status.mercadoPago && status.webhook && status.firebase && status.appUrl && status.adminSession
+    architecture: 'mercadopago-as-source-of-truth',
+    readyForPayments: status.mercadoPago && status.webhook && status.reservations && status.appUrl && status.adminSession
   });
 };
