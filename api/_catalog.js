@@ -7,8 +7,8 @@ const trips = [
     capacity: 100,
     level: 'Moderado a difícil',
     variants: [
-      { id: 'onibus', name: 'Ônibus', pixPrice: 85, cardPrice: 85 },
-      { id: 'carro', name: 'Carro próprio', pixPrice: 25, cardPrice: 25 }
+      { id: 'onibus', name: 'Ônibus', pixPrice: 85, cardPrice: 85, seatsPerUnit: 1 },
+      { id: 'carro', name: 'Carro próprio', pixPrice: 25, cardPrice: 25, seatsPerUnit: 1 }
     ]
   },
   {
@@ -19,9 +19,9 @@ const trips = [
     capacity: 45,
     level: 'Passeio turístico',
     variants: [
-      { id: 'individual', name: 'Individual', pixPrice: 520, cardPrice: 539 },
-      { id: 'casal', name: 'Casal', pixPrice: 990, cardPrice: 1100 },
-      { id: 'crianca', name: 'Criança até 10 anos', pixPrice: 450, cardPrice: 450 }
+      { id: 'individual', name: 'Individual', pixPrice: 520, cardPrice: 539, seatsPerUnit: 1 },
+      { id: 'casal', name: 'Casal', pixPrice: 990, cardPrice: 1100, seatsPerUnit: 2 },
+      { id: 'crianca', name: 'Criança até 10 anos', pixPrice: 450, cardPrice: 450, seatsPerUnit: 1 }
     ]
   },
   {
@@ -32,8 +32,8 @@ const trips = [
     capacity: 70,
     level: 'Moderado',
     variants: [
-      { id: 'participacao', name: 'Participação', pixPrice: 30, cardPrice: 30 },
-      { id: 'camiseta', name: 'Participação + camiseta', pixPrice: 75, cardPrice: 75 }
+      { id: 'participacao', name: 'Participação', pixPrice: 30, cardPrice: 30, seatsPerUnit: 1 },
+      { id: 'camiseta', name: 'Participação + camiseta', pixPrice: 75, cardPrice: 75, seatsPerUnit: 1 }
     ]
   },
   {
@@ -44,8 +44,8 @@ const trips = [
     capacity: 45,
     level: '2 dias',
     variants: [
-      { id: 'individual', name: 'Individual', pixPrice: 890, cardPrice: 910 },
-      { id: 'casal', name: 'Casal', pixPrice: 1600, cardPrice: 1700 }
+      { id: 'individual', name: 'Individual', pixPrice: 890, cardPrice: 910, seatsPerUnit: 1 },
+      { id: 'casal', name: 'Casal', pixPrice: 1600, cardPrice: 1700, seatsPerUnit: 2 }
     ]
   },
   {
@@ -56,8 +56,8 @@ const trips = [
     capacity: 45,
     level: 'Fácil',
     variants: [
-      { id: 'adulto', name: 'Adulto', pixPrice: 355, cardPrice: 369 },
-      { id: 'crianca', name: 'Criança até 10 anos', pixPrice: 300, cardPrice: 300 }
+      { id: 'adulto', name: 'Adulto', pixPrice: 355, cardPrice: 369, seatsPerUnit: 1 },
+      { id: 'crianca', name: 'Criança até 10 anos', pixPrice: 300, cardPrice: 300, seatsPerUnit: 1 }
     ]
   },
   {
@@ -68,7 +68,7 @@ const trips = [
     capacity: 45,
     level: 'Moderado',
     variants: [
-      { id: 'adulto', name: 'Adulto', pixPrice: 365, cardPrice: 389 }
+      { id: 'adulto', name: 'Adulto', pixPrice: 365, cardPrice: 389, seatsPerUnit: 1 }
     ]
   }
 ];
