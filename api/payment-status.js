@@ -23,12 +23,12 @@ module.exports = async function handler(req, res) {
     if (!reservationPattern(reservationId)) return json(res, 400, { error: 'Reserva inválida.' });
 
     const [preference, payment] = await Promise.all([
-      findPreference(reservationId),
-      findPayment(reservationId)
+      findPreference(reservationId).catch(() => null),
+      findPayment(reservationId).catch(() => null)
     ]);
 
-    if (!preference) return json(res, 404, { error: 'Reserva não encontrada.' });
-    const reservation = normalizeReservation(preference, payment);
+    if (!preference && !payment) return json(res, 404, { error: 'Reserva não encontrada.' });
+    const reservation = normalizeReservation(preference || {}, payment || null);
     return json(res, 200, { reservation: publicReservation(reservation) });
   } catch (error) {
     console.error(error);
