@@ -30,7 +30,7 @@
         <h1>Sua próxima aventura começa aqui.</h1>
         <p>Escolha o passeio, faça sua reserva e pague com PIX ou cartão pelo Mercado Pago. A confirmação é automática — sem enviar comprovante.</p>
         <div class="trust-row">
-          <span>✓ Confirmação automática</span>
+          <span>✓ PIX direto com Copia e Cola</span>
           <span>✓ Mercado Pago</span>
           <span>✓ Reserva identificada</span>
         </div>
@@ -95,13 +95,13 @@
             <label class="pay-card active" data-method="pix">
               <input type="radio" name="paymentMethod" value="pix" checked>
               <span class="pay-icon">PIX</span>
-              <span><strong>PIX</strong><small>QR Code e PIX Copia e Cola</small></span>
+              <span><strong>PIX</strong><small>QR Code e PIX Copia e Cola na própria página</small></span>
               <b id="pixPrice">—</b>
             </label>
             <label class="pay-card" data-method="card">
               <input type="radio" name="paymentMethod" value="card">
               <span class="pay-icon card-icon">▰</span>
-              <span><strong>Cartão</strong><small>Crédito em até 12x</small></span>
+              <span><strong>Cartão</strong><small>Crédito em até 12x no Mercado Pago</small></span>
               <b id="cardPrice">—</b>
             </label>
           </div>
@@ -137,6 +137,31 @@
           <span>1. Reserva</span><i></i><span>2. Pagamento</span><i></i><span>3. Confirmado</span>
         </div>
       </aside>
+    </section>
+
+    <section id="pixCard" class="pix-card shell hidden" aria-live="polite">
+      <div class="pix-card-head">
+        <div>
+          <span class="eyebrow">PIX GERADO</span>
+          <h2>Pague pelo app do seu banco</h2>
+          <p>Escaneie o QR Code ou copie o código PIX abaixo. Pode pagar pelo Nubank, Caixa, BB, Itaú, Santander, Sicredi ou qualquer banco.</p>
+        </div>
+        <div class="pix-amount" id="pixAmount">R$ 0,00</div>
+      </div>
+      <div class="pix-grid">
+        <div class="pix-qr-wrap">
+          <img id="pixQrImage" alt="QR Code PIX" class="pix-qr">
+        </div>
+        <div class="pix-copy-wrap">
+          <label for="pixCode">PIX Copia e Cola</label>
+          <textarea id="pixCode" readonly></textarea>
+          <button id="copyPixBtn" type="button" class="primary-btn pix-copy-btn"><span>Copiar código PIX</span><strong>⧉</strong></button>
+          <a id="pixTicketLink" class="pix-ticket-link hidden" href="#" target="_blank" rel="noopener">Abrir instruções do Mercado Pago</a>
+          <div id="pixCopyMessage" class="pix-copy-message"></div>
+          <div class="pix-status-line"><span class="pulse"></span><strong id="pixStatusText">Aguardando pagamento...</strong></div>
+          <small id="pixReservationText" class="pix-reservation"></small>
+        </div>
+      </div>
     </section>
 
     <section id="returnCard" class="return-card shell hidden" aria-live="polite">
