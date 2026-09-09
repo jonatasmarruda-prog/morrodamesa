@@ -1,15 +1,14 @@
 const crypto = require('crypto');
 
 const COOKIE_NAME = 'trilheiros_admin';
-const MAX_AGE_SECONDS = 60 * 60 * 12;
+const MAX_AGE_SECONDS = 60 * 60;
+const SESSION_VERSION = 2;
 
 function b64url(input) {
   return Buffer.from(input).toString('base64url');
 }
 
 function sessionSecret() {
-  // Se ADMIN_SESSION_SECRET não estiver configurado, reutiliza com segurança
-  // o segredo privado do webhook que já existe apenas no backend da Vercel.
   const secret = process.env.ADMIN_SESSION_SECRET || process.env.MERCADOPAGO_WEBHOOK_SECRET;
   if (!secret) throw new Error('Segredo de sessão administrativa não configurado.');
   return secret;
@@ -20,7 +19,7 @@ function sign(payload) {
 }
 
 function createSessionToken() {
-  const payload = JSON.stringify({ role: 'admin', exp: Date.now() + MAX_AGE_SECONDS * 1000 });
+  const payload = JSON.stringify({ role: 'admin', v: SESSION_VERSION, exp: Date.now() + MAX_AGE_SECONDS * 1000 });
   const encoded = b64url(payload);
   return `${encoded}.${sign(encoded)}`;
 }
@@ -45,7 +44,7 @@ function verifySession(req) {
     const b = Buffer.from(expected);
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
     const payload = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
-    return payload.role === 'admin' && payload.exp > Date.now();
+    return payload.role === 'admin' && payload.v === SESSION_VERSION && payload.exp > Date.now();
   } catch {
     return false;
   }
