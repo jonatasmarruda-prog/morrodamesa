@@ -7,9 +7,9 @@ module.exports = async function handler(req, res) {
   if (!verifySession(req)) return json(res, 401, { error: 'Não autorizado.' });
 
   try {
-    const rows = await listReservations(50);
+    const rows = await listReservations(500);
     const summary = rows.reduce((acc, row) => {
-      if (row.status === 'approved') {
+      if (row.status === 'approved' || row.status === 'review') {
         acc.approved += 1;
         acc.revenue += Number(row.amountPaid ?? row.amount ?? 0);
         acc.seats += Number(row.seats || 1);
