@@ -16,16 +16,35 @@ function money(value) {
 }
 
 function reservationId() {
-  const suffix = crypto.randomBytes(3).toString('hex').toUpperCase();
+  const suffix = crypto.randomBytes(6).toString('hex').toUpperCase();
   return `TR-${new Date().getFullYear()}-${suffix}`;
 }
 
-function mpHeaders() {
-  const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
+function reservationIdFromRequest(requestId) {
+  const raw = String(requestId || '').trim();
+  if (!/^[A-Za-z0-9_-]{16,128}$/.test(raw)) return reservationId();
+  const suffix = crypto.createHash('sha256').update(raw).digest('hex').slice(0, 12).toUpperCase();
+  return `TR-${new Date().getFullYear()}-${suffix}`;
+}
+
+function mercadoPagoToken() {
+  return String(process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
+}
+
+function mercadoPagoTokenMode() {
+  const token = mercadoPagoToken();
+  if (!token) return 'missing';
+  if (token.startsWith('TEST-')) return 'test';
+  return 'production';
+}
+
+function mpHeaders(extra = {}) {
+  const token = mercadoPagoToken();
   if (!token) throw new Error('Mercado Pago não configurado.');
   return {
     Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    ...extra
   };
 }
 
@@ -43,4 +62,15 @@ function mapMpStatus(status) {
   return 'pending';
 }
 
-module.exports = { json, onlyDigits, money, reservationId, mpHeaders, appUrl, mapMpStatus };
+module.exports = {
+  json,
+  onlyDigits,
+  money,
+  reservationId,
+  reservationIdFromRequest,
+  mercadoPagoToken,
+  mercadoPagoTokenMode,
+  mpHeaders,
+  appUrl,
+  mapMpStatus
+};
