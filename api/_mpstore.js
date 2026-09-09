@@ -11,8 +11,23 @@ async function mpGet(path) {
   return data;
 }
 
+async function mpPut(path, body) {
+  const response = await fetch(`https://api.mercadopago.com${path}`, {
+    method: 'PUT',
+    headers: mpHeaders(),
+    body: JSON.stringify(body)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.message || `Mercado Pago respondeu ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
 function reservationPattern(value) {
-  return /^TR-\d{4}-[A-F0-9]{6}$/.test(String(value || ''));
+  return /^TR-\d{4}-[A-F0-9]{6,12}$/.test(String(value || ''));
 }
 
 async function getPreferenceById(id) {
@@ -34,31 +49,65 @@ async function findPayment(reservationId) {
   return results.find((p) => String(p.external_reference || '') === reservationId) || null;
 }
 
-async function listPreferenceDetails(limit = 50) {
-  const search = await mpGet(`/checkout/preferences/search?limit=${Math.max(1, Math.min(50, limit))}`);
-  const elements = Array.isArray(search.elements) ? search.elements : [];
-  const details = await Promise.all(elements.map(async (item) => {
-    try {
-      if (item.external_reference && item.payer && Array.isArray(item.items) && item.items.length) return item;
-      return await getPreferenceById(item.id);
-    } catch {
-      return null;
-    }
-  }));
-  return details.filter((pref) => pref && reservationPattern(pref.external_reference));
-}
-
-async function listPayments(limit = 100) {
+async function searchPreferenceSummaries(max = 500) {
   const rows = [];
   let offset = 0;
-  while (rows.length < limit) {
-    const pageSize = Math.min(50, limit - rows.length);
+  const cappedMax = Math.max(1, Math.min(1000, Number(max) || 500));
+
+  while (rows.length < cappedMax) {
+    const pageSize = Math.min(50, cappedMax - rows.length);
+    const search = await mpGet(`/checkout/preferences/search?limit=${pageSize}&offset=${offset}`);
+    const elements = Array.isArray(search.elements) ? search.elements : [];
+    rows.push(...elements);
+    if (!elements.length) break;
+
+    const next = Number(search.next_offset);
+    if (Number.isFinite(next) && next > offset) offset = next;
+    else offset += elements.length;
+
+    const total = Number(search.total);
+    if (Number.isFinite(total) && offset >= total) break;
+    if (elements.length < pageSize) break;
+  }
+
+  return rows.filter((pref) => reservationPattern(pref.external_reference));
+}
+
+async function listPreferenceDetails(max = 500) {
+  const summaries = await searchPreferenceSummaries(max);
+  const details = [];
+  const chunkSize = 10;
+
+  for (let i = 0; i < summaries.length; i += chunkSize) {
+    const chunk = summaries.slice(i, i + chunkSize);
+    const fetched = await Promise.all(chunk.map(async (item) => {
+      try {
+        if (item.external_reference && item.payer && Array.isArray(item.items) && item.items.length && item.metadata) return item;
+        return await getPreferenceById(item.id);
+      } catch {
+        return null;
+      }
+    }));
+    details.push(...fetched.filter(Boolean));
+  }
+
+  return details.filter((pref) => reservationPattern(pref.external_reference));
+}
+
+async function listPayments(max = 500) {
+  const rows = [];
+  let offset = 0;
+  const cappedMax = Math.max(1, Math.min(1000, Number(max) || 500));
+
+  while (rows.length < cappedMax) {
+    const pageSize = Math.min(50, cappedMax - rows.length);
     const search = await mpGet(`/v1/payments/search?sort=date_created&criteria=desc&limit=${pageSize}&offset=${offset}`);
     const results = Array.isArray(search.results) ? search.results : [];
     rows.push(...results);
     if (results.length < pageSize) break;
-    offset += pageSize;
+    offset += results.length;
   }
+
   return rows.filter((payment) => reservationPattern(payment.external_reference));
 }
 
@@ -73,16 +122,16 @@ function preferenceAmount(pref) {
 }
 
 function normalizeReservation(pref, payment = null) {
-  const metadata = pref.metadata || {};
+  const metadata = pref.metadata || payment?.metadata || {};
   const item = pref.items?.[0] || {};
-  const expected = Number(metadata.amount || preferenceAmount(pref) || 0);
+  const expected = Number(metadata.amount || preferenceAmount(pref) || payment?.transaction_amount || 0);
   const paid = payment ? Number(payment.transaction_amount || 0) : 0;
   const amountMatches = !payment || Math.abs(expected - paid) < 0.01;
   let status = payment ? mapMpStatus(payment.status) : 'pending';
   if (status === 'approved' && !amountMatches) status = 'review';
   if (!payment && pref.expiration_date_to && new Date(pref.expiration_date_to).getTime() < Date.now()) status = 'cancelled';
 
-  const payer = pref.payer || {};
+  const payer = pref.payer || payment?.payer || {};
   const fullName = [payer.name, payer.surname].filter(Boolean).join(' ').trim();
   const paymentChoice = String(metadata.payment_choice || '');
   const paymentMethod = paymentChoice === 'card' || paymentChoice === 'pix'
@@ -90,7 +139,7 @@ function normalizeReservation(pref, payment = null) {
     : (payment?.payment_type_id === 'credit_card' ? 'card' : (payment?.payment_method_id === 'pix' ? 'pix' : ''));
 
   return {
-    id: String(pref.external_reference || ''),
+    id: String(pref.external_reference || payment?.external_reference || ''),
     tripId: String(metadata.trip_id || ''),
     tripTitle: String(metadata.trip_title || item.title || '').replace(/\s+-\s+[^-]+$/, ''),
     tripDate: String(metadata.trip_date || ''),
@@ -119,36 +168,73 @@ function normalizeReservation(pref, payment = null) {
       phone: phoneFromPayer(payer),
       cpf: String(payer.identification?.number || '')
     },
-    createdAt: pref.date_created || null,
+    createdAt: pref.date_created || payment?.date_created || null,
     approvedAt: payment?.date_approved || null,
     updatedAt: payment?.date_last_updated || pref.date_created || null,
     expiresAt: pref.expiration_date_to || null
   };
 }
 
-async function listReservations(limit = 50) {
+async function listReservations(max = 500) {
   const [preferences, payments] = await Promise.all([
-    listPreferenceDetails(limit),
-    listPayments(Math.max(limit, 50))
+    listPreferenceDetails(max),
+    listPayments(max)
   ]);
+
   const latestPayment = new Map();
   for (const payment of payments) {
     const key = String(payment.external_reference || '');
     if (!latestPayment.has(key)) latestPayment.set(key, payment);
   }
-  return preferences
-    .map((pref) => normalizeReservation(pref, latestPayment.get(String(pref.external_reference || '')) || null))
-    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+  const rows = preferences.map((pref) => normalizeReservation(
+    pref,
+    latestPayment.get(String(pref.external_reference || '')) || null
+  ));
+
+  return rows.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+}
+
+function rowOccupiesSeat(row) {
+  const activePending = row.status === 'pending' && (!row.expiresAt || new Date(row.expiresAt).getTime() > Date.now());
+  return row.status === 'approved' || row.status === 'review' || activePending;
 }
 
 async function usedSeatsForTrip(tripId) {
-  const rows = await listReservations(50);
+  const rows = await listReservations(500);
   return rows.reduce((total, row) => {
-    if (row.tripId !== tripId) return total;
-    const activePending = row.status === 'pending' && (!row.expiresAt || new Date(row.expiresAt).getTime() > Date.now());
-    if (row.status === 'approved' || row.status === 'review' || activePending) return total + Number(row.seats || 1);
-    return total;
+    if (row.tripId !== tripId || !rowOccupiesSeat(row)) return total;
+    return total + Number(row.seats || 1);
   }, 0);
+}
+
+async function reservationFitsCapacity(tripId, reservationId, capacity) {
+  const rows = (await listReservations(500))
+    .filter((row) => row.tripId === tripId && rowOccupiesSeat(row))
+    .sort((a, b) => {
+      const aPaid = a.status === 'approved' || a.status === 'review' ? 0 : 1;
+      const bPaid = b.status === 'approved' || b.status === 'review' ? 0 : 1;
+      if (aPaid !== bPaid) return aPaid - bPaid;
+      return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+    });
+
+  let occupied = 0;
+  for (const row of rows) {
+    occupied += Number(row.seats || 1);
+    if (row.id === reservationId) return occupied <= Number(capacity || 0);
+  }
+  return false;
+}
+
+async function expirePreference(preferenceId) {
+  if (!preferenceId) return;
+  const now = new Date();
+  const end = new Date(now.getTime() + 1000);
+  await mpPut(`/checkout/preferences/${encodeURIComponent(preferenceId)}`, {
+    expires: true,
+    expiration_date_from: now.toISOString(),
+    expiration_date_to: end.toISOString()
+  });
 }
 
 module.exports = {
@@ -157,5 +243,7 @@ module.exports = {
   listReservations,
   normalizeReservation,
   usedSeatsForTrip,
+  reservationFitsCapacity,
+  expirePreference,
   reservationPattern
 };
