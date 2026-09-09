@@ -35,9 +35,7 @@ function validSignature(req, body) {
   if (!secret) return false;
 
   const xSignature = String(req.headers['x-signature'] || '').trim();
-  const xRequestId = String(req.headers['x-request-id'] || '').trim();
-  const dataId = dataIdFromRequest(req, body);
-  if (!xSignature || !xRequestId || !dataId) return false;
+  if (!xSignature) return false;
 
   let ts = '';
   let v1 = '';
@@ -51,8 +49,16 @@ function validSignature(req, body) {
   });
   if (!ts || !v1) return false;
 
-  // Mercado Pago assina exatamente o data.id recebido. Não alterar maiúsculas/minúsculas.
-  const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
+  const dataId = dataIdFromRequest(req, body);
+  const xRequestId = String(req.headers['x-request-id'] || '').trim();
+
+  // O Mercado Pago orienta omitir do manifesto qualquer par cujo valor
+  // não esteja presente na notificação recebida.
+  let manifest = '';
+  if (dataId) manifest += `id:${dataId};`;
+  if (xRequestId) manifest += `request-id:${xRequestId};`;
+  if (ts) manifest += `ts:${ts};`;
+
   const expected = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
   return safeEqualHex(expected, v1);
 }
