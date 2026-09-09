@@ -48,11 +48,13 @@ module.exports = async function handler(req, res) {
 
     if (!trip || !variant) return json(res, 400, { error: 'Passeio ou opção inválida.' });
 
+    const seatsPerUnit = Math.max(1, Number(variant.seatsPerUnit || 1));
+    const seats = seatsPerUnit * quantity;
     const unitPrice = paymentMethod === 'card' ? variant.cardPrice : variant.pixPrice;
     const total = money(unitPrice * quantity);
     const db = getFirestore();
     const used = await heldSeats(db, trip.id);
-    if (used + quantity > trip.capacity) {
+    if (used + seats > trip.capacity) {
       return json(res, 409, { error: 'Não há vagas suficientes disponíveis para esta quantidade.' });
     }
 
@@ -70,7 +72,8 @@ module.exports = async function handler(req, res) {
       variantId: variant.id,
       variantName: variant.name,
       quantity,
-      seats: quantity,
+      seatsPerUnit,
+      seats,
       unitPrice,
       amount: total,
       paymentMethod,
@@ -123,7 +126,8 @@ module.exports = async function handler(req, res) {
         reservation_id: id,
         trip_id: trip.id,
         variant_id: variant.id,
-        payment_choice: paymentMethod
+        payment_choice: paymentMethod,
+        seats
       }
     };
 
@@ -153,6 +157,7 @@ module.exports = async function handler(req, res) {
       reservationId: id,
       checkoutUrl: mp.init_point,
       amount: total,
+      seats,
       expiresAt: expiresAt.toISOString()
     });
   } catch (error) {
