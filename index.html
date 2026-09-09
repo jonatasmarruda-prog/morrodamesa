@@ -1,330 +1,160 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a">
-<title>Lista de Presença Ônibus - Trilha Morro da Mesa</title>
-
-<style>
-:root{
---bg1:#020617;
---bg2:#0f172a;
---line:rgba(255,255,255,.08);
---txt:#ffffff;
---muted:#cbd5e1;
---green:#16a34a;
---green2:#22c55e;
---red:#dc2626;
---red2:#ef4444;
---shadow:0 10px 28px rgba(0,0,0,.28);
-}
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:
-radial-gradient(circle at top left,#1e293b 0%,transparent 35%),
-linear-gradient(180deg,var(--bg2),var(--bg1));
-color:var(--txt);
-min-height:100vh;
-}
-
-header{
-position:sticky;
-top:0;
-z-index:50;
-padding:14px;
-background:rgba(2,6,23,.94);
-backdrop-filter:blur(14px);
-border-bottom:1px solid var(--line);
-}
-
-.topo{
-display:flex;
-gap:12px;
-align-items:center;
-margin-bottom:12px;
-}
-
-.logo{
-width:48px;
-height:48px;
-border-radius:14px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:24px;
-background:linear-gradient(135deg,#2563eb,#06b6d4);
-box-shadow:var(--shadow);
-}
-
-h1{
-font-size:20px;
-font-weight:900;
-line-height:1.1;
-}
-
-.sub{
-font-size:13px;
-color:var(--muted);
-margin-top:3px;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-}
-
-.card{
-background:rgba(255,255,255,.05);
-border:1px solid var(--line);
-border-radius:14px;
-padding:10px 6px;
-text-align:center;
-}
-
-.card b{
-display:block;
-font-size:22px;
-font-weight:900;
-}
-
-.card span{
-font-size:12px;
-color:var(--muted);
-}
-
-main{
-max-width:760px;
-margin:auto;
-padding:14px;
-padding-bottom:28px;
-}
-
-.search{
-width:100%;
-height:54px;
-border:none;
-outline:none;
-border-radius:16px;
-padding:0 16px;
-font-size:17px;
-font-weight:700;
-margin-bottom:12px;
-}
-
-.list{
-display:grid;
-gap:10px;
-}
-
-.item{
-min-height:62px;
-padding:14px;
-border-radius:18px;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-font-size:18px;
-font-weight:900;
-cursor:pointer;
-user-select:none;
-box-shadow:var(--shadow);
-}
-
-.item.ok{
-background:linear-gradient(180deg,var(--green2),var(--green));
-border:2px solid #15803d;
-}
-
-.item.no{
-background:linear-gradient(180deg,var(--red2),var(--red));
-border:2px solid #b91c1c;
-}
-
-.reset{
-width:100%;
-height:54px;
-margin-top:16px;
-border:none;
-border-radius:16px;
-font-size:16px;
-font-weight:900;
-cursor:pointer;
-background:#334155;
-color:#fff;
-}
-
-.msg{
-text-align:center;
-padding:18px;
-color:#cbd5e1;
-font-weight:700;
-}
-
-footer{
-text-align:center;
-padding:18px;
-font-size:12px;
-color:#94a3b8;
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07140d">
+  <meta name="description" content="Reservas oficiais dos Trilheiros de Rondonópolis com confirmação automática de pagamento.">
+  <title>Trilheiros de Rondonópolis | Reservas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <div class="bg-orb bg-orb-a"></div>
+  <div class="bg-orb bg-orb-b"></div>
 
-<header>
-<div class="topo">
-<div class="logo">🚌</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Trilheiros de Rondonópolis">
+      <span class="brand-mark">TR</span>
+      <span><strong>Trilheiros</strong><small>de Rondonópolis</small></span>
+    </a>
+    <a class="admin-link" href="/admin.html">Painel</a>
+  </header>
 
-<div>
-<h1>Lista de Presença Ônibus</h1>
-<div class="sub">Trilha Morro da Mesa</div>
-</div>
-</div>
+  <main>
+    <section class="hero shell">
+      <div class="hero-copy">
+        <span class="eyebrow">RESERVA OFICIAL • PAGAMENTO SEGURO</span>
+        <h1>Sua próxima aventura começa aqui.</h1>
+        <p>Escolha o passeio, faça sua reserva e pague com PIX ou cartão pelo Mercado Pago. A confirmação é automática — sem enviar comprovante.</p>
+        <div class="trust-row">
+          <span>✓ Confirmação automática</span>
+          <span>✓ Mercado Pago</span>
+          <span>✓ Reserva identificada</span>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <span class="pulse"></span>
+        <div><strong>Pagamento monitorado</strong><small>Assim que o Mercado Pago aprovar, sua reserva muda para confirmada.</small></div>
+      </div>
+    </section>
 
-<div class="stats">
-<div class="card">
-<b id="okCount">0</b>
-<span>Presentes</span>
-</div>
+    <section class="checkout-grid shell">
+      <div class="panel form-panel">
+        <div class="section-title">
+          <span class="step">1</span>
+          <div><h2>Dados da reserva</h2><p>Preencha os dados do responsável pela compra.</p></div>
+        </div>
 
-<div class="card">
-<b id="noCount">0</b>
-<span>Faltando</span>
-</div>
+        <form id="checkoutForm" autocomplete="on">
+          <div class="field field-full">
+            <label for="trip">Passeio</label>
+            <select id="trip" required><option value="">Carregando passeios...</option></select>
+          </div>
 
-<div class="card">
-<b id="totalCount">0</b>
-<span>Total</span>
-</div>
-</div>
-</header>
+          <div class="field field-full">
+            <label for="variant">Opção</label>
+            <select id="variant" required disabled><option value="">Selecione o passeio primeiro</option></select>
+          </div>
 
-<main>
+          <div class="field">
+            <label for="quantity">Quantidade</label>
+            <select id="quantity" required>
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+            </select>
+          </div>
 
-<input type="text" class="search" id="search" placeholder="🔎 Buscar nome...">
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input id="name" name="name" type="text" placeholder="Nome e sobrenome" autocomplete="name" required>
+          </div>
 
-<div class="list" id="list">
-<div class="msg">Carregando nomes...</div>
-</div>
+          <div class="field">
+            <label for="cpf">CPF</label>
+            <input id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" required>
+          </div>
 
-<button class="reset" onclick="resetar()">♻️ Resetar Lista</button>
+          <div class="field">
+            <label for="phone">WhatsApp</label>
+            <input id="phone" name="phone" inputmode="tel" placeholder="(66) 99999-9999" autocomplete="tel" required>
+          </div>
 
-</main>
+          <div class="field field-full">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required>
+          </div>
 
-<footer>
-Sincronizado em tempo real 🔥
-</footer>
+          <div class="section-title payment-title">
+            <span class="step">2</span>
+            <div><h2>Forma de pagamento</h2><p>O valor é calculado conforme a opção selecionada.</p></div>
+          </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+          <div class="payment-options field-full">
+            <label class="pay-card active" data-method="pix">
+              <input type="radio" name="paymentMethod" value="pix" checked>
+              <span class="pay-icon">PIX</span>
+              <span><strong>PIX</strong><small>QR Code e PIX Copia e Cola</small></span>
+              <b id="pixPrice">—</b>
+            </label>
+            <label class="pay-card" data-method="card">
+              <input type="radio" name="paymentMethod" value="card">
+              <span class="pay-icon card-icon">▰</span>
+              <span><strong>Cartão</strong><small>Crédito em até 12x</small></span>
+              <b id="cardPrice">—</b>
+            </label>
+          </div>
 
-<script>
-const firebaseConfig = {
-apiKey: "AIzaSyAUssjdtiOs0oO9yhWV3dExsj7sGaB4jEA",
-authDomain: "onibus-morro-da-mesa.firebaseapp.com",
-databaseURL: "https://onibus-morro-da-mesa-default-rtdb.firebaseio.com",
-projectId: "onibus-morro-da-mesa",
-storageBucket: "onibus-morro-da-mesa.firebasestorage.app",
-messagingSenderId: "21597144482",
-appId: "1:21597144482:web:93a55c39d477e67c1d5efb"
-};
+          <label class="terms field-full">
+            <input id="terms" type="checkbox" required>
+            <span>Confirmo que os dados estão corretos e estou ciente das regras do passeio.</span>
+          </label>
 
-firebase.initializeApp(firebaseConfig);
+          <button class="primary-btn field-full" type="submit" id="payButton">
+            <span>Continuar para pagamento</span>
+            <strong id="buttonTotal">R$ —</strong>
+          </button>
+          <div id="formMessage" class="form-message field-full" role="status"></div>
+        </form>
+      </div>
 
-const ref = firebase.database().ref("/");
+      <aside class="panel summary-panel">
+        <span class="eyebrow">RESUMO</span>
+        <h2 id="summaryTitle">Selecione seu passeio</h2>
+        <p id="summaryMeta">As informações aparecerão aqui.</p>
+        <div class="summary-lines">
+          <div><span>Opção</span><strong id="summaryVariant">—</strong></div>
+          <div><span>Quantidade</span><strong id="summaryQty">1</strong></div>
+          <div><span>Pagamento</span><strong id="summaryMethod">PIX</strong></div>
+        </div>
+        <div class="summary-total"><span>Total</span><strong id="summaryTotal">R$ —</strong></div>
+        <div class="security-box">
+          <span class="lock">✓</span>
+          <div><strong>Você não precisa enviar comprovante.</strong><p>O sistema recebe a confirmação do Mercado Pago e registra automaticamente nome, passeio, valor e status.</p></div>
+        </div>
+        <div class="flow">
+          <span>1. Reserva</span><i></i><span>2. Pagamento</span><i></i><span>3. Confirmado</span>
+        </div>
+      </aside>
+    </section>
 
-const list = document.getElementById("list");
-const search = document.getElementById("search");
-const okCount = document.getElementById("okCount");
-const noCount = document.getElementById("noCount");
-const totalCount = document.getElementById("totalCount");
+    <section id="returnCard" class="return-card shell hidden" aria-live="polite">
+      <div class="status-icon" id="statusIcon">⏳</div>
+      <div>
+        <span class="eyebrow">STATUS DA RESERVA</span>
+        <h2 id="returnTitle">Verificando pagamento...</h2>
+        <p id="returnText">Aguarde enquanto confirmamos diretamente com o Mercado Pago.</p>
+        <div id="returnDetails" class="return-details"></div>
+      </div>
+    </section>
+  </main>
 
-let dados = {};
+  <footer>
+    <strong>Trilheiros de Rondonópolis</strong>
+    <span>Reservas online • Pagamento processado pelo Mercado Pago</span>
+  </footer>
 
-function vibrar(){
-if(navigator.vibrate) navigator.vibrate(25);
-}
-
-function render(){
-
-const filtro = search.value.toLowerCase().trim();
-
-list.innerHTML = "";
-
-const nomes = Object.keys(dados);
-
-const ordenados = nomes.sort((a,b)=>{
-if(dados[a] === dados[b]) return a.localeCompare(b);
-return dados[b] - dados[a];
-});
-
-const filtrados = ordenados.filter(nome =>
-nome.toLowerCase().includes(filtro)
-);
-
-let presentes = 0;
-
-nomes.forEach(nome=>{
-if(dados[nome] === true) presentes++;
-});
-
-if(filtrados.length === 0){
-list.innerHTML = '<div class="msg">Nenhum nome encontrado</div>';
-}
-
-filtrados.forEach(nome=>{
-
-const confirmado = dados[nome] === true;
-
-const div = document.createElement("div");
-
-div.className = "item " + (confirmado ? "ok":"no");
-
-div.innerHTML = confirmado ? "✅ " + nome : "❌ " + nome;
-
-div.onclick = ()=>{
-ref.child(nome).set(!confirmado);
-vibrar();
-};
-
-list.appendChild(div);
-
-});
-
-okCount.textContent = presentes;
-noCount.textContent = nomes.length - presentes;
-totalCount.textContent = nomes.length;
-
-}
-
-ref.on("value",(snap)=>{
-dados = snap.val() || {};
-render();
-});
-
-function resetar(){
-if(confirm("Deseja resetar toda lista?")){
-const novo = {};
-Object.keys(dados).forEach(nome=>{
-novo[nome] = false;
-});
-ref.set(novo);
-}
-}
-
-search.addEventListener("input",render);
-</script>
-
+  <script src="script.js" defer></script>
 </body>
 </html>
