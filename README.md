@@ -63,3 +63,7 @@ Acesse `/admin.html`. O login usa `ADMIN_PASSWORD` e cria uma sessão HttpOnly a
 ## Passeios e preços
 
 Os passeios ficam em `api/_catalog.js`. O backend calcula os valores a partir desse catálogo; portanto, o navegador não consegue alterar o preço enviado ao Mercado Pago.
+
+## Deploy
+
+Repositório conectado à Vercel para deploy automático a partir da branch `main`.
