@@ -1,6 +1,6 @@
 const { getTrip, getVariant } = require('./_catalog');
 const { json, onlyDigits, money, reservationIdFromRequest, mercadoPagoTokenMode, mpHeaders, appUrl } = require('./_utils');
-const { usedSeatsForTrip, findPreference, findPayment, reservationFitsCapacity, expirePreference, cancelPayment } = require('./_mpstore');
+const { usedSeatsForTrip, findPreference, findPayment } = require('./_mpstore');
 
 function validateCustomer(customer = {}) {
   const name = String(customer.name || '').trim();
@@ -58,19 +58,6 @@ async function postMp(path, body, idempotencyKey) {
   return { response, data };
 }
 
-async function checkCapacity(tripId, reservationId, capacity) {
-  for (const wait of [300, 800, 1600, 2500]) {
-    await new Promise((resolve) => setTimeout(resolve, wait));
-    try {
-      const fits = await reservationFitsCapacity(tripId, reservationId, capacity);
-      if (fits === true || fits === false) return fits;
-    } catch (error) {
-      console.warn('Capacity recheck failed', error?.message || error);
-    }
-  }
-  return null;
-}
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
 
@@ -95,6 +82,7 @@ module.exports = async function handler(req, res) {
     const total = money(unitPrice * quantity);
     const baseUrl = appUrl();
 
+    // Idempotência: reutiliza uma tentativa ativa se o navegador reenviar o formulário.
     if (method === 'pix') {
       const existing = await findPayment(id).catch(() => null);
       if (existing?.id && ['pending', 'approved'].includes(existing.status)) {
@@ -129,13 +117,18 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    // Confere capacidade ANTES de criar o pagamento. Se o Mercado Pago estiver
+    // indisponível para consultar reservas, a venda não é iniciada.
     let used;
     try {
       used = await usedSeatsForTrip(trip.id);
-    } catch {
+    } catch (error) {
+      console.error('Capacity lookup failed', error);
       return json(res, 503, { error: 'Não foi possível confirmar as vagas agora. Tente novamente em alguns segundos.' });
     }
-    if (used + seats > trip.capacity) return json(res, 409, { error: 'Não há vagas suficientes disponíveis.' });
+    if (used + seats > trip.capacity) {
+      return json(res, 409, { error: 'Não há vagas suficientes disponíveis.' });
+    }
 
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 30 * 60 * 1000);
@@ -174,29 +167,25 @@ module.exports = async function handler(req, res) {
         metadata
       };
 
-      const { response, data: payment } = await postMp('/v1/payments', paymentBody, `${requestId || id}-pix`);
+      const { response, data: payment } = await postMp('/v1/payments', paymentBody, requestId || id);
       if (!response.ok || !payment.id) {
         const detail = mpMessage(payment);
+        console.error('Mercado Pago PIX error', payment);
         return json(res, 502, { error: `Não foi possível gerar o PIX${detail ? `: ${detail}` : '.'}` });
-      }
-
-      const fits = await checkCapacity(trip.id, id, trip.capacity);
-      if (fits !== true) {
-        await cancelPayment(payment.id).catch(() => {});
-        return json(res, fits === false ? 409 : 503, {
-          error: fits === false ? 'As últimas vagas foram ocupadas. O PIX foi cancelado.' : 'Não foi possível validar a reserva. O PIX foi cancelado por segurança.'
-        });
       }
 
       const tx = pixTx(payment);
       if (payment.status !== 'approved' && !tx.qr_code && !tx.ticket_url) {
-        await cancelPayment(payment.id).catch(() => {});
-        return json(res, 502, { error: 'O Mercado Pago não retornou o QR Code/PIX Copia e Cola. Confirme se há uma chave PIX cadastrada na conta.' });
+        return json(res, 502, {
+          error: 'O Mercado Pago criou o pagamento, mas não retornou QR Code nem PIX Copia e Cola. Confirme se existe uma chave PIX cadastrada na conta Mercado Pago.'
+        });
       }
 
       return json(res, 201, pixPayload(payment, id, total, seats, expiresAt.toISOString()));
     }
 
+    // Cartão: Checkout Pro sem exclusões de meios de pagamento. O cliente escolhe
+    // o cartão dentro do ambiente seguro do Mercado Pago.
     const names = customer.name.split(/\s+/);
     const preferenceBody = {
       items: [{
@@ -233,15 +222,8 @@ module.exports = async function handler(req, res) {
     const { response, data: preference } = await postMp('/checkout/preferences', preferenceBody);
     if (!response.ok || !preference.id || !preference.init_point) {
       const detail = mpMessage(preference);
+      console.error('Mercado Pago preference error', preference);
       return json(res, 502, { error: `Não foi possível iniciar o pagamento com cartão${detail ? `: ${detail}` : '.'}` });
-    }
-
-    const fits = await checkCapacity(trip.id, id, trip.capacity);
-    if (fits !== true) {
-      await expirePreference(preference.id).catch(() => {});
-      return json(res, fits === false ? 409 : 503, {
-        error: fits === false ? 'As últimas vagas foram ocupadas. O checkout foi encerrado.' : 'Não foi possível validar a reserva. Tente novamente.'
-      });
     }
 
     return json(res, 201, {
