@@ -7,10 +7,16 @@ function b64url(input) {
   return Buffer.from(input).toString('base64url');
 }
 
+function sessionSecret() {
+  // Se ADMIN_SESSION_SECRET não estiver configurado, reutiliza com segurança
+  // o segredo privado do webhook que já existe apenas no backend da Vercel.
+  const secret = process.env.ADMIN_SESSION_SECRET || process.env.MERCADOPAGO_WEBHOOK_SECRET;
+  if (!secret) throw new Error('Segredo de sessão administrativa não configurado.');
+  return secret;
+}
+
 function sign(payload) {
-  const secret = process.env.ADMIN_SESSION_SECRET;
-  if (!secret) throw new Error('ADMIN_SESSION_SECRET não configurado.');
-  return crypto.createHmac('sha256', secret).update(payload).digest('base64url');
+  return crypto.createHmac('sha256', sessionSecret()).update(payload).digest('base64url');
 }
 
 function createSessionToken() {
