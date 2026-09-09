@@ -16,5 +16,12 @@
   $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginMessage').textContent='';const response=await fetch('/api/admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('adminPassword').value})});const data=await response.json();if(!response.ok)return $('loginMessage').textContent=data.error||'Não foi possível entrar.';$('adminPassword').value='';await load()});
   $('logoutBtn').addEventListener('click',async()=>{await fetch('/api/admin-logout',{method:'POST'});rows=[];showLogin()});$('refreshBtn').addEventListener('click',()=>load().catch(e=>alert(e.message)));$('searchAdmin').addEventListener('input',render);$('statusFilter').addEventListener('change',render);$('tripFilter').addEventListener('change',render);$('clearFilters').addEventListener('click',()=>{$('searchAdmin').value='';$('statusFilter').value='';$('tripFilter').value='';render()});
   $('exportBtn').addEventListener('click',()=>{const header=['Reserva','Nome','CPF','WhatsApp','Email','Passeio','Opção','Quantidade','Valor','Forma','Status','Pagamento Mercado Pago','Data'];const csvRows=rows.map(r=>[r.id,r.customer?.name,r.customer?.cpf,r.customer?.phone,r.customer?.email,r.tripTitle,r.variantName,r.quantity,r.amountPaid??r.amount,paymentLabel[r.paymentMethod]||r.paymentMethod,statusLabel[r.status]||r.status,r.mpPaymentId||'',r.approvedAt||r.createdAt]);const csv=[header,...csvRows].map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`reservas-trilheiros-${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href)});
-  load().catch(()=>showLogin());
+
+  async function init(){
+    rows=[];
+    showLogin();
+    $('dashboardSection').classList.add('hidden');
+    await fetch('/api/admin-logout',{method:'POST',cache:'no-store'}).catch(()=>{});
+  }
+  init();
 })();
