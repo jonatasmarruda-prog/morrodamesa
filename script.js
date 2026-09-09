@@ -1,8 +1,19 @@
 (() => {
-  const state = { trips: [], trip: null, variant: null, method: 'pix', quantity: 1 };
+  const state = { trips: [], trip: null, variant: null, method: 'pix', quantity: 1, checkoutRequestId: null };
   const $ = (id) => document.getElementById(id);
   const money = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0));
   const dateBR = (iso) => iso ? new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC', day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(`${iso}T12:00:00Z`)) : '';
+
+  function newRequestId() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function resetCheckoutAttempt() {
+    state.checkoutRequestId = null;
+  }
 
   function selectedPrice(method = state.method) {
     if (!state.variant) return 0;
@@ -35,6 +46,7 @@
   }
 
   $('trip').addEventListener('change', (e) => {
+    resetCheckoutAttempt();
     state.trip = state.trips.find(t => t.id === e.target.value) || null;
     state.variant = null;
     if (!state.trip) {
@@ -48,17 +60,20 @@
   });
 
   $('variant').addEventListener('change', (e) => {
+    resetCheckoutAttempt();
     state.variant = state.trip?.variants.find(v => v.id === e.target.value) || null;
     updateSummary();
   });
 
   $('quantity').addEventListener('change', (e) => {
+    resetCheckoutAttempt();
     state.quantity = Number(e.target.value || 1);
     updateSummary();
   });
 
   document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
     radio.addEventListener('change', () => {
+      resetCheckoutAttempt();
       state.method = radio.value;
       document.querySelectorAll('.pay-card').forEach(c => c.classList.toggle('active', c.dataset.method === state.method));
       updateSummary();
@@ -73,13 +88,16 @@
     if (d.length <= 10) return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
     return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
   }
-  $('cpf').addEventListener('input', (e) => e.target.value = maskCpf(e.target.value));
-  $('phone').addEventListener('input', (e) => e.target.value = maskPhone(e.target.value));
+  $('cpf').addEventListener('input', (e) => { resetCheckoutAttempt(); e.target.value = maskCpf(e.target.value); });
+  $('phone').addEventListener('input', (e) => { resetCheckoutAttempt(); e.target.value = maskPhone(e.target.value); });
+  ['name', 'email'].forEach((id) => $(id).addEventListener('input', resetCheckoutAttempt));
 
   $('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     $('formMessage').textContent = '';
     if (!state.trip || !state.variant) return $('formMessage').textContent = 'Selecione o passeio e a opção.';
+
+    if (!state.checkoutRequestId) state.checkoutRequestId = newRequestId();
 
     const button = $('payButton');
     button.disabled = true;
@@ -90,6 +108,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          requestId: state.checkoutRequestId,
           tripId: state.trip.id,
           variantId: state.variant.id,
           quantity: state.quantity,
