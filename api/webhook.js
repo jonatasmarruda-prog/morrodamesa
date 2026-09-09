@@ -1,19 +1,6 @@
-const crypto = require('crypto');
+const { WebhookSignatureValidator } = require('mercadopago');
 const { getFirestore } = require('./_firebase');
 const { json, mpHeaders, mapMpStatus } = require('./_utils');
-
-function safeEqualHex(a, b) {
-  try {
-    const left = String(a || '').trim();
-    const right = String(b || '').trim();
-    if (!/^[a-f0-9]{64}$/i.test(left) || !/^[a-f0-9]{64}$/i.test(right)) return false;
-    const x = Buffer.from(left, 'hex');
-    const y = Buffer.from(right, 'hex');
-    return x.length === y.length && crypto.timingSafeEqual(x, y);
-  } catch {
-    return false;
-  }
-}
 
 function bodyObject(req) {
   if (typeof req.body === 'string') {
@@ -30,37 +17,20 @@ function dataIdFromRequest(req, body = {}) {
   return String(queryId || body.data?.id || '').trim();
 }
 
-function validSignature(req, body) {
+function validateSignature(req, body) {
   const secret = String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim();
-  if (!secret) return false;
+  if (!secret) throw new Error('MERCADOPAGO_WEBHOOK_SECRET não configurado.');
 
   const xSignature = String(req.headers['x-signature'] || '').trim();
-  if (!xSignature) return false;
-
-  let ts = '';
-  let v1 = '';
-  xSignature.split(',').forEach((part) => {
-    const idx = part.indexOf('=');
-    if (idx === -1) return;
-    const key = part.slice(0, idx).trim();
-    const value = part.slice(idx + 1).trim();
-    if (key === 'ts') ts = value;
-    if (key === 'v1') v1 = value;
-  });
-  if (!ts || !v1) return false;
-
-  const dataId = dataIdFromRequest(req, body);
   const xRequestId = String(req.headers['x-request-id'] || '').trim();
+  const dataId = dataIdFromRequest(req, body);
 
-  // O Mercado Pago orienta omitir do manifesto qualquer par cujo valor
-  // não esteja presente na notificação recebida.
-  let manifest = '';
-  if (dataId) manifest += `id:${dataId};`;
-  if (xRequestId) manifest += `request-id:${xRequestId};`;
-  if (ts) manifest += `ts:${ts};`;
-
-  const expected = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
-  return safeEqualHex(expected, v1);
+  WebhookSignatureValidator.validate({
+    xSignature,
+    xRequestId,
+    dataId,
+    secret
+  });
 }
 
 async function fetchPayment(id) {
@@ -72,25 +42,35 @@ async function fetchPayment(id) {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
 
-  try {
-    const body = bodyObject(req);
-    if (!validSignature(req, body)) {
-      return json(res, 401, {
-        error: 'Assinatura inválida.',
-        signatureHeader: Boolean(req.headers['x-signature']),
-        requestIdHeader: Boolean(req.headers['x-request-id']),
-        dataIdPresent: Boolean(dataIdFromRequest(req, body)),
-        secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
-      });
-    }
+  const body = bodyObject(req);
 
+  try {
+    validateSignature(req, body);
+  } catch (error) {
+    console.warn('Webhook signature rejected', {
+      name: error?.name || 'Error',
+      signatureHeader: Boolean(req.headers['x-signature']),
+      requestIdHeader: Boolean(req.headers['x-request-id']),
+      dataIdPresent: Boolean(dataIdFromRequest(req, body)),
+      secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
+    });
+    return json(res, 401, {
+      error: 'Assinatura inválida.',
+      signatureHeader: Boolean(req.headers['x-signature']),
+      requestIdHeader: Boolean(req.headers['x-request-id']),
+      dataIdPresent: Boolean(dataIdFromRequest(req, body)),
+      secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
+    });
+  }
+
+  try {
     if (body.type !== 'payment') return json(res, 200, { received: true });
 
     const paymentId = dataIdFromRequest(req, body);
     if (!paymentId) return json(res, 200, { received: true });
 
-    // O simulador oficial envia live_mode=false e um Data ID fictício.
-    // Após validar a assinatura, basta confirmar o recebimento com HTTP 200.
+    // O simulador oficial usa live_mode=false e um ID fictício.
+    // A assinatura já foi validada pelo SDK oficial, então confirmamos o recebimento.
     if (body.live_mode === false) {
       return json(res, 200, { received: true, simulated: true });
     }
@@ -127,7 +107,7 @@ module.exports = async function handler(req, res) {
 
     return json(res, 200, { received: true });
   } catch (error) {
-    console.error('Webhook error', error);
+    console.error('Webhook processing error', error);
     return json(res, 500, { error: 'Falha ao processar notificação.' });
   }
 };
