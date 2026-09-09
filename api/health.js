@@ -1,11 +1,10 @@
-const { json, mpHeaders } = require('./_utils');
+const { json, mpHeaders, mercadoPagoTokenMode } = require('./_utils');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return json(res, 405, { error: 'Método não permitido.' });
 
-  const token = String(process.env.MERCADOPAGO_ACCESS_TOKEN || '');
   const configured = {
-    mercadoPago: Boolean(token),
+    mercadoPago: Boolean(process.env.MERCADOPAGO_ACCESS_TOKEN),
     webhook: Boolean(process.env.MERCADOPAGO_WEBHOOK_SECRET),
     appUrl: Boolean(process.env.APP_URL)
   };
@@ -20,13 +19,17 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  const tokenMode = token.startsWith('TEST-') ? 'test' : (token ? 'production-or-app' : 'missing');
+  const tokenMode = mercadoPagoTokenMode();
+  const productionCredential = tokenMode === 'production';
+  const integrationOk = configured.mercadoPago && configured.webhook && configured.appUrl && mercadoPagoApi;
 
   return json(res, 200, {
-    ok: configured.mercadoPago && configured.webhook && configured.appUrl && mercadoPagoApi,
+    ok: integrationOk,
+    readyForSales: integrationOk && productionCredential,
     configured,
     mercadoPagoApi,
     tokenMode,
+    productionCredential,
     reservationsSource: 'Mercado Pago',
     firebaseRequired: false
   });
