@@ -1,5 +1,13 @@
 (() => {
-  const state = { trips: [], trip: null, variant: null, method: 'pix', quantity: 1, checkoutRequestId: null };
+  const state = {
+    trips: [],
+    trip: null,
+    variant: null,
+    method: 'pix',
+    quantity: 1,
+    checkoutRequestId: null,
+    pollSeq: 0
+  };
   const $ = (id) => document.getElementById(id);
   const money = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0));
   const dateBR = (iso) => iso ? new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC', day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(`${iso}T12:00:00Z`)) : '';
@@ -13,6 +21,8 @@
 
   function resetCheckoutAttempt() {
     state.checkoutRequestId = null;
+    state.pollSeq += 1;
+    $('pixCard')?.classList.add('hidden');
   }
 
   function selectedPrice(method = state.method) {
@@ -83,14 +93,109 @@
   function maskCpf(value) {
     return value.replace(/\D/g, '').slice(0, 11).replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   }
+
   function maskPhone(value) {
     const d = value.replace(/\D/g, '').slice(0, 11);
     if (d.length <= 10) return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
     return d.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
   }
+
   $('cpf').addEventListener('input', (e) => { resetCheckoutAttempt(); e.target.value = maskCpf(e.target.value); });
   $('phone').addEventListener('input', (e) => { resetCheckoutAttempt(); e.target.value = maskPhone(e.target.value); });
   ['name', 'email'].forEach((id) => $(id).addEventListener('input', resetCheckoutAttempt));
+
+  async function copyPixCode() {
+    const code = $('pixCode').value;
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      $('pixCode').focus();
+      $('pixCode').select();
+      document.execCommand('copy');
+    }
+    $('pixCopyMessage').textContent = '✓ Código PIX copiado. Abra o app do seu banco e cole no PIX Copia e Cola.';
+    $('copyPixBtn').querySelector('span').textContent = 'Código copiado!';
+    setTimeout(() => {
+      $('copyPixBtn').querySelector('span').textContent = 'Copiar código PIX';
+    }, 2500);
+  }
+
+  $('copyPixBtn').addEventListener('click', copyPixCode);
+
+  function renderReservation(r) {
+    const approved = r.status === 'approved';
+    const pending = r.status === 'pending';
+    $('statusIcon').textContent = approved ? '✅' : pending ? '⏳' : '⚠️';
+    $('returnTitle').textContent = approved ? 'Pagamento aprovado. Reserva confirmada!' : pending ? 'Pagamento em processamento' : 'Pagamento não confirmado';
+    $('returnText').textContent = approved ? 'Tudo certo. O sistema já registrou seu pagamento automaticamente.' : pending ? 'O Mercado Pago ainda não confirmou o pagamento. Esta tela será atualizada automaticamente.' : 'O pagamento não foi aprovado. Você pode iniciar uma nova tentativa de pagamento.';
+    $('returnDetails').innerHTML = `<span>${r.id}</span><span>${r.tripTitle}</span><span>${r.customerName}</span><span>${money(r.amount)}</span>`;
+    return approved;
+  }
+
+  async function pollReservation(reservationId, seq) {
+    for (let i = 0; i < 100 && seq === state.pollSeq; i++) {
+      try {
+        const response = await fetch(`/api/payment-status?reservation=${encodeURIComponent(reservationId)}`, { cache: 'no-store' });
+        const data = await response.json();
+        if (response.ok && data.reservation) {
+          if (data.reservation.status === 'approved') {
+            $('pixStatusText').textContent = 'Pagamento aprovado! Reserva confirmada.';
+            $('pixStatusText').classList.add('approved-text');
+            $('returnCard').classList.remove('hidden');
+            renderReservation(data.reservation);
+            $('returnCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+          }
+          if (['rejected', 'cancelled', 'refunded'].includes(data.reservation.status)) {
+            $('pixStatusText').textContent = 'Pagamento não confirmado. Gere uma nova tentativa.';
+            return;
+          }
+        }
+      } catch {}
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+  }
+
+  function showPix(data) {
+    if (data.status === 'approved') {
+      $('returnCard').classList.remove('hidden');
+      $('statusIcon').textContent = '✅';
+      $('returnTitle').textContent = 'Pagamento aprovado. Reserva confirmada!';
+      $('returnText').textContent = 'Tudo certo. O pagamento já está confirmado.';
+      $('returnDetails').innerHTML = `<span>${data.reservationId}</span><span>${money(data.amount)}</span>`;
+      $('returnCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const pix = data.pix || {};
+    $('pixAmount').textContent = money(data.amount);
+    $('pixCode').value = pix.qrCode || '';
+    $('pixReservationText').textContent = `Reserva ${data.reservationId} • confirmação automática`;
+    $('pixCopyMessage').textContent = '';
+    $('pixStatusText').textContent = 'Aguardando pagamento...';
+    $('pixStatusText').classList.remove('approved-text');
+
+    if (pix.qrCodeBase64) {
+      $('pixQrImage').src = `data:image/png;base64,${pix.qrCodeBase64}`;
+      $('pixQrImage').closest('.pix-qr-wrap').classList.remove('hidden');
+    } else {
+      $('pixQrImage').removeAttribute('src');
+      $('pixQrImage').closest('.pix-qr-wrap').classList.add('hidden');
+    }
+
+    if (pix.ticketUrl) {
+      $('pixTicketLink').href = pix.ticketUrl;
+      $('pixTicketLink').classList.remove('hidden');
+    } else {
+      $('pixTicketLink').classList.add('hidden');
+    }
+
+    $('pixCard').classList.remove('hidden');
+    $('pixCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const seq = ++state.pollSeq;
+    pollReservation(data.reservationId, seq);
+  }
 
   $('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -101,7 +206,7 @@
 
     const button = $('payButton');
     button.disabled = true;
-    button.querySelector('span').textContent = 'Criando pagamento seguro...';
+    button.querySelector('span').textContent = state.method === 'pix' ? 'Gerando PIX seguro...' : 'Criando pagamento seguro...';
 
     try {
       const response = await fetch('/api/checkout', {
@@ -118,6 +223,15 @@
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Não foi possível iniciar o pagamento.');
+
+      if (data.paymentMode === 'pix_direct') {
+        showPix(data);
+        button.disabled = false;
+        button.querySelector('span').textContent = 'Mostrar PIX novamente';
+        return;
+      }
+
+      if (!data.checkoutUrl) throw new Error('O Mercado Pago não retornou o checkout do cartão.');
       window.location.href = data.checkoutUrl;
     } catch (error) {
       $('formMessage').textContent = error.message;
@@ -126,29 +240,16 @@
     }
   });
 
-  function renderReservation(r) {
-    const approved = r.status === 'approved';
-    const pending = r.status === 'pending';
-    $('statusIcon').textContent = approved ? '✅' : pending ? '⏳' : '⚠️';
-    $('returnTitle').textContent = approved ? 'Pagamento aprovado. Reserva confirmada!' : pending ? 'Pagamento em processamento' : 'Pagamento não confirmado';
-    $('returnText').textContent = approved ? 'Tudo certo. O sistema já registrou seu pagamento automaticamente.' : pending ? 'O Mercado Pago ainda não confirmou o pagamento. Esta tela será atualizada automaticamente.' : 'O pagamento não foi aprovado. Você pode iniciar uma nova tentativa de pagamento.';
-    $('returnDetails').innerHTML = `<span>${r.id}</span><span>${r.tripTitle}</span><span>${r.customerName}</span><span>${money(r.amount)}</span>`;
-    return approved;
-  }
-
   async function checkReturn() {
     const params = new URLSearchParams(location.search);
     const reservation = params.get('reserva') || params.get('external_reference');
     if (!reservation) return;
     $('returnCard').classList.remove('hidden');
     $('returnCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const paymentId = params.get('payment_id') || params.get('collection_id') || '';
 
     for (let i = 0; i < 8; i++) {
       try {
-        const qs = new URLSearchParams({ reservation });
-        if (paymentId) qs.set('payment_id', paymentId);
-        const response = await fetch(`/api/payment-status?${qs}`, { cache: 'no-store' });
+        const response = await fetch(`/api/payment-status?reservation=${encodeURIComponent(reservation)}`, { cache: 'no-store' });
         const data = await response.json();
         if (response.ok && data.reservation && renderReservation(data.reservation)) break;
       } catch {}
