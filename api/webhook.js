@@ -4,32 +4,54 @@ const { json, mpHeaders, mapMpStatus } = require('./_utils');
 
 function safeEqualHex(a, b) {
   try {
-    const x = Buffer.from(String(a || ''), 'hex');
-    const y = Buffer.from(String(b || ''), 'hex');
-    return x.length > 0 && x.length === y.length && crypto.timingSafeEqual(x, y);
+    const left = String(a || '').trim();
+    const right = String(b || '').trim();
+    if (!/^[a-f0-9]{64}$/i.test(left) || !/^[a-f0-9]{64}$/i.test(right)) return false;
+    const x = Buffer.from(left, 'hex');
+    const y = Buffer.from(right, 'hex');
+    return x.length === y.length && crypto.timingSafeEqual(x, y);
   } catch {
     return false;
   }
 }
 
-function validSignature(req) {
-  const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+function bodyObject(req) {
+  if (typeof req.body === 'string') {
+    try { return JSON.parse(req.body); } catch { return {}; }
+  }
+  return req.body || {};
+}
+
+function dataIdFromRequest(req, body = {}) {
+  const queryId = req.query?.['data.id']
+    || req.query?.data_id
+    || (req.query?.data && typeof req.query.data === 'object' ? req.query.data.id : '')
+    || '';
+  return String(queryId || body.data?.id || '').trim();
+}
+
+function validSignature(req, body) {
+  const secret = String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim();
   if (!secret) return false;
-  const xSignature = req.headers['x-signature'];
-  const xRequestId = req.headers['x-request-id'];
-  const rawId = req.query?.['data.id'] || req.query?.data_id || '';
-  const dataId = String(rawId || '').toLowerCase();
+
+  const xSignature = String(req.headers['x-signature'] || '').trim();
+  const xRequestId = String(req.headers['x-request-id'] || '').trim();
+  const dataId = dataIdFromRequest(req, body);
   if (!xSignature || !xRequestId || !dataId) return false;
 
   let ts = '';
   let v1 = '';
-  String(xSignature).split(',').forEach((part) => {
-    const [key, value] = part.split('=', 2).map((v) => v?.trim());
-    if (key === 'ts') ts = value || '';
-    if (key === 'v1') v1 = value || '';
+  xSignature.split(',').forEach((part) => {
+    const idx = part.indexOf('=');
+    if (idx === -1) return;
+    const key = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1).trim();
+    if (key === 'ts') ts = value;
+    if (key === 'v1') v1 = value;
   });
   if (!ts || !v1) return false;
 
+  // Mercado Pago assina exatamente o data.id recebido. Não alterar maiúsculas/minúsculas.
   const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
   const expected = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
   return safeEqualHex(expected, v1);
@@ -45,13 +67,27 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
 
   try {
-    if (!validSignature(req)) return json(res, 401, { error: 'Assinatura inválida.' });
+    const body = bodyObject(req);
+    if (!validSignature(req, body)) {
+      return json(res, 401, {
+        error: 'Assinatura inválida.',
+        signatureHeader: Boolean(req.headers['x-signature']),
+        requestIdHeader: Boolean(req.headers['x-request-id']),
+        dataIdPresent: Boolean(dataIdFromRequest(req, body)),
+        secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
+      });
+    }
 
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     if (body.type !== 'payment') return json(res, 200, { received: true });
 
-    const paymentId = body.data?.id || req.query?.['data.id'] || req.query?.data_id;
+    const paymentId = dataIdFromRequest(req, body);
     if (!paymentId) return json(res, 200, { received: true });
+
+    // O simulador oficial envia live_mode=false e um Data ID fictício.
+    // Após validar a assinatura, basta confirmar o recebimento com HTTP 200.
+    if (body.live_mode === false) {
+      return json(res, 200, { received: true, simulated: true });
+    }
 
     const payment = await fetchPayment(paymentId);
     const reservationId = String(payment.external_reference || '');
