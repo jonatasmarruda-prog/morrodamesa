@@ -1,6 +1,6 @@
-const { getFirestore } = require('./_firebase');
 const { getTrip, getVariant } = require('./_catalog');
 const { json, onlyDigits, money, reservationId, mpHeaders, appUrl } = require('./_utils');
+const { usedSeatsForTrip } = require('./_mpstore');
 
 function validateCustomer(customer = {}) {
   const name = String(customer.name || '').trim();
@@ -16,23 +16,15 @@ function validateCustomer(customer = {}) {
   return { name, email, phone, cpf };
 }
 
-async function heldSeats(db, tripId) {
-  const snap = await db.collection('reservations').where('tripId', '==', tripId).get();
-  const now = Date.now();
-  let total = 0;
-  snap.forEach((doc) => {
-    const row = doc.data();
-    const activePending = row.status === 'pending' && new Date(row.expiresAt || 0).getTime() > now;
-    if (row.status === 'approved' || activePending) total += Number(row.seats || 1);
-  });
-  return total;
+function exclusionsFor(method) {
+  if (method === 'pix') return ['credit_card', 'debit_card', 'prepaid_card', 'ticket', 'atm'];
+  return ['bank_transfer', 'ticket', 'atm'];
 }
 
-function exclusionsFor(method) {
-  if (method === 'pix') {
-    return ['credit_card', 'debit_card', 'prepaid_card', 'ticket', 'atm'];
-  }
-  return ['bank_transfer', 'ticket', 'atm'];
+function splitPhone(phone) {
+  const digits = onlyDigits(phone);
+  if (digits.length < 10) return { area_code: '', number: digits };
+  return { area_code: digits.slice(0, 2), number: digits.slice(2) };
 }
 
 module.exports = async function handler(req, res) {
@@ -52,8 +44,12 @@ module.exports = async function handler(req, res) {
     const seats = seatsPerUnit * quantity;
     const unitPrice = paymentMethod === 'card' ? variant.cardPrice : variant.pixPrice;
     const total = money(unitPrice * quantity);
-    const db = getFirestore();
-    const used = await heldSeats(db, trip.id);
+
+    // A ocupação é calculada diretamente a partir das preferências e pagamentos do Mercado Pago.
+    const used = await usedSeatsForTrip(trip.id).catch((error) => {
+      console.warn('Capacity lookup failed; checkout continues without blocking', error?.message || error);
+      return 0;
+    });
     if (used + seats > trip.capacity) {
       return json(res, 409, { error: 'Não há vagas suficientes disponíveis para esta quantidade.' });
     }
@@ -62,34 +58,9 @@ module.exports = async function handler(req, res) {
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 30 * 60 * 1000);
     const baseUrl = appUrl();
-
-    const reservation = {
-      id,
-      tripId: trip.id,
-      tripTitle: trip.title,
-      tripDate: trip.date,
-      location: trip.location,
-      variantId: variant.id,
-      variantName: variant.name,
-      quantity,
-      seatsPerUnit,
-      seats,
-      unitPrice,
-      amount: total,
-      paymentMethod,
-      status: 'pending',
-      mpStatus: 'pending',
-      mpPaymentId: null,
-      mpPreferenceId: null,
-      customer,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString()
-    };
-
-    await db.collection('reservations').doc(id).set(reservation);
-
     const names = customer.name.split(/\s+/);
+    const phone = splitPhone(customer.phone);
+
     const preference = {
       items: [{
         id: `${trip.id}-${variant.id}`,
@@ -104,6 +75,7 @@ module.exports = async function handler(req, res) {
         name: names.shift() || customer.name,
         surname: names.join(' '),
         email: customer.email,
+        phone,
         identification: { type: 'CPF', number: customer.cpf }
       },
       external_reference: id,
@@ -119,15 +91,23 @@ module.exports = async function handler(req, res) {
       expiration_date_from: now.toISOString(),
       expiration_date_to: expiresAt.toISOString(),
       payment_methods: {
-        excluded_payment_types: exclusionsFor(paymentMethod).map((id) => ({ id })),
+        excluded_payment_types: exclusionsFor(paymentMethod).map((typeId) => ({ id: typeId })),
         installments: paymentMethod === 'card' ? 12 : 1
       },
       metadata: {
         reservation_id: id,
         trip_id: trip.id,
+        trip_title: trip.title,
+        trip_date: trip.date,
+        location: trip.location,
         variant_id: variant.id,
+        variant_name: variant.name,
         payment_choice: paymentMethod,
-        seats
+        quantity,
+        seats_per_unit: seatsPerUnit,
+        seats,
+        unit_price: Number(unitPrice),
+        amount: total
       }
     };
 
@@ -136,25 +116,16 @@ module.exports = async function handler(req, res) {
       headers: mpHeaders(),
       body: JSON.stringify(preference)
     });
-    const mp = await mpResponse.json();
+    const mp = await mpResponse.json().catch(() => ({}));
 
     if (!mpResponse.ok || !mp.id || !mp.init_point) {
-      await db.collection('reservations').doc(id).update({
-        status: 'checkout_error',
-        updatedAt: new Date().toISOString(),
-        error: mp.message || 'Erro ao criar checkout.'
-      });
       console.error('Mercado Pago preference error', mp);
       return json(res, 502, { error: 'Não foi possível iniciar o pagamento. Tente novamente.' });
     }
 
-    await db.collection('reservations').doc(id).update({
-      mpPreferenceId: mp.id,
-      updatedAt: new Date().toISOString()
-    });
-
     return json(res, 201, {
       reservationId: id,
+      preferenceId: mp.id,
       checkoutUrl: mp.init_point,
       amount: total,
       seats,
