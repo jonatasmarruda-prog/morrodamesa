@@ -1,6 +1,5 @@
 const { WebhookSignatureValidator } = require('mercadopago');
-const { getFirestore } = require('./_firebase');
-const { json, mpHeaders, mapMpStatus } = require('./_utils');
+const { json, mpHeaders } = require('./_utils');
 
 function bodyObject(req) {
   if (typeof req.body === 'string') {
@@ -21,14 +20,10 @@ function validateSignature(req, body) {
   const secret = String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim();
   if (!secret) throw new Error('MERCADOPAGO_WEBHOOK_SECRET não configurado.');
 
-  const xSignature = String(req.headers['x-signature'] || '').trim();
-  const xRequestId = String(req.headers['x-request-id'] || '').trim();
-  const dataId = dataIdFromRequest(req, body);
-
   WebhookSignatureValidator.validate({
-    xSignature,
-    xRequestId,
-    dataId,
+    xSignature: String(req.headers['x-signature'] || '').trim(),
+    xRequestId: String(req.headers['x-request-id'] || '').trim(),
+    dataId: dataIdFromRequest(req, body),
     secret
   });
 }
@@ -41,71 +36,33 @@ async function fetchPayment(id) {
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Método não permitido.' });
-
   const body = bodyObject(req);
 
   try {
     validateSignature(req, body);
   } catch (error) {
-    console.warn('Webhook signature rejected', {
-      name: error?.name || 'Error',
-      signatureHeader: Boolean(req.headers['x-signature']),
-      requestIdHeader: Boolean(req.headers['x-request-id']),
-      dataIdPresent: Boolean(dataIdFromRequest(req, body)),
-      secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
-    });
-    return json(res, 401, {
-      error: 'Assinatura inválida.',
-      signatureHeader: Boolean(req.headers['x-signature']),
-      requestIdHeader: Boolean(req.headers['x-request-id']),
-      dataIdPresent: Boolean(dataIdFromRequest(req, body)),
-      secretConfigured: Boolean(String(process.env.MERCADOPAGO_WEBHOOK_SECRET || '').trim())
-    });
+    console.warn('Webhook signature rejected', { name: error?.name || 'Error' });
+    return json(res, 401, { error: 'Assinatura inválida.' });
   }
 
   try {
     if (body.type !== 'payment') return json(res, 200, { received: true });
-
     const paymentId = dataIdFromRequest(req, body);
     if (!paymentId) return json(res, 200, { received: true });
 
-    // O simulador oficial usa live_mode=false e um ID fictício.
-    // A assinatura já foi validada pelo SDK oficial, então confirmamos o recebimento.
-    if (body.live_mode === false) {
-      return json(res, 200, { received: true, simulated: true });
-    }
+    // O simulador oficial usa live_mode=false e ID fictício.
+    if (body.live_mode === false) return json(res, 200, { received: true, simulated: true });
 
+    // Em produção, consultamos o pagamento na API oficial antes de confirmar o recebimento.
     const payment = await fetchPayment(paymentId);
     const reservationId = String(payment.external_reference || '');
-    if (!/^TR-\d{4}-[A-F0-9]{6}$/.test(reservationId)) return json(res, 200, { received: true });
+    if (reservationId && !/^TR-\d{4}-[A-F0-9]{6}$/.test(reservationId)) {
+      return json(res, 200, { received: true, ignored: true });
+    }
 
-    const db = getFirestore();
-    const docRef = db.collection('reservations').doc(reservationId);
-    const doc = await docRef.get();
-    if (!doc.exists) return json(res, 200, { received: true });
-
-    const data = doc.data();
-    const status = mapMpStatus(payment.status);
-    const expected = Number(data.amount || 0);
-    const paid = Number(payment.transaction_amount || 0);
-    const amountMatches = Math.abs(expected - paid) < 0.01;
-    const finalStatus = status === 'approved' && !amountMatches ? 'review' : status;
-
-    await docRef.update({
-      status: finalStatus,
-      mpStatus: payment.status || status,
-      mpStatusDetail: payment.status_detail || null,
-      mpPaymentId: String(payment.id),
-      paymentTypeId: payment.payment_type_id || null,
-      paymentMethodId: payment.payment_method_id || null,
-      installments: payment.installments || 1,
-      amountPaid: paid,
-      amountMatches,
-      approvedAt: payment.date_approved || null,
-      updatedAt: new Date().toISOString()
-    });
-
-    return json(res, 200, { received: true });
+    // Não é necessário gravar em banco próprio: o painel e o retorno consultam
+    // a situação diretamente no Mercado Pago, que é a fonte de verdade.
+    return json(res, 200, { received: true, paymentStatus: payment.status || null });
   } catch (error) {
     console.error('Webhook processing error', error);
     return json(res, 500, { error: 'Falha ao processar notificação.' });
