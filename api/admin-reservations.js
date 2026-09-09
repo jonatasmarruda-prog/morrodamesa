@@ -1,17 +1,13 @@
-const { getFirestore } = require('./_firebase');
 const { verifySession } = require('./_auth');
 const { json } = require('./_utils');
+const { listReservations } = require('./_mpstore');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return json(res, 405, { error: 'Método não permitido.' });
   if (!verifySession(req)) return json(res, 401, { error: 'Não autorizado.' });
 
   try {
-    const db = getFirestore();
-    const snap = await db.collection('reservations').orderBy('createdAt', 'desc').limit(500).get();
-    const rows = [];
-    snap.forEach((doc) => rows.push(doc.data()));
-
+    const rows = await listReservations(50);
     const summary = rows.reduce((acc, row) => {
       if (row.status === 'approved') {
         acc.approved += 1;
@@ -23,9 +19,9 @@ module.exports = async function handler(req, res) {
       return acc;
     }, { approved: 0, pending: 0, revenue: 0, seats: 0, total: rows.length });
 
-    return json(res, 200, { rows, summary });
+    return json(res, 200, { rows, summary, source: 'mercadopago' });
   } catch (error) {
     console.error(error);
-    return json(res, 500, { error: 'Não foi possível carregar as reservas.' });
+    return json(res, 500, { error: 'Não foi possível carregar as reservas do Mercado Pago.' });
   }
 };
