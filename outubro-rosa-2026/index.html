@@ -23,7 +23,7 @@
     .timeline{max-width:760px;margin:auto}.step{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:14px 0}.dot{width:50px;height:50px;border-radius:50%;background:var(--rose);display:grid;place-items:center;font-size:25px}.step h3{margin:0;font-size:21px}.step p{margin:4px 0 0;color:var(--muted)}
     .shirt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.shirt-grid img{border-radius:22px;box-shadow:var(--shadow);width:100%;background:#fff}
     .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}.price{font-size:42px;color:var(--pink);font-weight:900}.package{position:relative}.package.recommended{border:2px solid var(--pink)}.tag{position:absolute;top:14px;right:14px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900}
-    .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participants{display:grid;gap:16px;margin-top:20px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.radio-card:hover{transform:translateY(-2px);border-color:#e5a4c5;box-shadow:0 10px 24px rgba(106,30,70,.08)}.radio-card:has(input:checked){border-color:var(--pink);background:linear-gradient(135deg,#fff3f8,#fff);box-shadow:0 12px 28px rgba(197,47,120,.13)}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participant-hint{margin:16px 0 8px;padding:13px 15px;border-radius:14px;background:linear-gradient(135deg,#fff4f8,#fff);border:1px solid var(--line);color:var(--muted);font-weight:750;font-size:15px}.participants{display:grid;gap:16px;margin-top:12px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant.invalid{border-color:#d84c65;box-shadow:0 0 0 3px rgba(216,76,101,.09)}.participant.invalid .pname{border-color:#d84c65}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.radio-card:hover{transform:translateY(-2px);border-color:#e5a4c5;box-shadow:0 10px 24px rgba(106,30,70,.08)}.radio-card:has(input:checked){border-color:var(--pink);background:linear-gradient(135deg,#fff3f8,#fff);box-shadow:0 12px 28px rgba(197,47,120,.13)}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .summary{background:#fff7fb;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}.summary-row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px dashed #e7c4d4;padding:10px 0}.summary-row:last-child{border:0}.total{font-size:30px;font-weight:900;color:var(--pink)}
     .payment-choice-title{text-align:center;font-size:20px;font-weight:900;margin:4px 0 14px;color:var(--ink)}.pay-tabs{display:flex;gap:14px;margin-bottom:20px}.pay-tabs button{flex:1}
     .pay-choice{position:relative;min-height:64px;border-radius:18px;font-size:19px;font-weight:900;letter-spacing:.01em;box-shadow:0 12px 28px rgba(70,28,53,.10);border:1px solid rgba(197,47,120,.18);overflow:hidden;isolation:isolate}
@@ -196,7 +196,8 @@
           <label>Quantas vagas você deseja?</label>
           <div class="qty"><button type="button" id="minusQty">−</button><span id="qtyValue">1</span><button type="button" id="plusQty">+</button></div>
         </div>
-        <div id="participants" class="participants"></div>
+        <div class="participant-hint" id="participantHint">Preencha o nome de cada participante. Para 2 vagas, serão necessários 2 nomes; para 3 vagas, 3 nomes, e assim por diante.</div>
+          <div id="participants" class="participants"></div>
         <div id="summary" class="summary"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
           <button class="btn btn-primary" id="continuePayment">Continuar para pagamento</button>
@@ -219,8 +220,8 @@
         <div id="pixPanel" class="pay-panel hidden">
           <h3>Pagamento via Pix</h3>
           <div>Valor a pagar</div><div class="pay-value" id="pixValue">R$ 0,00</div>
-          <p class="payment-note">Pagamento seguro pelo Mercado Pago. Ao iniciar, sua(s) vaga(s) ficam reservadas por até 30 minutos. A confirmação é automática após a aprovação do pagamento.</p>
-          <button class="btn btn-pay-pix" id="pixPayButton">💚 Pagar via Pix</button>
+          <p class="payment-note">Clique no botão abaixo para copiar a chave Pix. A reserva das vagas é registrada logo em seguida.</p>
+          <button class="btn btn-pay-pix" id="pixPayButton">💚 📋 Copiar Pix</button>
           <div id="pixFeedback"></div>
         </div>
         <div id="cardPanel" class="pay-panel hidden">
@@ -257,7 +258,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2140</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2215</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -319,8 +320,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2140';
+const BUILD_VERSION = '20260922-2215';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
+const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
 const PRICE_ENTRY = 30;
@@ -354,7 +356,7 @@ function renderParticipants(seed=[]){
     const previous=seed[i]||null;
     const p=document.createElement('div'); p.className='participant'; p.dataset.i=i;
     p.innerHTML=`<h3>Participante ${i+1}</h3>
-      <div class="field"><label>Nome completo</label><input class="pname" placeholder="Nome da participante" autocomplete="name"></div>
+      <div class="field"><label>Nome completo da participante ${i+1}</label><input class="pname" placeholder="Digite o nome da participante ${i+1}" autocomplete="name" required></div>
       <div class="field"><label>Escolha a opção</label><div class="radio-row">
         <label class="radio-card"><input type="radio" name="opt${i}" value="entry" checked> Somente entrada — R$ 30</label>
         <label class="radio-card"><input type="radio" name="opt${i}" value="shirt"> Entrada + camiseta — R$ 75</label>
@@ -397,7 +399,20 @@ function updateSummary(){
 }
 function validate(){
   const ps=getParticipants();
-  for(let i=0;i<ps.length;i++){if(!ps[i].name)return 'Informe o nome da participante '+(i+1)+'.';if(ps[i].option==='shirt'&&(!ps[i].model||!ps[i].size))return 'Escolha modelo e tamanho da camiseta da participante '+(i+1)+'.'}
+  queryAll('.participant').forEach(p=>p.classList.remove('invalid'));
+  for(let i=0;i<ps.length;i++){
+    if(ps[i].name.trim().length<3){
+      const card=queryAll('.participant')[i];
+      if(card){
+        card.classList.add('invalid');
+        card.querySelector('.pname')?.focus();
+      }
+      return 'Preencha o nome da participante '+(i+1)+'. São necessários '+qty+' nome(s) para '+qty+' vaga(s).';
+    }
+    if(ps[i].option==='shirt'&&(!ps[i].model||!ps[i].size)){
+      return 'Escolha modelo e tamanho da camiseta da participante '+(i+1)+'.';
+    }
+  }
   return '';
 }
 function reservationPayload(){
@@ -552,6 +567,24 @@ async function beginCardPayment(){
     toast(e.message);
   }
 }
+async function copyTextNow(text){
+  if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+  const area=document.createElement('textarea');
+  area.value=text;
+  area.setAttribute('readonly','');
+  area.style.position='fixed';
+  area.style.opacity='0';
+  document.body.appendChild(area);
+  area.select();
+  const ok=document.execCommand('copy');
+  area.remove();
+  if(!ok) throw new Error('Não foi possível copiar automaticamente.');
+  return true;
+}
+
 async function beginPayment(method,button,feedback){
   const original=button.textContent;
   button.disabled=true;
@@ -634,7 +667,32 @@ $('#cardTab').onclick=()=>{
   $('#cardTab').className='btn btn-primary pay-choice active';
   $('#pixTab').className='btn btn-light pay-choice';
 };
-$('#pixPayButton').onclick=()=>beginPayment('PIX',$('#pixPayButton'),$('#pixFeedback'));
+$('#pixPayButton').onclick=async()=>{
+  const button=$('#pixPayButton');
+  const feedback=$('#pixFeedback');
+  const original='💚 📋 Copiar Pix';
+  try{
+    await copyTextNow(PIX_KEY);
+    button.classList.remove('btn-busy');
+    button.textContent='✅ PIX COPIADO';
+    showMsg(feedback,'✅ PIX COPIADO! Chave: '+PIX_KEY+'<br>Registrando sua(s) vaga(s)...','success');
+    toast('Pix copiado!');
+  }catch(e){
+    showMsg(feedback,'Não foi possível copiar automaticamente. Chave Pix: <strong>'+PIX_KEY+'</strong>','error');
+    return;
+  }
+
+  button.disabled=true;
+  try{
+    const r=await ensureReservation('PIX');
+    showMsg(feedback,'✅ PIX COPIADO! Sua(s) '+r.quantity+' vaga(s) foram reservadas por até 30 minutos.<br><strong>Chave Pix:</strong> '+PIX_KEY,'success');
+  }catch(e){
+    showMsg(feedback,'✅ PIX COPIADO. ⚠️ A reserva não foi concluída: '+e.message+'<br><strong>Não efetue o pagamento enquanto esta mensagem aparecer.</strong>','error');
+  }finally{
+    button.disabled=false;
+    setTimeout(()=>{button.textContent=original},5000);
+  }
+};
 $('#cardPayButton').onclick=()=>beginCardPayment();
 $('#requestCardLink').onclick=async()=>{
   const button=$('#requestCardLink');
