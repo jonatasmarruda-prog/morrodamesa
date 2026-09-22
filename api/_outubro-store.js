@@ -358,18 +358,10 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
   const pref=await mpPost('/checkout/preferences',body);
   if(!pref.id || !pref.init_point) throw new Error('O Mercado Pago não retornou o link de pagamento.');
 
-  // Dupla verificação após a criação reduz disputa de última vaga entre acessos simultâneos.
-  await new Promise(resolve=>setTimeout(resolve,450));
-  let fits=await reservationFitsCapacity(id);
-  if(fits){
-    await new Promise(resolve=>setTimeout(resolve,350));
-    fits=await reservationFitsCapacity(id);
-  }
-  if(!fits){
-    await expirePreference(pref.id).catch(()=>{});
-    throw new Error('As últimas vagas foram preenchidas por outra reserva. Tente novamente se alguma vaga for liberada.');
-  }
-
+  // A disponibilidade já foi validada antes da criação. Não fazemos uma
+  // segunda leitura imediata aqui porque a busca de preferências do Mercado Pago
+  // pode levar alguns instantes para refletir a reserva recém-criada, gerando
+  // falso aviso de últimas vagas.
   const row=normalize(pref,null);
   return {reservation:row,checkoutUrl:pref.init_point,expiresAt:expiresAt.toISOString()};
 }
