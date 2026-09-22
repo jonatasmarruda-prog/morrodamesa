@@ -35,11 +35,11 @@
     .btn-pay-card{background:linear-gradient(135deg,#5a2a68,#c52f78)!important;color:#fff!important}
     .btn-whatsapp-premium{background:linear-gradient(135deg,#138d5a,#25c879)!important;color:#fff!important}
     .btn-pay-pix:hover,.btn-pay-card:hover,.btn-whatsapp-premium:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 45px rgba(50,28,43,.22);filter:saturate(1.08) brightness(1.03)}.btn-pay-pix:after,.btn-pay-card:after,.btn-whatsapp-premium:after{content:"";position:absolute;inset:-60% auto -60% -45%;width:32%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:paymentShine 3.8s ease-in-out infinite;pointer-events:none}
-    .btn-pay-pix:active,.btn-pay-card:active,.btn-whatsapp-premium:active{transform:translateY(0) scale(.985)}
+    .btn-pay-pix:active,.btn-pay-card:active,.btn-whatsapp-premium:active{transform:translateY(0) scale(.985)}.btn-pulse{animation:premiumPulse 2.8s ease-in-out infinite}.btn-pulse-soft{margin-top:12px;animation:whatsPulse 3.2s ease-in-out infinite}.navlinks .btn-primary,#continuePayment{animation:premiumPulsePink 3.2s ease-in-out infinite}
     .btn-busy{pointer-events:none;opacity:.82}.soldout-state{background:linear-gradient(135deg,#8f2030,#b4233a)!important;color:#fff!important;box-shadow:none!important;cursor:not-allowed!important}
     .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
-    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 16px}.pix-key-box{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px;padding:14px 16px;border-radius:15px;background:#f7fff9;border:1px solid #bfe6cf}.pix-key-box span{font-size:13px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;color:#47715a}.pix-key-box strong{font-size:17px;word-break:break-all;color:#195f3b}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
+    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 18px}.payment-caption{font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8e6b7e;margin-top:8px}.payment-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:linear-gradient(135deg,#fff3f8,#fff);border:1px solid #efc5d9;color:var(--pink);font-size:12px;font-weight:900;letter-spacing:.08em;margin-bottom:10px}.payment-feedback{margin-top:14px}.payment-premium{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,245,250,.94));border:1px solid rgba(197,47,120,.20);box-shadow:0 24px 60px rgba(106,30,70,.13)}.payment-premium:before{content:"";position:absolute;top:-80px;right:-70px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(230,92,156,.14),transparent 70%);pointer-events:none}.payment-premium h3{font-size:28px;margin:4px 0 6px;letter-spacing:-.02em}.payment-premium .success{margin-top:12px;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(32,180,116,.08)}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
     footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.admin-access{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:16px;min-height:48px;padding:10px 14px;display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.14);transition:.22s}.admin-access:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);border-color:rgba(255,255,255,.5)}.admin-gear{font-size:25px;line-height:1}.admin-label{font-size:14px}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
@@ -73,9 +73,9 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes seatDrop{0%{transform:scale(1)}35%{transform:scale(1.16);color:#168253}100%{transform:scale(1)}}
     @keyframes whatsPulse{0%,100%{box-shadow:0 16px 34px rgba(31,157,97,.32)}50%{box-shadow:0 18px 42px rgba(31,157,97,.48)}}
-    @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}@keyframes paymentShine{0%,58%{left:-45%}78%,100%{left:135%}}
+    @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}@keyframes paymentShine{0%,58%{left:-45%}78%,100%{left:135%}}@keyframes premiumPulse{0%,100%{transform:translateY(0) scale(1);box-shadow:0 16px 34px rgba(18,138,89,.20)}50%{transform:translateY(-1px) scale(1.018);box-shadow:0 18px 44px rgba(18,138,89,.34)}}@keyframes premiumPulsePink{0%,100%{box-shadow:0 12px 30px rgba(197,47,120,.22)}50%{box-shadow:0 18px 42px rgba(197,47,120,.38)}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
-    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:repeat(3,1fr)}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:center;gap:12px}.floating-back{left:8px;width:42px;height:42px;font-size:24px}.admin-tools{grid-template-columns:1fr}.admin-access{min-width:52px;padding:10px 12px}.admin-label{display:none}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
+    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:repeat(3,1fr)}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:center;gap:12px}.floating-back{left:8px;width:42px;height:42px;font-size:24px}.admin-tools{grid-template-columns:1fr}.admin-access{min-width:52px;padding:10px 12px}.admin-label{display:none}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.payment-premium{padding:20px}.payment-premium h3{font-size:25px}.pay-value{font-size:34px}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
 </head>
 <body>
@@ -217,15 +217,17 @@
           <button class="btn btn-light pay-choice" id="pixTab">💚 PIX</button>
           <button class="btn btn-light pay-choice" id="cardTab">💳 CARTÃO</button>
         </div>
-        <div id="pixPanel" class="pay-panel hidden">
+        <div id="pixPanel" class="pay-panel payment-premium hidden">
+          <div class="payment-badge">PIX • PAGAMENTO RÁPIDO</div>
           <h3>Pagamento via Pix</h3>
-          <div>Valor a pagar</div><div class="pay-value" id="pixValue">R$ 0,00</div>
-          <p class="payment-note">Clique para copiar a chave Pix. A chave também fica visível abaixo para conferência.</p>
-          <div class="pix-key-box"><span>Chave Pix</span><strong id="pixKeyText">trilheiros.roomt@gmail.com</strong></div>
-          <button class="btn btn-pay-pix" id="pixPayButton">💚 📋 Copiar Pix</button>
-          <div id="pixFeedback"></div>
+          <div class="payment-caption">Valor a pagar</div>
+          <div class="pay-value" id="pixValue">R$ 0,00</div>
+          <p class="payment-note">Toque no botão para copiar a chave Pix automaticamente.</p>
+          <button class="btn btn-pay-pix btn-pulse" id="pixPayButton">💚 📋 Copiar Pix</button>
+          <div id="pixFeedback" class="payment-feedback"></div>
+          <button class="btn btn-whatsapp-premium btn-pulse-soft hidden" id="sendPixReceipt">📲 Enviar comprovante no WhatsApp</button>
         </div>
-        <div id="cardPanel" class="pay-panel hidden">
+        <div id="cardPanel" class="pay-panel payment-premium hidden">
           <h3>Pagamento com cartão</h3>
           <div class="pay-value" id="cardValue">R$ 0,00</div>
           <p class="payment-note" id="cardInstruction">Selecione Cartão para verificar o link disponível para esta combinação.</p>
@@ -259,7 +261,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2245</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2315</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -321,7 +323,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2245';
+const BUILD_VERSION = '20260922-2315';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -499,6 +501,8 @@ function showPayment(){
   $('#cardValue').textContent=money(totalValue());
   $('#pixPanel').classList.add('hidden');
   $('#cardPanel').classList.add('hidden');
+  $('#sendPixReceipt').classList.add('hidden');
+  $('#pixFeedback').innerHTML='';
   $('#pixTab').className='btn btn-light pay-choice';
   $('#cardTab').className='btn btn-light pay-choice';
   configureCardPayment();
@@ -533,6 +537,21 @@ function configureCardPayment(){
     request.classList.remove('hidden');
     instruction.textContent='Para esta quantidade ou combinação, solicite o link de pagamento diretamente ao Jonatas.';
   }
+}
+
+function pixReceiptText(){
+  const ps=getParticipants();
+  let text='Olá, Jonatas! 🌸\n\nSegue meu comprovante de pagamento do Outubro Rosa.\n\n';
+  text+='Quantidade: '+ps.length+' vaga(s)\n\n';
+  text+='Participantes:\n';
+  ps.forEach((p,i)=>{
+    text+=(i+1)+'. '+p.name+' — '+(p.option==='shirt'?'Entrada + camiseta — '+p.model+' — '+p.size:'Somente entrada')+'\n';
+  });
+  text+='\nValor total: '+money(totalValue())+'\n';
+  text+='Pagamento: PIX\n';
+  if(reservation?.id) text+='Reserva: '+reservation.id+'\n';
+  text+='\nEstou enviando o comprovante para conferência. ✅';
+  return text;
 }
 
 function cardRequestText(){
@@ -680,34 +699,52 @@ $('#cardTab').onclick=()=>{
 $('#pixPayButton').onclick=async()=>{
   const button=$('#pixPayButton');
   const feedback=$('#pixFeedback');
+  const receipt=$('#sendPixReceipt');
   const original='💚 📋 Copiar Pix';
 
-  // A cópia acontece antes de qualquer chamada ao servidor.
   try{
     await copyTextNow(PIX_KEY);
     button.textContent='✅ PIX COPIADO';
-    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong>','success');
-    toast('Pix copiado!');
+    showMsg(feedback,'✓ Pix copiado com sucesso.','success');
+    receipt.classList.remove('hidden');
+    toast('Pix copiado com sucesso!');
   }catch(e){
-    button.textContent='📋 COPIE A CHAVE ACIMA';
-    showMsg(feedback,'Use a chave exibida acima: <strong>'+PIX_KEY+'</strong>','notice');
+    button.textContent=original;
+    showMsg(feedback,'Não foi possível copiar automaticamente. Tente novamente.','error');
+    receipt.classList.add('hidden');
     return;
   }
 
-  // Depois registra a(s) vaga(s), sem apagar a confirmação visual da cópia.
   button.disabled=true;
   try{
-    const r=await ensureReservation('PIX');
-    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong><br>'+r.quantity+' vaga(s) reservada(s) por até 30 minutos.','success');
+    await ensureReservation('PIX');
   }catch(e){
     console.error('Reserva Pix:',e);
-    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong><br>Não foi possível atualizar a reserva agora. Confira as vagas disponíveis antes de efetuar o pagamento.','notice');
     refreshStats().catch(()=>{});
   }finally{
     button.disabled=false;
     setTimeout(()=>{button.textContent=original},5000);
   }
 };
+$('#sendPixReceipt').onclick=async()=>{
+  const button=$('#sendPixReceipt');
+  const original=button.textContent;
+  button.disabled=true;
+  button.classList.add('btn-busy');
+  button.textContent='Preparando WhatsApp...';
+  try{
+    if(!reservation) await ensureReservation('PIX');
+    const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
+    button.textContent='Abrindo WhatsApp...';
+    setTimeout(()=>window.location.assign(url),180);
+  }catch(e){
+    button.disabled=false;
+    button.classList.remove('btn-busy');
+    button.textContent=original;
+    toast('Não foi possível preparar a mensagem. Tente novamente.');
+  }
+};
+
 $('#cardPayButton').onclick=()=>beginCardPayment();
 $('#requestCardLink').onclick=async()=>{
   const button=$('#requestCardLink');
@@ -733,6 +770,8 @@ $('#backEdit').onclick=()=>{
   $('#pagamento').classList.add('hidden');
   $('#pixPanel').classList.add('hidden');
   $('#cardPanel').classList.add('hidden');
+  $('#sendPixReceipt').classList.add('hidden');
+  $('#pixFeedback').innerHTML='';
   location.hash='inscricao';
 };
 $('#backSite').onclick=()=>returnHome();
