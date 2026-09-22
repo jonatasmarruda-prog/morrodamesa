@@ -122,15 +122,37 @@ function occupies(status) {
   return status === 'pending' || status === 'confirmed';
 }
 
+function publicName(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '';
+  if (parts.length === 1) return parts[0];
+  return parts[0] + ' ' + parts[parts.length - 1].charAt(0).toUpperCase() + '.';
+}
+
 async function stats() {
   const rows = (await listOutubroPreferences()).map(normalize);
   let pending=0, confirmed=0;
+  const confirmedParticipants = [];
   rows.forEach(r => {
     if (r.status === 'pending') pending += r.quantity;
-    if (r.status === 'confirmed') confirmed += r.quantity;
+    if (r.status === 'confirmed') {
+      confirmed += r.quantity;
+      r.participants.forEach(p => {
+        const displayName = publicName(p.name);
+        if (displayName) confirmedParticipants.push(displayName);
+      });
+    }
   });
+  confirmedParticipants.sort((a,b)=>a.localeCompare(b,'pt-BR'));
   const reserved = pending + confirmed;
-  return { total: CAPACITY, pending, confirmed, reserved, available: Math.max(0, CAPACITY - reserved) };
+  return {
+    total: CAPACITY,
+    pending,
+    confirmed,
+    reserved,
+    available: Math.max(0, CAPACITY - reserved),
+    confirmedParticipants
+  };
 }
 
 async function createReservation({clientId, participants, paymentMethod}) {
