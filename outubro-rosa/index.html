@@ -287,13 +287,48 @@ async function ensureReservation(method){
   paymentMethod=method;
   if(reservation && reservation.paymentMethod===method) return reservation;
   const payload={...reservationPayload(),paymentMethod:method};
+
+  // O pagamento nunca pode ser bloqueado porque a sincronização externa está indisponível.
+  // Quando o backend estiver configurado, registra normalmente. Enquanto isso, cria um
+  // identificador local para manter o fluxo de Pix/WhatsApp funcionando.
+  if(!apiReady()){
+    reservation={
+      id:'OR-2026-LOCAL-'+Date.now(),
+      quantity:payload.participants.length,
+      total:totalValue(),
+      status:'AGUARDANDO_PAGAMENTO',
+      paymentMethod:method,
+      participants:getParticipants(),
+      whatsapp:payload.whatsapp,
+      pendingSync:true
+    };
+    return reservation;
+  }
+
   const data=await api('createReservation',payload);
   reservation={...data.reservation,paymentMethod:method,participants:getParticipants(),whatsapp:payload.whatsapp};
-  refreshStats(); return reservation;
+  refreshStats();
+  return reservation;
 }
 async function refreshStats(){
-  if(!apiReady()){showMsg($('#apiNotice'),'O site visual está publicado, mas a integração de reservas ainda precisa do Web App do Google Apps Script. O contador real será ativado assim que a URL for configurada.','notice');return}
-  try{const d=await api('stats',{},'GET');$('#reservedCount').textContent=d.reserved;$('#availableCount').textContent=d.available;$('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';$('#apiNotice').classList.add('hidden')}catch(e){showMsg($('#apiNotice'),e.message,'error')}
+  if(!apiReady()){
+    $('#apiNotice').classList.add('hidden');
+    $('#reservedCount').textContent='—';
+    $('#availableCount').textContent='—';
+    $('#progressBar').style.width='0%';
+    return;
+  }
+  try{
+    const d=await api('stats',{},'GET');
+    $('#reservedCount').textContent=d.reserved;
+    $('#availableCount').textContent=d.available;
+    $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
+    $('#apiNotice').classList.add('hidden');
+  }catch(e){
+    $('#apiNotice').classList.add('hidden');
+    $('#reservedCount').textContent='—';
+    $('#availableCount').textContent='—';
+  }
 }
 function showPayment(){
   $('#pagamento').classList.remove('hidden');$('#finalSummary').innerHTML=$('#summary').innerHTML;$('#pixValue').textContent=money(totalValue());configureCard();location.hash='pagamento';
