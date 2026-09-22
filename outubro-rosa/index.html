@@ -274,7 +274,7 @@ const CARD_TWO_SHIRTS = 'https://mpago.la/1DJFjnq';
 const CARD_TWO_ENTRY = 'https://mpago.la/1HRu8wF';
 
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
-const $=s=>document.querySelector(s), $=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 function showMsg(el,msg,type='notice'){el.innerHTML='<div class="'+type+'">'+msg+'</div>'}
@@ -312,7 +312,7 @@ function renderParticipants(){
   updateSummary();
 }
 function getParticipants(){
-  return $$('.participant').map(p=>{
+  return queryAll('.participant').map(p=>{
     const opt=p.querySelector('input[type=radio]:checked').value;
     return {name:p.querySelector('.pname').value.trim(),option:opt,model:opt==='shirt'?p.querySelector('.model').value:'',size:opt==='shirt'?p.querySelector('.size').value:'',price:opt==='shirt'?PRICE_SHIRT:PRICE_ENTRY};
   });
@@ -420,7 +420,7 @@ $('#cardLink').addEventListener('click',async e=>{
 $('#backEdit').onclick=()=>{reservation=null;sessionStorage.removeItem('outubroReservationClientId');$('#pagamento').classList.add('hidden');location.hash='inscricao'};
 
 $('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
-$$('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
+queryAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
 $('#adminEnter').onclick=async()=>{
   adminPass=$('#adminPassword').value;
   try{
