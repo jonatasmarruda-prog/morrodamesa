@@ -56,7 +56,7 @@ module.exports = async function handler(req, res) {
     // Em produção, consultamos o pagamento na API oficial antes de confirmar o recebimento.
     const payment = await fetchPayment(paymentId);
     const reservationId = String(payment.external_reference || '');
-    if (reservationId && !/^TR-\d{4}-[A-F0-9]{6}$/.test(reservationId)) {
+    if (reservationId && !(/^(TR-\d{4}-[A-F0-9]{6,12}|OR-2026-[A-F0-9]{12})$/.test(reservationId))) {
       return json(res, 200, { received: true, ignored: true });
     }
 
