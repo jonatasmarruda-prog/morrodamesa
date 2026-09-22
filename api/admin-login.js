@@ -2,8 +2,8 @@ const crypto = require('crypto');
 const { json } = require('./_utils');
 const { createSessionToken, sessionCookie } = require('./_auth');
 
-const ADMIN_SALT = 'b04b4a29b8ab3186de3d1ddfcc8eef2f';
-const ADMIN_HASH = 'f410064601ce53291185d5c605860a96f53cf73c1e4017dd0cfabc7b3bc9bbab';
+const ADMIN_SALT = '81a45b88b10c69a9a55ca02898e1dc24';
+const ADMIN_HASH = '55856c8bd93eb51cd61bc68236562c88d1f6ecc1065d8bfab7b38b702e572fae';
 
 function validAdminPassword(password) {
   try {
