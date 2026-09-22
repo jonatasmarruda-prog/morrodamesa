@@ -106,7 +106,7 @@
               <div id="apiNotice" class="notice hidden"></div>
               <div class="stats stats-live">
                 <div class="stat"><b>100</b><span>Total</span></div>
-                <div class="stat"><b id="confirmedCount">—</b><span>Confirmadas</span></div>
+                <div class="stat"><b id="confirmedCount">—</b><span>Reservadas</span></div>
                 <div class="stat"><b id="availableCount">—</b><span>Disponíveis</span></div>
               </div>
               <div class="progress"><span id="progressBar"></span></div>
@@ -252,8 +252,8 @@
       <div class="confirmed-shell">
         <div class="eyebrow">🌸 NOSSA TRILHA ESTÁ GANHANDO FORMA</div>
         <h2 class="section-title">Trilheiras confirmadas</h2>
-        <p class="section-sub">Os nomes aparecem aqui automaticamente após a confirmação da inscrição.</p>
-        <div class="confirmed-total"><strong id="confirmedPublicCount">0</strong><span>trilheiras confirmadas</span></div>
+        <p class="section-sub">Os nomes aparecem automaticamente assim que a vaga é reservada pelo Pix ou cartão.</p>
+        <div class="confirmed-total"><strong id="confirmedPublicCount">0</strong><span>trilheiras com vaga reservada</span></div>
         <div id="confirmedNames" class="confirmed-names"><div class="notice">As primeiras confirmações aparecerão aqui.</div></div>
       </div>
     </div>
@@ -326,7 +326,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2345';
+const BUILD_VERSION = '20260922-2415';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -452,7 +452,7 @@ async function refreshStats(animate=false,amount=0){
     const previousAvailable=Number($('#availableCount').textContent);
     const previousConfirmed=Number($('#confirmedCount').textContent);
     const d=await publicApi();
-    $('#confirmedCount').textContent=d.confirmed;
+    $('#confirmedCount').textContent=d.reserved;
     $('#availableCount').textContent=d.available;
     $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
     renderPublicConfirmed(d);
@@ -484,14 +484,15 @@ function applySoldOutState(d){
   $('#continuePayment').classList.toggle('soldout-state',sold);
 }
 function renderPublicConfirmed(d){
-  const names=Array.isArray(d.confirmedParticipants)?d.confirmedParticipants:[];
-  $('#confirmedPublicCount').textContent=d.confirmed||names.length||0;
+  const names=Array.isArray(d.publicParticipants)?d.publicParticipants:
+    (Array.isArray(d.confirmedParticipants)?d.confirmedParticipants:[]);
+  $('#confirmedPublicCount').textContent=Number(d.publicCount ?? d.reserved ?? names.length);
   const box=$('#confirmedNames');
   if(!names.length){
-    box.innerHTML='<div class="notice">As primeiras confirmações aparecerão aqui.</div>';
+    box.innerHTML='<div class="notice">As primeiras reservas aparecerão aqui.</div>';
     return;
   }
-  box.innerHTML=names.map(name=>'<span class="confirmed-chip">🌸 '+escapeHtml(name)+'</span>').join('');
+  box.innerHTML=names.map(name=>'<span class="confirmed-chip">'+escapeHtml(name)+'</span>').join('');
 }
 function escapeHtml(value){
   return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -579,6 +580,7 @@ async function beginCardPayment(){
   button.textContent='Reservando vaga...';
   try{
     await ensureReservation('CARTÃO');
+    await refreshStats();
     showMsg(feedback,'Vaga(s) reservada(s). Abrindo o link oficial do cartão...','success');
     button.textContent='Abrindo Mercado Pago...';
     setTimeout(()=>window.location.assign(cfg.url),250);
@@ -721,6 +723,7 @@ $('#pixPayButton').onclick=async()=>{
   button.disabled=true;
   try{
     await ensureReservation('PIX');
+    await refreshStats();
   }catch(e){
     console.error('Reserva Pix:',e);
     refreshStats().catch(()=>{});
