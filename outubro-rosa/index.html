@@ -27,8 +27,32 @@
     footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.gear{border:0;background:transparent;color:#fff;opacity:.45;font-size:24px;cursor:pointer;padding:10px}.gear:hover{opacity:1}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
-    .whatsapp{position:fixed;right:18px;bottom:18px;z-index:80;border-radius:999px;background:#1f9d61;color:#fff;text-decoration:none;font-weight:900;padding:14px 18px;box-shadow:0 12px 28px rgba(31,157,97,.28)}
-    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:12px;right:12px;text-align:center}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}}
+    .whatsapp{position:fixed;right:18px;bottom:18px;z-index:80;border-radius:999px;background:#1f9d61;color:#fff;text-decoration:none;font-weight:900;padding:14px 18px;box-shadow:0 12px 28px rgba(31,157,97,.28);transition:.25s}
+    .whatsapp:hover{transform:translateY(-3px) scale(1.02)}
+    body:before,body:after{content:"";position:fixed;pointer-events:none;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.32;animation:orb 10s ease-in-out infinite alternate}
+    body:before{width:340px;height:340px;background:#ffc4dc;top:8%;left:-120px}
+    body:after{width:420px;height:420px;background:#f5d7ea;right:-160px;bottom:5%;animation-delay:-3s}
+    .banner{animation:heroFloat 7s ease-in-out infinite;will-change:transform}
+    .card,.fact,.formbox,.availability,.photo,.participant,.pay-panel{transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
+    .card:hover,.fact:hover{transform:translateY(-6px);box-shadow:0 22px 55px rgba(106,30,70,.18);border-color:#e7a9c8}
+    .btn-primary{position:relative;overflow:hidden}
+    .btn-primary:after{content:"";position:absolute;inset:-40% auto -40% -50%;width:35%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:shine 4.2s ease-in-out infinite}
+    .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.visible{opacity:1;transform:none}
+    .admin-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+    .report-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+    .shirt-summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+    .shirt-group{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fffafd}
+    .shirt-group h3{margin:0 0 10px}
+    .shirt-counts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    .shirt-count{padding:10px 6px;text-align:center;background:#fff;border-radius:12px;border:1px solid var(--line)}
+    .shirt-count b{display:block;font-size:23px;color:var(--pink)}
+    .shirt-row{display:grid;grid-template-columns:1.7fr 1fr .55fr .45fr;gap:8px;padding:10px 0;border-bottom:1px dashed #ead1dd;align-items:center}
+    @keyframes orb{to{transform:translate3d(35px,-25px,0) scale(1.08)}}
+    @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes shine{0%,68%{left:-50%}86%,100%{left:130%}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
+    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:12px;right:12px;text-align:center}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
 </head>
 <body>
@@ -145,7 +169,6 @@
           <label>Quantas vagas você deseja?</label>
           <div class="qty"><button type="button" id="minusQty">−</button><span id="qtyValue">1</span><button type="button" id="plusQty">+</button></div>
         </div>
-        <div class="field"><label for="responsibleWhats">WhatsApp do responsável</label><input id="responsibleWhats" inputmode="tel" placeholder="Ex.: 66999999999"></div>
         <div id="participants" class="participants"></div>
         <div id="summary" class="summary"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
@@ -210,15 +233,38 @@
         <div class="stat"><b id="adminPending">0</b><span>Reservadas</span></div>
         <div class="stat"><b id="adminAvailable">0</b><span>Disponíveis</span></div>
       </div>
+      <div class="admin-tabs">
+        <button class="btn btn-primary" id="adminReservationsTab">📋 Inscrições</button>
+        <button class="btn btn-light" id="adminShirtsTab">👕 Camisetas confirmadas</button>
+      </div>
       <div id="adminReservations" class="admin-list"></div>
+      <div id="shirtReport" class="hidden">
+        <div class="shirt-summary">
+          <div class="shirt-group">
+            <h3>👕 Camiseta Tradicional</h3>
+            <div class="shirt-counts" id="traditionalCounts"></div>
+          </div>
+          <div class="shirt-group">
+            <h3>💕 Babylook</h3>
+            <div class="shirt-counts" id="babylookCounts"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px"><strong>Total de camisetas confirmadas</strong><div class="price" id="totalShirts">0</div></div>
+        <div class="report-tools">
+          <button class="btn btn-primary" id="copyShirtReport">📋 Copiar relatório</button>
+          <button class="btn btn-dark" id="pdfShirtReport">📄 Gerar PDF</button>
+        </div>
+        <div id="shirtReportList"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const API_URL = 'PASTE_APPS_SCRIPT_WEBAPP_URL_HERE';
+const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
@@ -227,20 +273,22 @@ const PRICE_SHIRT = 75;
 const CARD_TWO_SHIRTS = 'https://mpago.la/1DJFjnq';
 const CARD_TWO_ENTRY = 'https://mpago.la/1HRu8wF';
 
-let qty=1, reservation=null, paymentMethod='PIX', adminPass='';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
+const $=s=>document.querySelector(s), $=s=>[...document.querySelectorAll(s)];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const apiReady=()=>API_URL.startsWith('https://script.google.com/');
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 function showMsg(el,msg,type='notice'){el.innerHTML='<div class="'+type+'">'+msg+'</div>'}
-async function api(action,payload={},method='POST'){
-  if(!apiReady()) throw new Error('Integração com a planilha ainda não foi ativada.');
-  const url=API_URL+(API_URL.includes('?')?'&':'?')+'action='+encodeURIComponent(action);
-  const opt=method==='GET'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...payload})};
-  const res=await fetch(method==='GET'?url+'&'+new URLSearchParams(payload):url,opt);
-  if(!res.ok) throw new Error('Falha de comunicação com o sistema.');
-  const data=await res.json();
-  if(data.ok===false) throw new Error(data.error||'Operação não concluída.');
+async function publicApi(payload=null){
+  const opt=payload?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}:{cache:'no-store'};
+  const res=await fetch(API_BASE+'/outubro-reservas',opt);
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||data.ok===false) throw new Error(data.error||'Não foi possível registrar a reserva.');
+  return data;
+}
+async function adminApi(action='list',payload={}){
+  const res=await fetch(API_BASE+'/outubro-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPass,action,...payload})});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok||data.ok===false) throw new Error(data.error||'Não foi possível carregar o painel.');
   return data;
 }
 function renderParticipants(){
@@ -276,58 +324,44 @@ function updateSummary(){
 }
 function validate(){
   const ps=getParticipants();
-  if(!$('#responsibleWhats').value.trim()) return 'Informe o WhatsApp do responsável.';
   for(let i=0;i<ps.length;i++){if(!ps[i].name)return 'Informe o nome da participante '+(i+1)+'.';if(ps[i].option==='shirt'&&(!ps[i].model||!ps[i].size))return 'Escolha modelo e tamanho da camiseta da participante '+(i+1)+'.'}
   return '';
 }
 function reservationPayload(){
-  return {whatsapp:$('#responsibleWhats').value.replace(/\D/g,''),participants:getParticipants()};
+  return {participants:getParticipants()};
 }
 async function ensureReservation(method){
   paymentMethod=method;
   if(reservation && reservation.paymentMethod===method) return reservation;
-  const payload={...reservationPayload(),paymentMethod:method};
-
-  // O pagamento nunca pode ser bloqueado porque a sincronização externa está indisponível.
-  // Quando o backend estiver configurado, registra normalmente. Enquanto isso, cria um
-  // identificador local para manter o fluxo de Pix/WhatsApp funcionando.
-  if(!apiReady()){
-    reservation={
-      id:'OR-2026-LOCAL-'+Date.now(),
-      quantity:payload.participants.length,
-      total:totalValue(),
-      status:'AGUARDANDO_PAGAMENTO',
-      paymentMethod:method,
-      participants:getParticipants(),
-      whatsapp:payload.whatsapp,
-      pendingSync:true
-    };
+  let clientId=sessionStorage.getItem('outubroReservationClientId');
+  if(!clientId){
+    clientId=(crypto.randomUUID?crypto.randomUUID():(Date.now()+'-'+Math.random()));
+    sessionStorage.setItem('outubroReservationClientId',clientId);
+  }
+  const payload={...reservationPayload(),paymentMethod:method,clientId};
+  try{
+    const data=await publicApi(payload);
+    reservation={...data.reservation,paymentMethod:method,participants:getParticipants()};
+    refreshStats();
+    return reservation;
+  }catch(error){
+    reservation={id:'OR-2026-LOCAL-'+Date.now(),quantity:payload.participants.length,total:totalValue(),status:'pending',paymentMethod:method,participants:getParticipants(),pendingSync:true};
+    toast('Pagamento liberado. O registro online será tentado novamente no próximo passo.');
     return reservation;
   }
-
-  const data=await api('createReservation',payload);
-  reservation={...data.reservation,paymentMethod:method,participants:getParticipants(),whatsapp:payload.whatsapp};
-  refreshStats();
-  return reservation;
 }
 async function refreshStats(){
-  if(!apiReady()){
-    $('#apiNotice').classList.add('hidden');
-    $('#reservedCount').textContent='—';
-    $('#availableCount').textContent='—';
-    $('#progressBar').style.width='0%';
-    return;
-  }
   try{
-    const d=await api('stats',{},'GET');
+    const d=await publicApi();
     $('#reservedCount').textContent=d.reserved;
     $('#availableCount').textContent=d.available;
     $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
     $('#apiNotice').classList.add('hidden');
   }catch(e){
-    $('#apiNotice').classList.add('hidden');
     $('#reservedCount').textContent='—';
     $('#availableCount').textContent='—';
+    $('#progressBar').style.width='0%';
+    $('#apiNotice').classList.add('hidden');
   }
 }
 function showPayment(){
@@ -357,28 +391,144 @@ $('#plusQty').onclick=()=>{if(qty<10){qty++;$('#qtyValue').textContent=qty;rende
 $('#continuePayment').onclick=()=>{const e=validate();if(e){showMsg($('#formMessage'),e,'error');return}$('#formMessage').innerHTML='';showPayment()};
 $('#pixTab').onclick=()=>{$('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden')};
 $('#cardTab').onclick=()=>{$('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden')};
-$('#copyPix').onclick=async()=>{try{await ensureReservation('PIX');await navigator.clipboard.writeText(PIX_KEY);$('#copyPix').textContent='✅ PIX COPIADO!';showMsg($('#pixFeedback'),'✅ PIX COPIADO! Faça o pagamento e envie o comprovante para confirmar sua reserva.','success');toast('Pix copiado! Faça o pagamento e envie o comprovante.');setTimeout(()=>$('#copyPix').textContent='📋 Copiar Pix',3500)}catch(e){showMsg($('#pixFeedback'),e.message,'error')}};
+$('#copyPix').onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(PIX_KEY);
+    $('#copyPix').textContent='✅ PIX COPIADO!';
+    showMsg($('#pixFeedback'),'✅ PIX COPIADO! Faça o pagamento e envie o comprovante para confirmar sua reserva.','success');
+    toast('Pix copiado! Faça o pagamento e envie o comprovante.');
+    ensureReservation('PIX').catch(()=>{});
+    setTimeout(()=>$('#copyPix').textContent='📋 Copiar Pix',3500);
+  }catch(e){
+    showMsg($('#pixFeedback'),'Não foi possível copiar automaticamente. Tente novamente.','error');
+  }
+};
 $('#sendReceiptPix').onclick=()=>sendReceipt('PIX');
 $('#sendReceiptCard').onclick=()=>sendReceipt('CARTÃO');
-$('#cardLink').addEventListener('click',async e=>{try{await ensureReservation('CARTÃO')}catch(err){e.preventDefault();toast(err.message)}});
-$('#backEdit').onclick=()=>{reservation=null;$('#pagamento').classList.add('hidden');location.hash='inscricao'};
+$('#cardLink').addEventListener('click',async e=>{
+  e.preventDefault();
+  const target=$('#cardLink').href;
+  const popup=window.open('about:blank','_blank');
+  try{
+    await ensureReservation('CARTÃO');
+    if(popup) popup.location=target; else window.location.href=target;
+  }catch(err){
+    if(popup) popup.close();
+    toast(err.message);
+  }
+});
+$('#backEdit').onclick=()=>{reservation=null;sessionStorage.removeItem('outubroReservationClientId');$('#pagamento').classList.add('hidden');location.hash='inscricao'};
 
 $('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
 $$('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
 $('#adminEnter').onclick=async()=>{
   adminPass=$('#adminPassword').value;
-  try{const d=await api('adminList',{password:adminPass},'POST');$('#adminLogin').classList.add('hidden');$('#adminPanel').classList.remove('hidden');renderAdmin(d)}catch(e){showMsg($('#adminLoginMessage'),e.message,'error')}
+  try{
+    const d=await adminApi('list');
+    adminDataCache=d;
+    $('#adminLogin').classList.add('hidden');
+    $('#adminPanel').classList.remove('hidden');
+    renderAdmin(d);
+  }catch(e){showMsg($('#adminLoginMessage'),e.message,'error')}
 };
+
+function statusLabel(status){
+  return ({pending:'AGUARDANDO',confirmed:'CONFIRMADA',cancelled:'CANCELADA'})[status]||String(status||'').toUpperCase();
+}
+
 function renderAdmin(d){
-  $('#adminConfirmed').textContent=d.stats.confirmed;$('#adminPending').textContent=d.stats.pending;$('#adminAvailable').textContent=d.stats.available;
-  const box=$('#adminReservations');box.innerHTML='';
-  d.reservations.forEach(r=>{const el=document.createElement('div');el.className='admin-item';el.innerHTML=`<div class="admin-item-head"><div><strong>${r.id}</strong><br>${r.participants.map(p=>p.name).join(', ')}<br><small>${r.quantity} vaga(s) • ${money(r.total)} • ${r.paymentMethod}</small></div><span class="status">${r.status}</span></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-light confirm">Confirmar</button><button class="btn btn-danger cancel">Excluir / cancelar</button></div>`;
-    el.querySelector('.confirm').onclick=()=>adminAction('confirmReservation',{reservationId:r.id});
-    el.querySelector('.cancel').onclick=()=>{if(confirm('Excluir/cancelar '+r.quantity+' vaga(s) desta reserva? As vagas serão devolvidas.'))adminAction('cancelReservation',{reservationId:r.id})};
+  adminDataCache=d;
+  $('#adminConfirmed').textContent=d.stats.confirmed;
+  $('#adminPending').textContent=d.stats.pending;
+  $('#adminAvailable').textContent=d.stats.available;
+  const box=$('#adminReservations'); box.innerHTML='';
+  d.reservations.forEach(r=>{
+    const el=document.createElement('div'); el.className='admin-item';
+    const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${p.name}</strong><br><small>${p.option==='shirt'?p.model+' • '+p.size:'Somente entrada'} • ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
+    el.innerHTML=`<div class="admin-item-head"><div><strong>${r.id}</strong><br><small>${r.quantity} vaga(s) • ${money(r.total)} • ${r.paymentMethod}</small></div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status==='pending'?'<button class="btn btn-primary confirm">✓ Confirmar pagamento</button>':''}${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar</button>':''}</div>`;
+    const confirmBtn=el.querySelector('.confirm'); if(confirmBtn) confirmBtn.onclick=()=>adminAction('confirm',{reservationId:r.id});
+    const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Cancelar esta reserva e devolver '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
+    el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
   });
+  renderShirtReport(d);
 }
-async function adminAction(action,payload){try{const d=await api(action,{password:adminPass,...payload});toast('Atualizado com sucesso.');const list=await api('adminList',{password:adminPass},'POST');renderAdmin(list);refreshStats()}catch(e){toast(e.message)}}
+
+async function adminAction(action,payload){
+  try{
+    const d=await adminApi(action,payload);
+    toast('Atualizado com sucesso.');
+    renderAdmin(d);
+    refreshStats();
+  }catch(e){toast(e.message)}
+}
+
+function reportText(d=adminDataCache){
+  const sizes=['PP','P','M','G','GG'];
+  const count=(model,size)=>Number(d?.shirtCounts?.[model+'|'+size]||0);
+  const lines=[
+    'RELATÓRIO DE CAMISETAS — TRILHA OUTUBRO ROSA',
+    'Data do evento: 18/10/2026',
+    '',
+    'TOTAL DE CAMISETAS CONFIRMADAS: '+Number(d?.totalShirts||0),
+    '',
+    'CAMISETA TRADICIONAL',
+    ...sizes.map(s=>s+': '+count('Camiseta Tradicional',s)),
+    '',
+    'BABYLOOK',
+    ...sizes.map(s=>s+': '+count('Babylook',s)),
+    '',
+    'LISTA NOMINAL'
+  ];
+  (d?.shirts||[]).forEach((s,i)=>lines.push((i+1)+'. '+s.name+' — '+s.model+' — '+s.size+' — Qtd. '+s.quantity));
+  return lines.join('\n');
+}
+
+function renderShirtReport(d){
+  const sizes=['PP','P','M','G','GG'];
+  const build=model=>sizes.map(s=>`<div class="shirt-count"><span>${s}</span><b>${Number(d.shirtCounts?.[model+'|'+s]||0)}</b></div>`).join('');
+  $('#traditionalCounts').innerHTML=build('Camiseta Tradicional');
+  $('#babylookCounts').innerHTML=build('Babylook');
+  $('#totalShirts').textContent=d.totalShirts||0;
+  const list=$('#shirtReportList');
+  if(!d.shirts?.length){
+    list.innerHTML='<div class="notice">Nenhuma camiseta confirmada ainda. O relatório só inclui participantes cujo pagamento foi confirmado no painel.</div>';
+    return;
+  }
+  list.innerHTML='<div class="shirt-row" style="font-weight:900"><span>NOME</span><span>MODELO</span><span>TAM.</span><span>QTD.</span></div>'+
+    d.shirts.map(s=>`<div class="shirt-row"><span>${s.name}</span><span>${s.model}</span><span>${s.size}</span><strong>${s.quantity}</strong></div>`).join('');
+}
+
+$('#adminReservationsTab').onclick=()=>{
+  $('#adminReservations').classList.remove('hidden');
+  $('#shirtReport').classList.add('hidden');
+  $('#adminReservationsTab').className='btn btn-primary';
+  $('#adminShirtsTab').className='btn btn-light';
+};
+$('#adminShirtsTab').onclick=()=>{
+  $('#adminReservations').classList.add('hidden');
+  $('#shirtReport').classList.remove('hidden');
+  $('#adminReservationsTab').className='btn btn-light';
+  $('#adminShirtsTab').className='btn btn-primary';
+};
+$('#copyShirtReport').onclick=async()=>{
+  try{await navigator.clipboard.writeText(reportText());toast('Relatório de camisetas copiado!')}catch{toast('Não foi possível copiar o relatório.')}
+};
+$('#pdfShirtReport').onclick=()=>{
+  if(!adminDataCache) return;
+  const jspdf=window.jspdf;
+  if(!jspdf?.jsPDF){toast('Gerador de PDF não carregou.');return}
+  const doc=new jspdf.jsPDF();
+  const lines=doc.splitTextToSize(reportText(),180);
+  let y=16;
+  lines.forEach(line=>{if(y>282){doc.addPage();y=16}doc.text(line,15,y);y+=7});
+  doc.save('relatorio-camisetas-outubro-rosa.pdf');
+};
+
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.08});
+  document.querySelectorAll('section,.card,.availability,.formbox').forEach(el=>{el.classList.add('reveal');io.observe(el)});
+}
 renderParticipants();refreshStats();
 </script>
 </body>
