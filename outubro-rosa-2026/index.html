@@ -13,7 +13,7 @@
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff 0,#fff8fb 48%,#fff 100%);font-size:18px;line-height:1.55}
     img{max-width:100%;display:block}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}.hidden{display:none!important}
     header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(197,47,120,.12)}
-    .nav{min-height:74px;display:flex;align-items:center;gap:14px}.back-site{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--pink);font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 8px 22px rgba(106,30,70,.08);transition:.2s}.back-site:hover{transform:translateX(-3px);box-shadow:0 12px 28px rgba(106,30,70,.14)}.floating-back{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:70;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(10px);color:var(--pink);font-size:0;font-weight:900;cursor:pointer;box-shadow:0 14px 32px rgba(106,30,70,.18);transition:.22s}.floating-back span{font-size:30px;line-height:1;display:block;transform:translateY(-1px)}.floating-back:hover{transform:translateY(-50%) translateX(-3px) scale(1.04);box-shadow:0 18px 38px rgba(106,30,70,.24)}.logo{width:64px;height:64px;object-fit:contain}.brand-title{font-size:18px;letter-spacing:-.01em}.navlinks{margin-left:auto;display:flex;gap:18px;align-items:center}.navlinks a{color:var(--ink);text-decoration:none;font-weight:700;font-size:16px}.btn{border:0;border-radius:14px;padding:14px 20px;min-height:50px;font-size:18px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}.btn:hover{transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;box-shadow:0 10px 30px rgba(197,47,120,.24)}.btn-light{background:#fff;color:var(--pink);border:1px solid var(--line)}.btn-dark{background:#392331;color:#fff}.btn-danger{background:#fff0f2;color:var(--danger);border:1px solid #ffc7d0}
+    .nav{min-height:74px;display:flex;align-items:center;gap:14px}.back-site{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--pink);font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 8px 22px rgba(106,30,70,.08);transition:.2s}.back-site:hover{transform:translateX(-3px);box-shadow:0 12px 28px rgba(106,30,70,.14)}.floating-back{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:70;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(10px);color:var(--pink);font-size:0;font-weight:900;cursor:pointer;box-shadow:0 14px 32px rgba(106,30,70,.18);transition:.22s}.floating-back span{font-size:30px;line-height:1;display:block;transform:translateY(-1px)}.floating-back:hover{transform:translateY(-50%) translateX(-3px) scale(1.04);box-shadow:0 18px 38px rgba(106,30,70,.24)}.logo{width:64px;height:64px;object-fit:contain}.brand-title{font-size:18px;letter-spacing:-.01em}.navlinks{margin-left:auto;display:flex;gap:18px;align-items:center}.navlinks a{position:relative;color:var(--ink);text-decoration:none;font-weight:750;font-size:16px;transition:color .2s ease}.navlinks a:not(.btn):after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--pink2));transition:right .25s ease}.navlinks a:not(.btn):hover{color:var(--pink)}.navlinks a:not(.btn):hover:after{right:0}.btn{position:relative;isolation:isolate;border:0;border-radius:14px;padding:14px 20px;min-height:50px;font-size:18px;font-weight:850;letter-spacing:.005em;cursor:pointer;transition:transform .22s ease,box-shadow .22s ease,filter .22s ease,border-color .22s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;overflow:hidden}.btn:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.30) 46%,transparent 70%);transform:translateX(-130%);transition:transform .65s ease;z-index:-1}.btn:hover:before{transform:translateX(130%)}.btn:focus-visible,.pay-choice:focus-visible,.floating-back:focus-visible,.whatsapp:focus-visible,.admin-access:focus-visible{outline:3px solid rgba(197,47,120,.28);outline-offset:3px}.btn:hover{transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;box-shadow:0 10px 30px rgba(197,47,120,.24)}.btn-light{background:#fff;color:var(--pink);border:1px solid var(--line)}.btn-dark{background:#392331;color:#fff}.btn-danger{background:#fff0f2;color:var(--danger);border:1px solid #ffc7d0}
     .hero{padding:20px 0 32px}.banner{width:100%;border-radius:24px;box-shadow:var(--shadow);background:#f8d8e6;object-fit:cover}.hero-copy{text-align:center;padding:30px 0 10px}.eyebrow{color:var(--pink);font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(42px,6.5vw,72px);line-height:.98;margin:10px 0 10px;letter-spacing:-.045em;font-weight:950;background:linear-gradient(135deg,#5b203f 8%,var(--pink) 48%,#e65c9c 88%);-webkit-background-clip:text;background-clip:text;color:transparent}.hero h1 span{font-weight:750}.hero-kicker{margin:0 0 12px;font-size:15px;letter-spacing:.16em;font-weight:900;color:#9b3c6d}.eyebrow{display:inline-flex;align-items:center;justify-content:center;padding:8px 13px;border-radius:999px;background:linear-gradient(135deg,#fff0f6,#fff);border:1px solid var(--line);box-shadow:0 8px 24px rgba(197,47,120,.08)}.lead{font-size:clamp(19px,2.4vw,24px);max-width:820px;margin:0 auto;color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}.fact,.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}.fact strong{font-size:21px;display:block;margin-top:4px}.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
     section{padding:64px 0}.section-title{text-align:center;margin:0 0 14px;font-size:clamp(30px,4vw,44px);line-height:1.15}.section-sub{max-width:780px;text-align:center;margin:0 auto 28px;color:var(--muted);font-size:19px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card h3{font-size:22px;margin:8px 0}.card p{margin:0;color:var(--muted)}
     .availability{background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:var(--shadow)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stats-live{grid-template-columns:repeat(3,1fr)}.stat{text-align:center;padding:18px;border-radius:18px;background:#fff}.stat b{font-size:40px;line-height:1;display:block;color:var(--pink)}.progress{height:14px;background:#f4dbe6;border-radius:999px;overflow:hidden;margin-top:18px}.progress>span{height:100%;display:block;background:linear-gradient(90deg,var(--pink),var(--pink2));width:0;transition:width .5s}
@@ -23,7 +23,7 @@
     .timeline{max-width:760px;margin:auto}.step{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:14px 0}.dot{width:50px;height:50px;border-radius:50%;background:var(--rose);display:grid;place-items:center;font-size:25px}.step h3{margin:0;font-size:21px}.step p{margin:4px 0 0;color:var(--muted)}
     .shirt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.shirt-grid img{border-radius:22px;box-shadow:var(--shadow);width:100%;background:#fff}
     .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}.price{font-size:42px;color:var(--pink);font-weight:900}.package{position:relative}.package.recommended{border:2px solid var(--pink)}.tag{position:absolute;top:14px;right:14px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900}
-    .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participants{display:grid;gap:16px;margin-top:20px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participants{display:grid;gap:16px;margin-top:20px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.radio-card:hover{transform:translateY(-2px);border-color:#e5a4c5;box-shadow:0 10px 24px rgba(106,30,70,.08)}.radio-card:has(input:checked){border-color:var(--pink);background:linear-gradient(135deg,#fff3f8,#fff);box-shadow:0 12px 28px rgba(197,47,120,.13)}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .summary{background:#fff7fb;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}.summary-row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px dashed #e7c4d4;padding:10px 0}.summary-row:last-child{border:0}.total{font-size:30px;font-weight:900;color:var(--pink)}
     .payment-choice-title{text-align:center;font-size:20px;font-weight:900;margin:4px 0 14px;color:var(--ink)}.pay-tabs{display:flex;gap:14px;margin-bottom:20px}.pay-tabs button{flex:1}
     .pay-choice{position:relative;min-height:64px;border-radius:18px;font-size:19px;font-weight:900;letter-spacing:.01em;box-shadow:0 12px 28px rgba(70,28,53,.10);border:1px solid rgba(197,47,120,.18);overflow:hidden;isolation:isolate}
@@ -34,9 +34,9 @@
     .btn-pay-pix{background:linear-gradient(135deg,#128a59,#20b474)!important;color:#fff!important}
     .btn-pay-card{background:linear-gradient(135deg,#5a2a68,#c52f78)!important;color:#fff!important}
     .btn-whatsapp-premium{background:linear-gradient(135deg,#138d5a,#25c879)!important;color:#fff!important}
-    .btn-pay-pix:hover,.btn-pay-card:hover,.btn-whatsapp-premium:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 45px rgba(50,28,43,.22);filter:saturate(1.08)}
+    .btn-pay-pix:hover,.btn-pay-card:hover,.btn-whatsapp-premium:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 45px rgba(50,28,43,.22);filter:saturate(1.08) brightness(1.03)}.btn-pay-pix:after,.btn-pay-card:after,.btn-whatsapp-premium:after{content:"";position:absolute;inset:-60% auto -60% -45%;width:32%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:paymentShine 3.8s ease-in-out infinite;pointer-events:none}
     .btn-pay-pix:active,.btn-pay-card:active,.btn-whatsapp-premium:active{transform:translateY(0) scale(.985)}
-    .btn-busy{pointer-events:none;opacity:.82}
+    .btn-busy{pointer-events:none;opacity:.82}.soldout-state{background:linear-gradient(135deg,#8f2030,#b4233a)!important;color:#fff!important;box-shadow:none!important;cursor:not-allowed!important}
     .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
     .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 16px}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
@@ -73,7 +73,7 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes seatDrop{0%{transform:scale(1)}35%{transform:scale(1.16);color:#168253}100%{transform:scale(1)}}
     @keyframes whatsPulse{0%,100%{box-shadow:0 16px 34px rgba(31,157,97,.32)}50%{box-shadow:0 18px 42px rgba(31,157,97,.48)}}
-    @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}
+    @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}@keyframes paymentShine{0%,58%{left:-45%}78%,100%{left:135%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
     @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:repeat(3,1fr)}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:center;gap:12px}.floating-back{left:8px;width:42px;height:42px;font-size:24px}.admin-tools{grid-template-columns:1fr}.admin-access{min-width:52px;padding:10px 12px}.admin-label{display:none}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
@@ -257,7 +257,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2105</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2140</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -319,7 +319,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2105';
+const BUILD_VERSION = '20260922-2140';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
@@ -348,12 +348,13 @@ async function adminApi(action='list',payload={}){
   if(!res.ok||data.ok===false) throw new Error(data.error||'Não foi possível carregar o painel.');
   return data;
 }
-function renderParticipants(){
+function renderParticipants(seed=[]){
   const box=$('#participants'); box.innerHTML='';
   for(let i=0;i<qty;i++){
+    const previous=seed[i]||null;
     const p=document.createElement('div'); p.className='participant'; p.dataset.i=i;
     p.innerHTML=`<h3>Participante ${i+1}</h3>
-      <div class="field"><label>Nome completo</label><input class="pname" placeholder="Nome da participante"></div>
+      <div class="field"><label>Nome completo</label><input class="pname" placeholder="Nome da participante" autocomplete="name"></div>
       <div class="field"><label>Escolha a opção</label><div class="radio-row">
         <label class="radio-card"><input type="radio" name="opt${i}" value="entry" checked> Somente entrada — R$ 30</label>
         <label class="radio-card"><input type="radio" name="opt${i}" value="shirt"> Entrada + camiseta — R$ 75</label>
@@ -363,7 +364,22 @@ function renderParticipants(){
         <div><label>Tamanho</label><select class="size"><option value="">Selecione</option><option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option></select></div>
       </div>`;
     box.appendChild(p);
-    p.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{p.querySelector('.shirt-options').classList.toggle('hidden',r.value!=='shirt'||!r.checked);updateSummary()}));
+
+    if(previous){
+      p.querySelector('.pname').value=previous.name||'';
+      const option=previous.option==='shirt'?'shirt':'entry';
+      const radio=p.querySelector('input[type=radio][value="'+option+'"]');
+      if(radio) radio.checked=true;
+      p.querySelector('.model').value=previous.model||'';
+      p.querySelector('.size').value=previous.size||'';
+      p.querySelector('.shirt-options').classList.toggle('hidden',option!=='shirt');
+    }
+
+    p.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{
+      const selected=p.querySelector('input[type=radio]:checked')?.value||'entry';
+      p.querySelector('.shirt-options').classList.toggle('hidden',selected!=='shirt');
+      updateSummary();
+    }));
     p.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',updateSummary));
   }
   updateSummary();
@@ -444,7 +460,7 @@ function applySoldOutState(d){
   $('#continuePayment').disabled=sold;
   $('#plusQty').disabled=sold;
   $('#continuePayment').textContent=sold?'🌸 VAGAS ESGOTADAS':'Continuar para pagamento';
-  if(sold) $('#continuePayment').classList.add('btn-busy'); else $('#continuePayment').classList.remove('btn-busy');
+  $('#continuePayment').classList.toggle('soldout-state',sold);
 }
 function renderPublicConfirmed(d){
   const names=Array.isArray(d.confirmedParticipants)?d.confirmedParticipants:[];
@@ -495,7 +511,7 @@ function configureCardPayment(){
     pay.classList.remove('hidden');
     request.classList.add('hidden');
     pay.textContent='💳 '+cfg.label;
-    instruction.textContent='Link oficial do Mercado Pago disponível para esta combinação.';
+    instruction.textContent='Link oficial do Mercado Pago disponível para esta combinação. Sua vaga é reservada antes da abertura do pagamento.';
   }else{
     pay.classList.add('hidden');
     request.classList.remove('hidden');
@@ -520,17 +536,15 @@ async function beginCardPayment(){
   const button=$('#cardPayButton');
   const feedback=$('#cardMessage');
   const original=button.textContent;
-  const popup=window.open('about:blank','_blank');
   button.disabled=true;
   button.classList.add('btn-busy');
   button.textContent='Reservando vaga...';
   try{
     await ensureReservation('CARTÃO');
-    showMsg(feedback,'Vaga(s) reservada(s). Abrindo o link oficial do cartão.','success');
-    if(popup) popup.location=cfg.url; else window.location.href=cfg.url;
-    setTimeout(()=>{button.disabled=false;button.classList.remove('btn-busy');button.textContent=original},3500);
+    showMsg(feedback,'Vaga(s) reservada(s). Abrindo o link oficial do cartão...','success');
+    button.textContent='Abrindo Mercado Pago...';
+    setTimeout(()=>window.location.assign(cfg.url),250);
   }catch(e){
-    if(popup) popup.close();
     button.disabled=false;
     button.classList.remove('btn-busy');
     button.textContent=original;
@@ -538,7 +552,6 @@ async function beginCardPayment(){
     toast(e.message);
   }
 }
-
 async function beginPayment(method,button,feedback){
   const original=button.textContent;
   button.disabled=true;
@@ -571,9 +584,45 @@ function returnHome(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-$('#minusQty').onclick=()=>{if(qty>1){qty--;$('#qtyValue').textContent=qty;renderParticipants()}};
-$('#plusQty').onclick=()=>{if(qty<10){qty++;$('#qtyValue').textContent=qty;renderParticipants()}};
-$('#continuePayment').onclick=()=>{const e=validate();if(e){showMsg($('#formMessage'),e,'error');return}$('#formMessage').innerHTML='';showPayment()};
+$('#minusQty').onclick=()=>{
+  if(qty>1){
+    const current=getParticipants();
+    qty--;
+    $('#qtyValue').textContent=qty;
+    renderParticipants(current.slice(0,qty));
+  }
+};
+$('#plusQty').onclick=()=>{
+  if(qty<10){
+    const current=getParticipants();
+    qty++;
+    $('#qtyValue').textContent=qty;
+    renderParticipants(current);
+  }
+};
+$('#continuePayment').onclick=async()=>{
+  const e=validate();
+  if(e){showMsg($('#formMessage'),e,'error');return}
+  const button=$('#continuePayment');
+  const original=button.textContent;
+  button.disabled=true;
+  button.classList.add('btn-busy');
+  button.textContent='Conferindo vagas...';
+  try{
+    const d=await refreshStats();
+    if(!d) throw new Error('Não foi possível atualizar as vagas agora.');
+    if(Number(d.available)<qty) throw new Error(d.available<=0?'Vagas esgotadas.':'Restam apenas '+d.available+' vaga(s). Ajuste a quantidade.');
+    $('#formMessage').innerHTML='';
+    showPayment();
+  }catch(err){
+    showMsg($('#formMessage'),err.message,'error');
+    toast(err.message);
+  }finally{
+    button.disabled=false;
+    button.classList.remove('btn-busy');
+    button.textContent=original;
+  }
+};
 $('#pixTab').onclick=()=>{
   $('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden');
   $('#pixTab').className='btn btn-primary pay-choice active';
@@ -587,8 +636,24 @@ $('#cardTab').onclick=()=>{
 };
 $('#pixPayButton').onclick=()=>beginPayment('PIX',$('#pixPayButton'),$('#pixFeedback'));
 $('#cardPayButton').onclick=()=>beginCardPayment();
-$('#requestCardLink').onclick=()=>{
-  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(cardRequestText()),'_blank','noopener');
+$('#requestCardLink').onclick=async()=>{
+  const button=$('#requestCardLink');
+  const original=button.textContent;
+  button.disabled=true;
+  button.classList.add('btn-busy');
+  button.textContent='Reservando vaga...';
+  try{
+    const r=await ensureReservation('CARTÃO');
+    const text=cardRequestText()+'\nReserva: '+(r.id||'')+'\nA vaga fica reservada por até 30 minutos.';
+    button.textContent='Abrindo WhatsApp...';
+    setTimeout(()=>window.location.assign('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text)),250);
+  }catch(e){
+    button.disabled=false;
+    button.classList.remove('btn-busy');
+    button.textContent=original;
+    showMsg($('#cardMessage'),e.message,'error');
+    toast(e.message);
+  }
 };
 $('#backEdit').onclick=()=>{
   reservation=null;
@@ -642,7 +707,8 @@ function renderAdmin(d){
     const el=document.createElement('div'); el.className='admin-item';
     const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>${p.option==='shirt'?escapeHtml(p.model)+' • '+escapeHtml(p.size):'Somente entrada'} • ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
     const paidInfo=r.status==='confirmed'?'<br><small>✅ Pagamento aprovado automaticamente'+(r.approvedAt?' • '+new Date(r.approvedAt).toLocaleString('pt-BR'):'')+'</small>':'';
-    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) • ${money(r.total)} • ${escapeHtml(r.paymentMethod)}</small>${paidInfo}</div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
+    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) • ${money(r.total)} • ${escapeHtml(r.paymentMethod)}</small>${paidInfo}</div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status==='pending'&&String(r.paymentMethod).includes('CART')?'<button class="btn btn-primary confirm-card">✓ Confirmar cartão</button>':''}${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
+    const confirmCardBtn=el.querySelector('.confirm-card'); if(confirmCardBtn) confirmCardBtn.onclick=()=>{if(confirm('Confirmar que o pagamento no cartão foi recebido?'))adminAction('confirm',{reservationId:r.id})};
     const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Cancelar esta reserva e devolver '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
     el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
@@ -662,7 +728,7 @@ function reportText(d=adminDataCache){
   const sizes=['PP','P','M','G','GG'];
   const count=(model,size)=>Number(d?.shirtCounts?.[model+'|'+size]||0);
   const lines=[
-    'RELATÓRIO DE CAMISETAS — TRILHA OUTUBRO ROSA',
+    'RELATÓRIO DE CAMISETAS — OUTUBRO ROSA',
     'Data do evento: 18/10/2026',
     '',
     'TOTAL DE CAMISETAS CONFIRMADAS: '+Number(d?.totalShirts||0),
@@ -736,7 +802,7 @@ $('#pdfShirtReport').onclick=()=>{
 
   doc.setFont('helvetica','bold');
   doc.setFontSize(18);
-  doc.text('TRILHA OUTUBRO ROSA',15,18);
+  doc.text('OUTUBRO ROSA',15,18);
   doc.setFontSize(12);
   doc.text('Relatório de camisetas confirmadas',15,25);
   doc.setFont('helvetica','normal');
