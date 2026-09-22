@@ -278,7 +278,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-2915</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-2940</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -341,7 +341,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2915';
+const BUILD_VERSION = '20260922-2940';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -815,9 +815,8 @@ async function loadAdminData(showLoading=true){
   if(showLoading) $('#adminReservations').innerHTML='<div class="notice">Carregando reservas...</div>';
   try{
     const d=await adminApi('list');
-    adminDataCache=d;
     renderAdmin(d);
-    return d;
+    return adminDataCache;
   }catch(e){
     $('#adminReservations').innerHTML='<div class="error">'+escapeHtml(e.message)+'</div>';
     toast(e.message);
@@ -841,17 +840,25 @@ queryAll('[data-close]').forEach(b=>b.onclick=()=>{
 $('#adminEnter').onclick=async()=>{
   const button=$('#adminEnter');
   adminPass=$('#adminPassword').value;
+  if(!adminPass){
+    showMsg($('#adminLoginMessage'),'Digite a senha administrativa.','error');
+    return;
+  }
+
+  $('#adminLoginMessage').innerHTML='';
+  $('#adminLogin').classList.add('hidden');
+  $('#adminPanel').classList.remove('hidden');
+  $('#adminReservations').innerHTML='<div class="notice">Carregando reservas...</div>';
   button.disabled=true;
   button.textContent='Entrando...';
+
   try{
-    await adminApi('auth');
-    $('#adminLoginMessage').innerHTML='';
-    $('#adminLogin').classList.add('hidden');
-    $('#adminPanel').classList.remove('hidden');
-    $('#adminReservations').innerHTML='<div class="notice">Carregando reservas...</div>';
+    const d=await adminApi('list');
+    renderAdmin(d);
     startAdminAutoSync();
-    loadAdminData(true);
   }catch(e){
+    $('#adminPanel').classList.add('hidden');
+    $('#adminLogin').classList.remove('hidden');
     showMsg($('#adminLoginMessage'),e.message,'error');
   }finally{
     button.disabled=false;
@@ -863,7 +870,31 @@ function statusLabel(status){
   return ({pending:'AGUARDANDO PAGAMENTO',confirmed:'CONFIRMADA AUTOMATICAMENTE',review:'EM ANÁLISE',cancelled:'CANCELADA / EXPIRADA'})[status]||String(status||'').toUpperCase();
 }
 
+function buildActiveShirtData(d){
+  const active=new Set(['pending','confirmed','review']);
+  const shirts=[];
+  (d?.reservations||[]).filter(r=>active.has(r.status)).forEach(r=>{
+    (r.participants||[]).filter(p=>p.option==='shirt').forEach(p=>shirts.push({
+      reservationId:r.id,
+      name:p.name,
+      model:p.model,
+      size:p.size,
+      quantity:1,
+      status:r.status,
+      paymentMethod:r.paymentMethod
+    }));
+  });
+  shirts.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+  const shirtCounts={};
+  shirts.forEach(s=>{
+    const key=s.model+'|'+s.size;
+    shirtCounts[key]=(shirtCounts[key]||0)+1;
+  });
+  return {...d,shirts,shirtCounts,totalShirts:shirts.length};
+}
+
 function renderAdmin(d){
+  d=buildActiveShirtData(d);
   adminDataCache=d;
   $('#adminConfirmed').textContent=d.stats.confirmed;
   $('#adminPending').textContent=d.stats.pending+(d.stats.review||0);
