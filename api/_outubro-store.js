@@ -216,18 +216,31 @@ async function stats() {
   const rows = await allRows();
   let pending=0, confirmed=0, review=0;
   const confirmedParticipants = [];
+  const publicParticipants = [];
+
   rows.forEach(r => {
     if (r.status === 'pending') pending += r.quantity;
     if (r.status === 'review') review += r.quantity;
+    if (r.status === 'confirmed') confirmed += r.quantity;
+
+    if (occupies(r.status)) {
+      r.participants.forEach(p => {
+        const displayName = publicName(p.name);
+        if (displayName) publicParticipants.push(displayName);
+      });
+    }
+
     if (r.status === 'confirmed') {
-      confirmed += r.quantity;
       r.participants.forEach(p => {
         const displayName = publicName(p.name);
         if (displayName) confirmedParticipants.push(displayName);
       });
     }
   });
+
   confirmedParticipants.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  publicParticipants.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+
   const reserved = pending + confirmed + review;
   return {
     total: CAPACITY,
@@ -237,7 +250,9 @@ async function stats() {
     reserved,
     available: Math.max(0, CAPACITY - reserved),
     soldOut: reserved >= CAPACITY,
-    confirmedParticipants
+    confirmedParticipants,
+    publicParticipants,
+    publicCount: reserved
   };
 }
 
