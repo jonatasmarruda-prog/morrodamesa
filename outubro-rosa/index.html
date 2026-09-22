@@ -23,12 +23,27 @@
     .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}.price{font-size:42px;color:var(--pink);font-weight:900}.package{position:relative}.package.recommended{border:2px solid var(--pink)}.tag{position:absolute;top:14px;right:14px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900}
     .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participants{display:grid;gap:16px;margin-top:20px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .summary{background:#fff7fb;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}.summary-row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px dashed #e7c4d4;padding:10px 0}.summary-row:last-child{border:0}.total{font-size:30px;font-weight:900;color:var(--pink)}
-    .pay-tabs{display:flex;gap:10px;margin-bottom:18px}.pay-tabs button{flex:1}.pay-panel{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff}.pay-value{font-size:34px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
+    .pay-tabs{display:flex;gap:14px;margin-bottom:20px}.pay-tabs button{flex:1}
+    .pay-choice{position:relative;min-height:64px;border-radius:18px;font-size:19px;font-weight:900;letter-spacing:.01em;box-shadow:0 12px 28px rgba(70,28,53,.10);border:1px solid rgba(197,47,120,.18);overflow:hidden;isolation:isolate}
+    .pay-choice:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.0),rgba(255,255,255,.42),rgba(255,255,255,.0));transform:translateX(-130%);transition:transform .7s ease;z-index:-1}
+    .pay-choice:hover:before,.pay-choice.active:before{transform:translateX(130%)}
+    .pay-choice.active{transform:translateY(-2px) scale(1.01);box-shadow:0 16px 38px rgba(197,47,120,.22);border-color:rgba(197,47,120,.42)}
+    .btn-pay-pix,.btn-pay-card,.btn-whatsapp-premium{position:relative;overflow:hidden;min-height:58px;border-radius:18px;box-shadow:0 16px 34px rgba(50,28,43,.16);transition:transform .22s ease,box-shadow .22s ease,filter .22s ease}
+    .btn-pay-pix{background:linear-gradient(135deg,#128a59,#20b474)!important;color:#fff!important}
+    .btn-pay-card{background:linear-gradient(135deg,#5a2a68,#c52f78)!important;color:#fff!important}
+    .btn-whatsapp-premium{background:linear-gradient(135deg,#138d5a,#25c879)!important;color:#fff!important}
+    .btn-pay-pix:hover,.btn-pay-card:hover,.btn-whatsapp-premium:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 20px 45px rgba(50,28,43,.22);filter:saturate(1.08)}
+    .btn-pay-pix:active,.btn-pay-card:active,.btn-whatsapp-premium:active{transform:translateY(0) scale(.985)}
+    .btn-busy{pointer-events:none;opacity:.82}
+    .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+    .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
+    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
     footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.gear{border:0;background:transparent;color:#fff;opacity:.45;font-size:24px;cursor:pointer;padding:10px}.gear:hover{opacity:1}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
-    .whatsapp{position:fixed;right:18px;bottom:18px;z-index:80;border-radius:999px;background:#1f9d61;color:#fff;text-decoration:none;font-weight:900;padding:14px 18px;box-shadow:0 12px 28px rgba(31,157,97,.28);transition:.25s}
-    .whatsapp:hover{transform:translateY(-3px) scale(1.02)}
+    .whatsapp{position:fixed;right:18px;bottom:18px;z-index:80;border-radius:999px;background:linear-gradient(135deg,#138d5a,#25c879);color:#fff;text-decoration:none;font-weight:900;padding:15px 20px;box-shadow:0 16px 34px rgba(31,157,97,.32);transition:.25s;overflow:hidden;animation:whatsPulse 2.8s ease-in-out infinite}
+    .whatsapp:before{content:"";position:absolute;inset:-40% auto -40% -55%;width:35%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.46),transparent);animation:whatsShine 3.8s ease-in-out infinite}
+    .whatsapp:hover{transform:translateY(-4px) scale(1.035);box-shadow:0 22px 44px rgba(31,157,97,.38)}
     body:before,body:after{content:"";position:fixed;pointer-events:none;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.32;animation:orb 10s ease-in-out infinite alternate}
     body:before{width:340px;height:340px;background:#ffc4dc;top:8%;left:-120px}
     body:after{width:420px;height:420px;background:#f5d7ea;right:-160px;bottom:5%;animation-delay:-3s}
@@ -51,6 +66,10 @@
     @keyframes orb{to{transform:translate3d(35px,-25px,0) scale(1.08)}}
     @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
     @keyframes shine{0%,68%{left:-50%}86%,100%{left:130%}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes seatDrop{0%{transform:scale(1)}35%{transform:scale(1.16);color:#168253}100%{transform:scale(1)}}
+    @keyframes whatsPulse{0%,100%{box-shadow:0 16px 34px rgba(31,157,97,.32)}50%{box-shadow:0 18px 42px rgba(31,157,97,.48)}}
+    @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
     @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:12px;right:12px;text-align:center}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
@@ -185,32 +204,32 @@
       <div class="formbox">
         <div id="finalSummary" class="summary"></div>
         <div class="pay-tabs">
-          <button class="btn btn-primary" id="pixTab">💚 PIX</button>
-          <button class="btn btn-light" id="cardTab">💳 CARTÃO</button>
+          <button class="btn btn-primary pay-choice active" id="pixTab">💚 PIX</button>
+          <button class="btn btn-light pay-choice" id="cardTab">💳 CARTÃO</button>
         </div>
         <div id="pixPanel" class="pay-panel">
           <h3>Pagamento via Pix</h3>
           <div>Valor a pagar</div><div class="pay-value" id="pixValue">R$ 0,00</div>
-          <button class="btn btn-primary" id="copyPix">📋 Copiar Pix</button>
+          <button class="btn btn-pay-pix" id="copyPix">💚 📋 Copiar Pix e reservar vaga</button>
           <div id="pixFeedback"></div>
-          <div style="margin-top:14px"><button class="btn btn-dark" id="sendReceiptPix">📲 Enviar comprovante</button></div>
+          <div style="margin-top:14px"><button class="btn btn-whatsapp-premium" id="sendReceiptPix">📲 Enviar comprovante no WhatsApp</button></div>
         </div>
         <div id="cardPanel" class="pay-panel hidden">
           <h3>Pagamento com cartão</h3>
           <div id="cardMessage"></div>
-          <a class="btn btn-primary hidden" id="cardLink" target="_blank" rel="noopener">💳 Pagar no cartão</a>
-          <div style="margin-top:14px"><button class="btn btn-dark" id="sendReceiptCard">📲 Enviar comprovante</button></div>
+          <a class="btn btn-pay-card hidden" id="cardLink" target="_blank" rel="noopener">💳 Pagar no cartão e reservar vaga</a>
+          <div style="margin-top:14px"><button class="btn btn-whatsapp-premium" id="sendReceiptCard">📲 Enviar comprovante no WhatsApp</button></div>
         </div>
         <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-light" id="backEdit">← Voltar e editar</button>
-          <a class="btn btn-light" href="#inicio">🏠 Voltar à página inicial</a>
+          <button class="btn btn-light" id="backHome">🏠 Voltar à página inicial</button>
         </div>
       </div>
     </div>
   </section>
 </main>
 
-<a class="whatsapp" href="https://wa.me/5566996926174?text=Ol%C3%A1%2C%20Jonatas!%20%F0%9F%8C%B8%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Trilha%20Outubro%20Rosa." target="_blank" rel="noopener">💬 Fale com a gente</a>
+<a class="whatsapp" id="floatingWhatsapp" href="https://wa.me/5566996926174?text=Ol%C3%A1%2C%20Jonatas!%20%F0%9F%8C%B8%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Trilha%20Outubro%20Rosa." target="_blank" rel="noopener">💬 Fale com a gente</a>
 
 <footer>
   <div class="wrap footer-row">
@@ -339,29 +358,31 @@ async function ensureReservation(method){
     sessionStorage.setItem('outubroReservationClientId',clientId);
   }
   const payload={...reservationPayload(),paymentMethod:method,clientId};
-  try{
-    const data=await publicApi(payload);
-    reservation={...data.reservation,paymentMethod:method,participants:getParticipants()};
-    refreshStats();
-    return reservation;
-  }catch(error){
-    reservation={id:'OR-2026-LOCAL-'+Date.now(),quantity:payload.participants.length,total:totalValue(),status:'pending',paymentMethod:method,participants:getParticipants(),pendingSync:true};
-    toast('Pagamento liberado. O registro online será tentado novamente no próximo passo.');
-    return reservation;
-  }
+  const data=await publicApi(payload);
+  reservation={...data.reservation,paymentMethod:method,participants:getParticipants()};
+  await refreshStats(true,payload.participants.length);
+  return reservation;
 }
-async function refreshStats(){
+async function refreshStats(animate=false,amount=0){
   try{
     const d=await publicApi();
     $('#reservedCount').textContent=d.reserved;
     $('#availableCount').textContent=d.available;
     $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
     $('#apiNotice').classList.add('hidden');
+    if(animate){
+      ['#reservedCount','#availableCount'].forEach(sel=>{
+        const el=$(sel); el.classList.remove('seat-drop'); void el.offsetWidth; el.classList.add('seat-drop');
+      });
+      toast((amount||1)+' vaga(s) reservada(s). Restam '+d.available+'.');
+    }
+    return d;
   }catch(e){
     $('#reservedCount').textContent='—';
     $('#availableCount').textContent='—';
     $('#progressBar').style.width='0%';
     $('#apiNotice').classList.add('hidden');
+    throw e;
   }
 }
 function showPayment(){
@@ -371,7 +392,7 @@ function configureCard(){
   const ps=getParticipants(),link=$('#cardLink'),msg=$('#cardMessage');let url='',label='';
   if(ps.length===2&&ps.every(p=>p.option==='shirt')){url=CARD_TWO_SHIRTS;label='Pagar '+money(150)+' no cartão'}
   else if(ps.length===2&&ps.every(p=>p.option==='entry')){url=CARD_TWO_ENTRY;label='Pagar '+money(60)+' no cartão'}
-  if(url){link.href=url;link.textContent='💳 '+label;link.classList.remove('hidden');showMsg(msg,'Link de cartão disponível para esta combinação.','success')}
+  if(url){link.href=url;link.textContent='💳 '+label+' • Reservar vaga';link.classList.remove('hidden');showMsg(msg,'Ao clicar, a(s) vaga(s) serão reservadas antes de abrir o pagamento.','success')}
   else{link.classList.add('hidden');showMsg(msg,'Para esta combinação, utilize Pix ou fale com a organização para pagamento no cartão.','notice')}
 }
 function whatsappText(method){
@@ -381,43 +402,82 @@ function whatsappText(method){
   text+='💰 VALOR TOTAL: '+money(totalValue())+'\n💳 FORMA DE PAGAMENTO: '+method+'\n\n📎 Estou enviando o comprovante para confirmação da(s) vaga(s).';
   return text;
 }
+function returnHome(){
+  $('#pagamento').classList.add('hidden');
+  history.replaceState(null,'',location.pathname+location.search+'#inicio');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 async function sendReceipt(method){
-  try{await ensureReservation(method)}catch(e){showMsg($('#formMessage'),e.message,'error');toast(e.message);return}
-  location.hash='inicio';
-  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(whatsappText(method)),'_blank','noopener');
+  const popup=window.open('about:blank','_blank');
+  try{
+    await ensureReservation(method);
+    const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(whatsappText(method));
+    returnHome();
+    if(popup) popup.location=url; else window.location.href=url;
+  }catch(e){
+    if(popup) popup.close();
+    showMsg($('#formMessage'),e.message,'error');
+    toast(e.message);
+  }
 }
 $('#minusQty').onclick=()=>{if(qty>1){qty--;$('#qtyValue').textContent=qty;renderParticipants()}};
 $('#plusQty').onclick=()=>{if(qty<10){qty++;$('#qtyValue').textContent=qty;renderParticipants()}};
 $('#continuePayment').onclick=()=>{const e=validate();if(e){showMsg($('#formMessage'),e,'error');return}$('#formMessage').innerHTML='';showPayment()};
-$('#pixTab').onclick=()=>{$('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden')};
-$('#cardTab').onclick=()=>{$('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden')};
+$('#pixTab').onclick=()=>{
+  $('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden');
+  $('#pixTab').className='btn btn-primary pay-choice active';
+  $('#cardTab').className='btn btn-light pay-choice';
+};
+$('#cardTab').onclick=()=>{
+  $('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden');
+  $('#cardTab').className='btn btn-primary pay-choice active';
+  $('#pixTab').className='btn btn-light pay-choice';
+};
 $('#copyPix').onclick=async()=>{
+  const btn=$('#copyPix');
+  const original='💚 📋 Copiar Pix e reservar vaga';
+  btn.classList.add('btn-busy');
+  btn.textContent='Reservando vaga...';
   try{
+    await ensureReservation('PIX');
     await navigator.clipboard.writeText(PIX_KEY);
-    $('#copyPix').textContent='✅ PIX COPIADO!';
-    showMsg($('#pixFeedback'),'✅ PIX COPIADO! Faça o pagamento e envie o comprovante para confirmar sua reserva.','success');
-    toast('Pix copiado! Faça o pagamento e envie o comprovante.');
-    ensureReservation('PIX').catch(()=>{});
-    setTimeout(()=>$('#copyPix').textContent='📋 Copiar Pix',3500);
+    btn.classList.remove('btn-busy');
+    btn.textContent='✅ PIX COPIADO • VAGA RESERVADA';
+    showMsg($('#pixFeedback'),'✅ Vaga(s) reservada(s) e Pix copiado! Faça o pagamento e envie o comprovante para confirmar.','success');
+    setTimeout(()=>btn.textContent=original,4200);
   }catch(e){
-    showMsg($('#pixFeedback'),'Não foi possível copiar automaticamente. Tente novamente.','error');
+    btn.classList.remove('btn-busy');
+    btn.textContent=original;
+    showMsg($('#pixFeedback'),'Não foi possível reservar a(s) vaga(s): '+e.message,'error');
+    toast(e.message);
   }
 };
 $('#sendReceiptPix').onclick=()=>sendReceipt('PIX');
 $('#sendReceiptCard').onclick=()=>sendReceipt('CARTÃO');
 $('#cardLink').addEventListener('click',async e=>{
   e.preventDefault();
-  const target=$('#cardLink').href;
+  const link=$('#cardLink');
+  const target=link.href;
+  const original=link.textContent;
   const popup=window.open('about:blank','_blank');
+  link.classList.add('btn-busy');
+  link.textContent='Reservando vaga...';
   try{
     await ensureReservation('CARTÃO');
+    link.classList.remove('btn-busy');
+    link.textContent='✅ VAGA RESERVADA • ABRINDO CARTÃO';
     if(popup) popup.location=target; else window.location.href=target;
+    setTimeout(()=>link.textContent=original,4200);
   }catch(err){
+    link.classList.remove('btn-busy');
+    link.textContent=original;
     if(popup) popup.close();
     toast(err.message);
   }
 });
 $('#backEdit').onclick=()=>{reservation=null;$('#pagamento').classList.add('hidden');location.hash='inscricao'};
+$('#backHome').onclick=()=>returnHome();
+$('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
 
 $('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
 queryAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
