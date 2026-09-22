@@ -118,7 +118,19 @@
     @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:repeat(3,1fr)}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:center;gap:12px}.floating-back{left:8px;width:42px;height:42px;font-size:24px}.admin-tools{grid-template-columns:1fr}.admin-access{min-width:52px;padding:10px 12px}.admin-label{display:none}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.payment-premium{padding:20px}.payment-premium h3{font-size:25px}.pay-value{font-size:34px}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   
     .local-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;width:100%;align-items:start;visibility:visible!important;opacity:1!important;content-visibility:visible!important}
-.local-gallery .photo{display:block!important;width:100%;min-width:0;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(62,30,48,.12);visibility:visible!important;opacity:1!important;transform:none!important;transition:none!important;content-visibility:visible!important}
+.local-gallery .photo{display:block!important;width:100%;min-width:0;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(62,30,48,.12);visibility:visible!important;opacity:1!important;transform:none!important;transition:none!important;content-visibility:visible!important;cursor:zoom-in;position:relative}
+.local-gallery .photo:after{content:"🔍";position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(47,33,48,.78);color:#fff;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
+.image-lightbox{position:fixed;inset:0;z-index:1000;background:rgba(20,12,18,.94);display:none;align-items:center;justify-content:center;padding:18px}
+.image-lightbox.open{display:flex}
+.image-lightbox-inner{position:relative;width:min(1100px,100%);height:min(92vh,100%);display:flex;align-items:center;justify-content:center}
+.image-lightbox img{display:block;max-width:100%;max-height:90vh;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,.45);background:#111}
+.image-lightbox-close,.image-lightbox-nav{position:absolute;border:0;background:rgba(255,255,255,.94);color:#2f2130;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:2}
+.image-lightbox-close{top:0;right:0;width:46px;height:46px;border-radius:50%;font-size:28px;font-weight:900}
+.image-lightbox-nav{top:50%;transform:translateY(-50%);width:48px;height:56px;border-radius:16px;font-size:31px;font-weight:900}
+.image-lightbox-prev{left:0}.image-lightbox-next{right:0}
+.image-lightbox-counter{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:#2f2130;font-size:13px;font-weight:900}
+body.lightbox-open{overflow:hidden!important}
+@media(max-width:768px){.local-gallery .photo:after{width:25px;height:25px;right:4px;bottom:4px;font-size:11px}.image-lightbox{padding:8px}.image-lightbox-inner{height:96vh}.image-lightbox img{max-height:92vh;border-radius:10px}.image-lightbox-close{top:7px;right:7px;width:42px;height:42px}.image-lightbox-nav{width:40px;height:52px;font-size:28px}.image-lightbox-prev{left:4px}.image-lightbox-next{right:4px}.image-lightbox-counter{bottom:8px}}
 .local-gallery .photo img{display:block!important;width:100%;height:auto;max-width:100%;aspect-ratio:1086/1448;object-fit:contain;object-position:center;background:#fff;visibility:visible!important;opacity:1!important;transform:none!important;filter:none!important;transition:none!important;content-visibility:visible!important}
 .local-gallery .photo:hover img{transform:none!important;filter:none!important}
 @media(max-width:768px){#local{content-visibility:visible!important;min-height:auto!important}#local .wrap{overflow:visible!important}.local-gallery{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important}.local-gallery .photo{border-radius:12px!important;box-shadow:0 8px 20px rgba(62,30,48,.10)!important}.local-gallery .photo img{width:100%!important;height:auto!important;min-height:0!important;visibility:visible!important;opacity:1!important}}
@@ -197,13 +209,13 @@ html,body{overflow-x:hidden}
       <h2 class="section-title">Conheça o Mirante da Janela</h2>
       <p class="section-sub">Km 18 da Rodovia do Peixe - região de Rondonópolis/MT.</p>
       <div class="local-gallery">
-        <div class="photo">
+        <div class="photo" role="button" tabindex="0" aria-label="Ampliar foto do Mirante da Janela">
           <img src="https://i.postimg.cc/1tZYdcnq/Chat-GPT-Image-22-de-set-de-2026-16-51-07.png" alt="Mirante da Janela" width="1086" height="1448" loading="eager" fetchpriority="high">
         </div>
-        <div class="photo">
+        <div class="photo" role="button" tabindex="0" aria-label="Ampliar foto do Mirante da Janela">
           <img src="https://i.postimg.cc/FRgnXd3F/Chat-GPT-Image-22-de-set-de-2026-16-48-17.png" alt="Mirante da Janela" width="1086" height="1448" loading="eager" fetchpriority="high">
         </div>
-        <div class="photo">
+        <div class="photo" role="button" tabindex="0" aria-label="Ampliar foto do Mirante da Janela">
           <img src="https://i.postimg.cc/Y2JCLNMc/20260526-164910.avif" alt="Mirante da Janela" width="1086" height="1448" loading="eager" fetchpriority="high">
         </div>
       </div>
@@ -333,11 +345,21 @@ html,body{overflow-x:hidden}
   </section>
 </main>
 
+<div class="image-lightbox" id="miranteLightbox" aria-hidden="true" role="dialog" aria-label="Foto ampliada do Mirante da Janela">
+  <div class="image-lightbox-inner">
+    <button class="image-lightbox-close" id="miranteLightboxClose" type="button" aria-label="Fechar imagem">×</button>
+    <button class="image-lightbox-nav image-lightbox-prev" id="miranteLightboxPrev" type="button" aria-label="Foto anterior">‹</button>
+    <img id="miranteLightboxImage" alt="Mirante da Janela ampliado">
+    <button class="image-lightbox-nav image-lightbox-next" id="miranteLightboxNext" type="button" aria-label="Próxima foto">›</button>
+    <div class="image-lightbox-counter" id="miranteLightboxCounter">1 / 3</div>
+  </div>
+</div>
+
 <a class="whatsapp" id="floatingWhatsapp" href="https://wa.me/5566996926174?text=Ol%C3%A1%2C%20Jonatas!%20%F0%9F%8C%B8%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Trilha%20Outubro%20Rosa." target="_blank" rel="noopener" aria-label="WhatsApp" title="Fale pelo WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4.1A8 8 0 1 1 20 11.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M8.4 7.8c.3-.3.7-.2.9.2l.8 1.6c.1.3.1.6-.1.8l-.6.7c.7 1.5 1.8 2.5 3.3 3.2l.7-.7c.2-.2.5-.3.8-.1l1.6.8c.4.2.5.6.2.9-.6.8-1.5 1.2-2.5 1-3.3-.6-5.9-3.2-6.5-6.5-.2-.9.2-1.8 1.4-1.9Z" fill="currentColor"/></svg></a>
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3200</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3245</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -400,7 +422,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-3200';
+const BUILD_VERSION = '20260922-3245';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -1088,22 +1110,46 @@ async function adminAction(action,payload){
 
 function reportText(d=adminDataCache){
   const sizes=['PP','P','M','G','GG'];
+  const rows=d?.shirts||[];
   const count=(model,size)=>Number(d?.shirtCounts?.[model+'|'+size]||0);
+  const totalModel=model=>sizes.reduce((sum,size)=>sum+count(model,size),0);
+  const totalSize=size=>count('Camiseta Tradicional',size)+count('Babylook',size);
   const lines=[
-    'RELATÓRIO DE CAMISETAS - OUTUBRO ROSA',
-    'Data do evento: 18/10/2026',
+    '🌸 *RELATÓRIO DAS CAMISETAS — OUTUBRO ROSA* 🌸',
     '',
-    'TOTAL DE CAMISETAS RESERVADAS: '+Number(d?.totalShirts||0),
+    '📅 *Evento:* 18/10/2026',
+    '📍 *Local:* Mirante da Janela',
     '',
-    'CAMISETA TRADICIONAL',
-    ...sizes.map(s=>s+': '+count('Camiseta Tradicional',s)),
-    '',
-    'BABYLOOK',
-    ...sizes.map(s=>s+': '+count('Babylook',s)),
-    '',
-    'LISTA NOMINAL'
+    '👕 *LISTA DE CAMISETAS*',
+    ''
   ];
-  (d?.shirts||[]).forEach((s,i)=>lines.push((i+1)+'. '+s.name+' - '+s.model+' - '+s.size+' - '+statusLabel(s.status)+' - Qtd. '+s.quantity));
+
+  if(!rows.length){
+    lines.push('_Nenhuma camiseta reservada até o momento._');
+  }else{
+    rows.forEach((s,i)=>{
+      lines.push('*'+(i+1)+'. '+s.name+'*');
+      lines.push('• *Modelo:* '+s.model);
+      lines.push('• *Tamanho:* '+s.size);
+      lines.push('');
+    });
+  }
+
+  lines.push('📊 *RESUMO POR MODELO*');
+  lines.push('');
+  lines.push('👕 *CAMISETA TRADICIONAL*');
+  sizes.forEach(size=>lines.push('• *'+size+':* '+count('Camiseta Tradicional',size)));
+  lines.push('*Total Tradicional:* '+totalModel('Camiseta Tradicional'));
+  lines.push('');
+  lines.push('💕 *BABYLOOK*');
+  sizes.forEach(size=>lines.push('• *'+size+':* '+count('Babylook',size)));
+  lines.push('*Total Babylook:* '+totalModel('Babylook'));
+  lines.push('');
+  lines.push('📦 *TOTAL POR TAMANHO*');
+  sizes.forEach(size=>lines.push('• *'+size+':* '+totalSize(size)));
+  lines.push('');
+  lines.push('✅ *TOTAL GERAL: '+Number(d?.totalShirts||rows.length)+' CAMISETA(S)*');
+
   return lines.join('\n');
 }
 
@@ -1309,6 +1355,52 @@ async function checkPaymentReturn(){
   }
 }
 
+let miranteLightboxIndex=0;
+function initMiranteLightbox(){
+  const photos=queryAll('#local .local-gallery .photo');
+  const images=photos.map(p=>p.querySelector('img')).filter(Boolean);
+  const box=$('#miranteLightbox');
+  const large=$('#miranteLightboxImage');
+  const counter=$('#miranteLightboxCounter');
+  if(!box||!large||!images.length) return;
+
+  const show=index=>{
+    miranteLightboxIndex=(index+images.length)%images.length;
+    const source=images[miranteLightboxIndex];
+    large.src=source.currentSrc||source.src;
+    large.alt=source.alt||'Mirante da Janela ampliado';
+    counter.textContent=(miranteLightboxIndex+1)+' / '+images.length;
+  };
+  const open=index=>{
+    show(index);
+    box.classList.add('open');
+    box.setAttribute('aria-hidden','false');
+    document.body.classList.add('lightbox-open');
+  };
+  const close=()=>{
+    box.classList.remove('open');
+    box.setAttribute('aria-hidden','true');
+    document.body.classList.remove('lightbox-open');
+    large.removeAttribute('src');
+  };
+
+  photos.forEach((photo,index)=>{
+    photo.onclick=()=>open(index);
+    photo.onkeydown=e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();open(index)}
+    };
+  });
+  $('#miranteLightboxClose').onclick=close;
+  $('#miranteLightboxPrev').onclick=e=>{e.stopPropagation();show(miranteLightboxIndex-1)};
+  $('#miranteLightboxNext').onclick=e=>{e.stopPropagation();show(miranteLightboxIndex+1)};
+  box.onclick=e=>{if(e.target===box) close()};
+  document.addEventListener('keydown',e=>{
+    if(!box.classList.contains('open')) return;
+    if(e.key==='Escape') close();
+    if(e.key==='ArrowLeft') show(miranteLightboxIndex-1);
+    if(e.key==='ArrowRight') show(miranteLightboxIndex+1);
+  });
+}
 function ensureMiranteImages(){
   queryAll('#local .local-gallery img').forEach(img=>{
     img.loading='eager';
@@ -1341,6 +1433,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSiteV
 
 renderParticipants();
 ensureMiranteImages();
+initMiranteLightbox();
 window.addEventListener('pageshow',ensureMiranteImages);
 window.addEventListener('online',ensureMiranteImages);
 applyShirtDeadlineState();
