@@ -266,8 +266,8 @@ html,body{overflow-x:hidden}
       <div class="confirmed-shell">
         <div class="eyebrow">🌸 NOSSA TRILHA ESTÁ GANHANDO FORMA</div>
         <h2 class="section-title">Trilheiras confirmadas</h2>
-        <p class="section-sub">Os nomes aparecem automaticamente assim que a vaga é reservada pelo Pix ou cartão.</p>
-        <div class="confirmed-total"><strong id="confirmedPublicCount">0</strong><span>trilheiras com vaga reservada</span></div>
+        <p class="section-sub">Os nomes aparecem automaticamente assim que a inscrição é registrada pelo Pix ou cartão.</p>
+        <div class="confirmed-total"><strong id="confirmedPublicCount">0</strong><span>trilheiras confirmadas</span></div>
         <div id="confirmedNames" class="confirmed-names"><div class="notice">As primeiras confirmações aparecerão aqui.</div></div>
       </div>
     </div>
@@ -278,7 +278,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-2940</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3015</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -294,8 +294,8 @@ html,body{overflow-x:hidden}
     <div id="adminPanel" class="hidden">
       <div class="stats" style="margin-top:18px">
         <div class="stat"><b id="adminConfirmed">0</b><span>Confirmadas</span></div>
-        <div class="stat"><b id="adminPending">0</b><span>Reservadas</span></div>
-        <div class="stat"><b id="adminAvailable">0</b><span>Disponíveis</span></div>
+        <div class="stat"><b id="adminPending">0</b><span>Disponíveis</span></div>
+        <div class="stat"><b id="adminAvailable">100</b><span>Total</span></div>
       </div>
       <div class="admin-tabs">
         <button class="btn btn-primary" id="adminReservationsTab">📋 Inscrições</button>
@@ -304,11 +304,9 @@ html,body{overflow-x:hidden}
       <div class="admin-tools">
         <input id="adminSearch" type="search" placeholder="Buscar por nome ou reserva">
         <select id="adminStatusFilter">
-          <option value="all">Todos os status</option>
-          <option value="confirmed">Confirmadas</option>
-          <option value="pending">Aguardando pagamento</option>
-          <option value="review">Em análise</option>
-          <option value="cancelled">Canceladas/expiradas</option>
+          <option value="all">Todas</option>
+          <option value="active">Confirmadas</option>
+          <option value="cancelled">Canceladas</option>
         </select>
         <button class="btn btn-light" id="exportReservationsCsv">⬇️ Exportar CSV</button>
       </div>
@@ -341,7 +339,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2940';
+const BUILD_VERSION = '20260922-3015';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -669,7 +667,7 @@ async function beginPayment(method,button,feedback){
       return;
     }
     if(!r.checkoutUrl) throw new Error('Não foi possível abrir o pagamento.');
-    showMsg(feedback,'Sua(s) vaga(s) estão reservadas por até 30 minutos. Abrindo o Mercado Pago...','success');
+    showMsg(feedback,'Sua(s) vaga(s) já estão confirmadas. Abrindo o Mercado Pago...','success');
     button.textContent='Abrindo Mercado Pago...';
     setTimeout(()=>{window.location.assign(r.checkoutUrl)},250);
   }catch(e){
@@ -787,7 +785,7 @@ $('#requestCardLink').onclick=async()=>{
   button.textContent='Reservando vaga...';
   try{
     const r=await ensureReservation('CARTÃO');
-    const text=cardRequestText()+'\nReserva: '+(r.id||'')+'\nA vaga fica reservada por até 30 minutos.';
+    const text=cardRequestText()+'\nReserva: '+(r.id||'')+'\nA vaga já está confirmada no sistema.';
     button.textContent='Abrindo WhatsApp...';
     setTimeout(()=>window.location.assign('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text)),250);
   }catch(e){
@@ -867,7 +865,7 @@ $('#adminEnter').onclick=async()=>{
 };
 
 function statusLabel(status){
-  return ({pending:'AGUARDANDO PAGAMENTO',confirmed:'CONFIRMADA AUTOMATICAMENTE',review:'EM ANÁLISE',cancelled:'CANCELADA / EXPIRADA'})[status]||String(status||'').toUpperCase();
+  return status==='cancelled'?'CANCELADA':'CONFIRMADA';
 }
 
 function buildActiveShirtData(d){
@@ -896,14 +894,15 @@ function buildActiveShirtData(d){
 function renderAdmin(d){
   d=buildActiveShirtData(d);
   adminDataCache=d;
-  $('#adminConfirmed').textContent=d.stats.confirmed;
-  $('#adminPending').textContent=d.stats.pending+(d.stats.review||0);
-  $('#adminAvailable').textContent=d.stats.available;
+  $('#adminConfirmed').textContent=Number(d.stats.reserved ?? ((d.stats.confirmed||0)+(d.stats.pending||0)+(d.stats.review||0)));
+  $('#adminPending').textContent=d.stats.available;
+  $('#adminAvailable').textContent=d.stats.total||TOTAL_VAGAS;
 
   const search=String($('#adminSearch')?.value||'').trim().toLowerCase();
   const statusFilter=$('#adminStatusFilter')?.value||'all';
   const rows=(d.reservations||[]).filter(r=>{
-    if(statusFilter!=='all'&&r.status!==statusFilter) return false;
+    if(statusFilter==='active'&&r.status==='cancelled') return false;
+    if(statusFilter==='cancelled'&&r.status!=='cancelled') return false;
     if(!search) return true;
     return String(r.id||'').toLowerCase().includes(search)||r.participants.some(p=>String(p.name||'').toLowerCase().includes(search));
   });
@@ -913,11 +912,11 @@ function renderAdmin(d){
   rows.forEach(r=>{
     const el=document.createElement('div'); el.className='admin-item';
     const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>${p.option==='shirt'?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
-    const paidInfo=r.status==='confirmed'?'<br><small>✅ Pagamento aprovado automaticamente'+(r.approvedAt?' - '+new Date(r.approvedAt).toLocaleString('pt-BR'):'')+'</small>':'';
-    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) - ${money(r.total)} - ${escapeHtml(r.paymentMethod)}</small>${paidInfo}</div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status==='pending'&&String(r.paymentMethod).includes('CART')?'<button class="btn btn-primary confirm-card">✓ Confirmar cartão</button>':''}${r.status==='pending'&&String(r.paymentMethod).includes('PIX')?'<button class="btn btn-primary confirm-pix">✓ Confirmar Pix recebido</button>':''}${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
-    const confirmCardBtn=el.querySelector('.confirm-card'); if(confirmCardBtn) confirmCardBtn.onclick=()=>{if(confirm('Confirmar que o pagamento no cartão foi recebido?'))adminAction('confirm',{reservationId:r.id})};
-    const confirmPixBtn=el.querySelector('.confirm-pix'); if(confirmPixBtn) confirmPixBtn.onclick=()=>{if(confirm('Confirmar que este Pix foi recebido?'))adminAction('confirm',{reservationId:r.id})};
-    const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Cancelar esta reserva e devolver '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
+    const paymentInfo=(r.paymentApproved||r.mpStatus==='approved')
+      ?'<br><small>Pagamento aprovado pelo Mercado Pago</small>'
+      :'<br><small>Pagamento: '+escapeHtml(r.paymentMethod)+' • controle manual se necessário</small>';
+    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) - ${money(r.total)} - ${escapeHtml(r.paymentMethod)}</small>${paymentInfo}</div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
+    const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Excluir esta reserva e liberar '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
     el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
   });
