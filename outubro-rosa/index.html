@@ -39,7 +39,7 @@
     .btn-busy{pointer-events:none;opacity:.82}.soldout-state{background:linear-gradient(135deg,#8f2030,#b4233a)!important;color:#fff!important;box-shadow:none!important;cursor:not-allowed!important}
     .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
-    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 16px}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
+    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 16px}.pix-key-box{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px;padding:14px 16px;border-radius:15px;background:#f7fff9;border:1px solid #bfe6cf}.pix-key-box span{font-size:13px;font-weight:850;text-transform:uppercase;letter-spacing:.06em;color:#47715a}.pix-key-box strong{font-size:17px;word-break:break-all;color:#195f3b}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
     footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.admin-access{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:16px;min-height:48px;padding:10px 14px;display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.14);transition:.22s}.admin-access:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);border-color:rgba(255,255,255,.5)}.admin-gear{font-size:25px;line-height:1}.admin-label{font-size:14px}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
@@ -220,7 +220,8 @@
         <div id="pixPanel" class="pay-panel hidden">
           <h3>Pagamento via Pix</h3>
           <div>Valor a pagar</div><div class="pay-value" id="pixValue">R$ 0,00</div>
-          <p class="payment-note">Clique no botão abaixo para copiar a chave Pix. A reserva das vagas é registrada logo em seguida.</p>
+          <p class="payment-note">Clique para copiar a chave Pix. A chave também fica visível abaixo para conferência.</p>
+          <div class="pix-key-box"><span>Chave Pix</span><strong id="pixKeyText">trilheiros.roomt@gmail.com</strong></div>
           <button class="btn btn-pay-pix" id="pixPayButton">💚 📋 Copiar Pix</button>
           <div id="pixFeedback"></div>
         </div>
@@ -258,7 +259,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2225</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2245</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -320,7 +321,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2225';
+const BUILD_VERSION = '20260922-2245';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -568,21 +569,30 @@ async function beginCardPayment(){
   }
 }
 async function copyTextNow(text){
-  if(navigator.clipboard?.writeText){
-    await navigator.clipboard.writeText(text);
-    return true;
-  }
+  // Primeiro tenta a cópia clássica dentro do próprio clique. Isso funciona
+  // melhor em alguns celulares/navegadores e não depende de permississão assíncrona.
   const area=document.createElement('textarea');
   area.value=text;
   area.setAttribute('readonly','');
+  area.setAttribute('aria-hidden','true');
   area.style.position='fixed';
+  area.style.left='-9999px';
+  area.style.top='0';
   area.style.opacity='0';
   document.body.appendChild(area);
+  area.focus();
   area.select();
-  const ok=document.execCommand('copy');
+  area.setSelectionRange(0,text.length);
+  let copied=false;
+  try{copied=document.execCommand('copy')}catch{}
   area.remove();
-  if(!ok) throw new Error('Não foi possível copiar automaticamente.');
-  return true;
+  if(copied) return true;
+
+  if(window.isSecureContext&&navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+  throw new Error('Não foi possível copiar automaticamente.');
 }
 
 async function beginPayment(method,button,feedback){
@@ -671,23 +681,28 @@ $('#pixPayButton').onclick=async()=>{
   const button=$('#pixPayButton');
   const feedback=$('#pixFeedback');
   const original='💚 📋 Copiar Pix';
+
+  // A cópia acontece antes de qualquer chamada ao servidor.
   try{
     await copyTextNow(PIX_KEY);
-    button.classList.remove('btn-busy');
     button.textContent='✅ PIX COPIADO';
-    showMsg(feedback,'✅ PIX COPIADO! Chave: '+PIX_KEY+'<br>Registrando sua(s) vaga(s)...','success');
+    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong>','success');
     toast('Pix copiado!');
   }catch(e){
-    showMsg(feedback,'Não foi possível copiar automaticamente. Chave Pix: <strong>'+PIX_KEY+'</strong>','error');
+    button.textContent='📋 COPIE A CHAVE ACIMA';
+    showMsg(feedback,'Use a chave exibida acima: <strong>'+PIX_KEY+'</strong>','notice');
     return;
   }
 
+  // Depois registra a(s) vaga(s), sem apagar a confirmação visual da cópia.
   button.disabled=true;
   try{
     const r=await ensureReservation('PIX');
-    showMsg(feedback,'✅ PIX COPIADO! Sua(s) '+r.quantity+' vaga(s) foram reservadas por até 30 minutos.<br><strong>Chave Pix:</strong> '+PIX_KEY,'success');
+    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong><br>'+r.quantity+' vaga(s) reservada(s) por até 30 minutos.','success');
   }catch(e){
-    showMsg(feedback,'✅ PIX COPIADO. ⚠️ A reserva não foi concluída: '+e.message+'<br><strong>Não efetue o pagamento enquanto esta mensagem aparecer.</strong>','error');
+    console.error('Reserva Pix:',e);
+    showMsg(feedback,'✅ PIX COPIADO!<br><strong>'+PIX_KEY+'</strong><br>Não foi possível atualizar a reserva agora. Confira as vagas disponíveis antes de efetuar o pagamento.','notice');
+    refreshStats().catch(()=>{});
   }finally{
     button.disabled=false;
     setTimeout(()=>{button.textContent=original},5000);
