@@ -25,7 +25,7 @@
     .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}.price{font-size:42px;color:var(--pink);font-weight:900}.package{position:relative}.package.recommended{border:2px solid var(--pink)}.tag{position:absolute;top:14px;right:14px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900}
     .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participants{display:grid;gap:16px;margin-top:20px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .summary{background:#fff7fb;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}.summary-row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px dashed #e7c4d4;padding:10px 0}.summary-row:last-child{border:0}.total{font-size:30px;font-weight:900;color:var(--pink)}
-    .pay-tabs{display:flex;gap:14px;margin-bottom:20px}.pay-tabs button{flex:1}
+    .payment-choice-title{text-align:center;font-size:20px;font-weight:900;margin:4px 0 14px;color:var(--ink)}.pay-tabs{display:flex;gap:14px;margin-bottom:20px}.pay-tabs button{flex:1}
     .pay-choice{position:relative;min-height:64px;border-radius:18px;font-size:19px;font-weight:900;letter-spacing:.01em;box-shadow:0 12px 28px rgba(70,28,53,.10);border:1px solid rgba(197,47,120,.18);overflow:hidden;isolation:isolate}
     .pay-choice:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.0),rgba(255,255,255,.42),rgba(255,255,255,.0));transform:translateX(-130%);transition:transform .7s ease;z-index:-1}
     .pay-choice:hover:before,.pay-choice.active:before{transform:translateX(130%)}
@@ -211,22 +211,24 @@
       <h2 class="section-title">Pagamento</h2>
       <div class="formbox">
         <div id="finalSummary" class="summary"></div>
+        <div class="payment-choice-title">Escolha como deseja pagar</div>
         <div class="pay-tabs">
-          <button class="btn btn-primary pay-choice active" id="pixTab">💚 PIX</button>
+          <button class="btn btn-light pay-choice" id="pixTab">💚 PIX</button>
           <button class="btn btn-light pay-choice" id="cardTab">💳 CARTÃO</button>
         </div>
-        <div id="pixPanel" class="pay-panel">
+        <div id="pixPanel" class="pay-panel hidden">
           <h3>Pagamento via Pix</h3>
           <div>Valor a pagar</div><div class="pay-value" id="pixValue">R$ 0,00</div>
-          <p class="payment-note">Pagamento seguro pelo Mercado Pago. Ao iniciar, sua(s) vaga(s) ficam reservadas por até 30 minutos. A confirmação é automática após o pagamento.</p>
+          <p class="payment-note">Pagamento seguro pelo Mercado Pago. Ao iniciar, sua(s) vaga(s) ficam reservadas por até 30 minutos. A confirmação é automática após a aprovação do pagamento.</p>
           <button class="btn btn-pay-pix" id="pixPayButton">💚 Pagar via Pix</button>
           <div id="pixFeedback"></div>
         </div>
         <div id="cardPanel" class="pay-panel hidden">
           <h3>Pagamento com cartão</h3>
           <div class="pay-value" id="cardValue">R$ 0,00</div>
-          <p class="payment-note">Pagamento seguro pelo Mercado Pago. A confirmação entra automaticamente no sistema quando o pagamento for aprovado.</p>
-          <button class="btn btn-pay-card" id="cardPayButton">💳 Pagar com cartão</button>
+          <p class="payment-note" id="cardInstruction">Selecione Cartão para verificar o link disponível para esta combinação.</p>
+          <button class="btn btn-pay-card hidden" id="cardPayButton">💳 Pagar com cartão</button>
+          <button class="btn btn-whatsapp-premium hidden" id="requestCardLink">📲 Solicitar link ao Jonatas</button>
           <div id="cardMessage"></div>
         </div>
         <div id="paymentStatusBox"></div>
@@ -255,7 +257,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2025</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2045</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -317,12 +319,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2025';
+const BUILD_VERSION = '20260922-2045';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
 const PRICE_ENTRY = 30;
 const PRICE_SHIRT = 75;
+const CARD_2_ENTRY = 'https://mpago.la/1HRu8wF';
+const CARD_1_SHIRT = 'https://mpago.la/1D9bgo3';
+const CARD_2_SHIRTS = 'https://mpago.la/1DJFjnq';
 
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
 const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
@@ -460,7 +465,78 @@ function showPayment(){
   $('#finalSummary').innerHTML=$('#summary').innerHTML;
   $('#pixValue').textContent=money(totalValue());
   $('#cardValue').textContent=money(totalValue());
+  $('#pixPanel').classList.add('hidden');
+  $('#cardPanel').classList.add('hidden');
+  $('#pixTab').className='btn btn-light pay-choice';
+  $('#cardTab').className='btn btn-light pay-choice';
+  configureCardPayment();
   location.hash='pagamento';
+}
+
+function cardPaymentConfig(){
+  const ps=getParticipants();
+  if(ps.length===2&&ps.every(p=>p.option==='entry')){
+    return {url:CARD_2_ENTRY,label:'Pagar 2 vagas sem camiseta',supported:true};
+  }
+  if(ps.length===1&&ps.every(p=>p.option==='shirt')){
+    return {url:CARD_1_SHIRT,label:'Pagar 1 vaga com camiseta',supported:true};
+  }
+  if(ps.length===2&&ps.every(p=>p.option==='shirt')){
+    return {url:CARD_2_SHIRTS,label:'Pagar 2 vagas com camiseta',supported:true};
+  }
+  return {url:'',label:'Solicitar link ao Jonatas',supported:false};
+}
+
+function configureCardPayment(){
+  const cfg=cardPaymentConfig();
+  const pay=$('#cardPayButton'),request=$('#requestCardLink'),instruction=$('#cardInstruction'),msg=$('#cardMessage');
+  msg.innerHTML='';
+  if(cfg.supported){
+    pay.classList.remove('hidden');
+    request.classList.add('hidden');
+    pay.textContent='💳 '+cfg.label;
+    instruction.textContent='Link oficial do Mercado Pago disponível para esta combinação.';
+  }else{
+    pay.classList.add('hidden');
+    request.classList.remove('hidden');
+    instruction.textContent='Para esta quantidade ou combinação, solicite o link de pagamento diretamente ao Jonatas.';
+  }
+}
+
+function cardRequestText(){
+  const ps=getParticipants();
+  let text='Olá, Jonatas! 🌸\nPreciso do link de pagamento no cartão para o Outubro Rosa.\n\n';
+  text+='Quantidade: '+ps.length+' vaga(s)\n';
+  ps.forEach((p,i)=>{
+    text+=(i+1)+'. '+p.name+' — '+(p.option==='shirt'?'Com camiseta • '+p.model+' • '+p.size:'Sem camiseta')+'\n';
+  });
+  text+='\nValor total: '+money(totalValue());
+  return text;
+}
+
+async function beginCardPayment(){
+  const cfg=cardPaymentConfig();
+  if(!cfg.supported) return;
+  const button=$('#cardPayButton');
+  const feedback=$('#cardMessage');
+  const original=button.textContent;
+  const popup=window.open('about:blank','_blank');
+  button.disabled=true;
+  button.classList.add('btn-busy');
+  button.textContent='Reservando vaga...';
+  try{
+    await ensureReservation('CARTÃO');
+    showMsg(feedback,'Vaga(s) reservada(s). Abrindo o link oficial do cartão.','success');
+    if(popup) popup.location=cfg.url; else window.location.href=cfg.url;
+    setTimeout(()=>{button.disabled=false;button.classList.remove('btn-busy');button.textContent=original},3500);
+  }catch(e){
+    if(popup) popup.close();
+    button.disabled=false;
+    button.classList.remove('btn-busy');
+    button.textContent=original;
+    showMsg(feedback,e.message,'error');
+    toast(e.message);
+  }
 }
 
 async function beginPayment(method,button,feedback){
@@ -506,13 +582,23 @@ $('#pixTab').onclick=()=>{
   $('#cardTab').className='btn btn-light pay-choice';
 };
 $('#cardTab').onclick=()=>{
+  configureCardPayment();
   $('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden');
   $('#cardTab').className='btn btn-primary pay-choice active';
   $('#pixTab').className='btn btn-light pay-choice';
 };
 $('#pixPayButton').onclick=()=>beginPayment('PIX',$('#pixPayButton'),$('#pixFeedback'));
-$('#cardPayButton').onclick=()=>beginPayment('CARTÃO',$('#cardPayButton'),$('#cardMessage'));
-$('#backEdit').onclick=()=>{reservation=null;$('#pagamento').classList.add('hidden');location.hash='inscricao'};
+$('#cardPayButton').onclick=()=>beginCardPayment();
+$('#requestCardLink').onclick=()=>{
+  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(cardRequestText()),'_blank','noopener');
+};
+$('#backEdit').onclick=()=>{
+  reservation=null;
+  $('#pagamento').classList.add('hidden');
+  $('#pixPanel').classList.add('hidden');
+  $('#cardPanel').classList.add('hidden');
+  location.hash='inscricao';
+};
 $('#backSite').onclick=()=>returnHome();
 $('#backHome').onclick=()=>returnHome();
 $('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
