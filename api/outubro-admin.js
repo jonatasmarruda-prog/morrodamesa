@@ -27,6 +27,7 @@ module.exports = async function handler(req,res){
     const body=typeof req.body==='string'?JSON.parse(req.body):(req.body||{});
     if(!validPassword(body.password)) return json(res,401,{ok:false,error:'Senha incorreta.'});
     const action=String(body.action||'list');
+    if(action==='auth') return json(res,200,{ok:true,authenticated:true});
     if(action==='confirm') await store.updateStatus(body.reservationId,'confirmed');
     else if(action==='cancel') await store.updateStatus(body.reservationId,'cancelled');
     else if(action==='removeParticipant') await store.removeParticipant(body.reservationId,body.participantId);
