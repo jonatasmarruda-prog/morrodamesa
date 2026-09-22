@@ -261,7 +261,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2315</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-2325</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -323,7 +323,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2315';
+const BUILD_VERSION = '20260922-2325';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -732,17 +732,17 @@ $('#sendPixReceipt').onclick=async()=>{
   button.disabled=true;
   button.classList.add('btn-busy');
   button.textContent='Preparando WhatsApp...';
-  try{
-    if(!reservation) await ensureReservation('PIX');
-    const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
-    button.textContent='Abrindo WhatsApp...';
-    setTimeout(()=>window.location.assign(url),180);
-  }catch(e){
-    button.disabled=false;
-    button.classList.remove('btn-busy');
-    button.textContent=original;
-    toast('Não foi possível preparar a mensagem. Tente novamente.');
+
+  if(!reservation){
+    try{await ensureReservation('PIX')}catch(e){console.error('Reserva Pix no WhatsApp:',e)}
   }
+
+  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
+  button.textContent='Abrindo WhatsApp...';
+
+  // Deixa o site preparado para retornar ao início quando a pessoa voltar.
+  history.replaceState(null,'',location.pathname+'#inicio');
+  setTimeout(()=>window.location.assign(url),180);
 };
 
 $('#cardPayButton').onclick=()=>beginCardPayment();
