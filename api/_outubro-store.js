@@ -119,10 +119,24 @@ async function listOutubroPreferences() {
     const batch = await Promise.all(summaries.slice(i, i + 10).map(x => getPreference(x.id)));
     details.push(...batch.filter(Boolean));
   }
-  return details.filter(p => {
+
+  const valid = details.filter(p => {
     const key=String(p.metadata?.event_key || '');
     return key === EVENT_KEY || key === 'outubro-rosa-2026-10-18-v2';
   });
+
+  // Uma mesma pessoa pode ter gerado mais de uma preferência ao editar dados
+  // ou trocar a forma de pagamento. Para capacidade e relatórios, cada
+  // external_reference representa uma única reserva e deve ser contada só uma vez.
+  const byReference = new Map();
+  valid.forEach(pref => {
+    const ref = String(pref.external_reference || pref.metadata?.reservation_id || pref.id || '');
+    const previous = byReference.get(ref);
+    if (!previous || new Date(pref.date_created || 0) >= new Date(previous.date_created || 0)) {
+      byReference.set(ref, pref);
+    }
+  });
+  return [...byReference.values()];
 }
 
 async function listOutubroPayments() {
