@@ -164,6 +164,7 @@ function normalize(pref, payment = null) {
 
   if (adminStatus === 'cancelled') status = 'cancelled';
   else if (payment?.status === 'approved' && amountMatches) status = 'confirmed';
+  else if (payment?.status === 'approved' && !amountMatches && md.adjusted_after_payment === true) status = 'confirmed';
   else if (payment?.status === 'approved' && !amountMatches) status = 'review';
   else if (['rejected','cancelled','refunded','charged_back'].includes(payment?.status)) status = 'cancelled';
   else if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) status = 'cancelled';
@@ -265,7 +266,18 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
     const current=normalize(existing,payments.get(id)||null);
     const active=occupies(current.status);
     if(current.status==='confirmed') return {reservation:current,checkoutUrl:'',alreadyPaid:true};
-    if(active && existing.init_point) return {reservation:current,checkoutUrl:existing.init_point,reused:true};
+
+    if(active){
+      const sameParticipants=JSON.stringify(current.participants||[])===JSON.stringify(ps);
+      const sameMethod=String(current.paymentMethod||'').toUpperCase()===method;
+      if(sameParticipants && sameMethod && existing.init_point){
+        return {reservation:current,checkoutUrl:existing.init_point,reused:true};
+      }
+
+      // A pessoa voltou para editar ou trocou a forma de pagamento.
+      // Expira a tentativa anterior antes de criar a nova, para não prender vagas duplicadas.
+      await expirePreference(existing.id).catch(()=>{});
+    }
   }
 
   const before=await stats();
@@ -378,18 +390,21 @@ async function removeParticipant(reservationIdValue, participantId) {
   const audit=decodeAudit(md.audit_b64);
   audit.push({at:new Date().toISOString(),action:'PARTICIPANTE_EXCLUIDA',detail:removed.name});
   const total=money(next.reduce((s,p)=>s+Number(p.price||0),0));
+  const payments=await listOutubroPayments();
+  const currentPayment=payments.get(reservationIdValue)||null;
+  const wasPaid=currentPayment?.status==='approved';
   const metadata={
     ...md,
     participants_b64:encodeParticipants(next),
     quantity:next.length,
     total,
-    admin_status:next.length?String(md.admin_status||'pending'):'cancelled',
+    admin_status:next.length?(wasPaid?'confirmed':String(md.admin_status||'pending')):'cancelled',
+    adjusted_after_payment: Boolean(next.length && wasPaid),
     audit_b64:encodeAudit(audit),
     updated_at:new Date().toISOString()
   };
   const updated=await mpPut('/checkout/preferences/'+encodeURIComponent(pref.id),{metadata});
   if(!next.length) await expirePreference(pref.id).catch(()=>{});
-  const payments=await listOutubroPayments();
   return normalize(updated,payments.get(reservationIdValue)||null);
 }
 
