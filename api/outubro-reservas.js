@@ -14,7 +14,12 @@ module.exports = async function handler(req,res){
   try{
     if(req.method==='GET'){
       const data=await store.stats();
-      return json(res,200,{ok:true,...data});
+      // Navegadores sempre revalidam; a CDN compartilha por poucos segundos entre
+      // muitos visitantes para evitar dezenas de consultas simultâneas ao Mercado Pago.
+      res.statusCode=200;
+      res.setHeader('Content-Type','application/json; charset=utf-8');
+      res.setHeader('Cache-Control','public, max-age=0, s-maxage=2, stale-while-revalidate=3');
+      return res.end(JSON.stringify({ok:true,...data,updatedAt:new Date().toISOString()}));
     }
     if(req.method==='POST'){
       const body=typeof req.body==='string'?JSON.parse(req.body):(req.body||{});
