@@ -493,6 +493,12 @@ async function beginPayment(method,button,feedback){
     toast(e.message);
   }
 }
+function returnHome(){
+  $('#pagamento').classList.add('hidden');
+  history.replaceState(null,'',location.pathname+'#inicio');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 $('#minusQty').onclick=()=>{if(qty>1){qty--;$('#qtyValue').textContent=qty;renderParticipants()}};
 $('#plusQty').onclick=()=>{if(qty<10){qty++;$('#qtyValue').textContent=qty;renderParticipants()}};
 $('#continuePayment').onclick=()=>{const e=validate();if(e){showMsg($('#formMessage'),e,'error');return}$('#formMessage').innerHTML='';showPayment()};
