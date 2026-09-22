@@ -137,13 +137,31 @@ async function createReservation({clientId, participants, paymentMethod}) {
   const ps = cleanParticipants(participants);
   const id = reservationId(clientId);
   const existing = await findPreferenceByExternalReference(id);
-  if (existing && String(existing.metadata?.event_key || '') === EVENT_KEY) return normalize(existing);
+  const total = ps.reduce((s,p)=>s+p.price,0);
+  const now = new Date().toISOString();
+
+  if (existing && String(existing.metadata?.event_key || '') === EVENT_KEY) {
+    const current = normalize(existing);
+    if (current.status === 'confirmed') return current;
+    const before = await stats();
+    const capacityForEdit = before.available + (occupies(current.status) ? current.quantity : 0);
+    if (ps.length > capacityForEdit) throw new Error('Não há vagas suficientes disponíveis.');
+    const metadata = {
+      ...(existing.metadata || {}),
+      admin_status: 'pending',
+      payment_method: String(paymentMethod || 'PIX').toUpperCase(),
+      participants_b64: encodeParticipants(ps),
+      quantity: ps.length,
+      total: money(total),
+      updated_at: now
+    };
+    const updated = await mpPut('/checkout/preferences/' + encodeURIComponent(existing.id), { metadata });
+    return normalize(updated);
+  }
 
   const before = await stats();
   if (ps.length > before.available) throw new Error('Não há vagas suficientes disponíveis.');
 
-  const total = ps.reduce((s,p)=>s+p.price,0);
-  const now = new Date().toISOString();
   const pref = await mpPost('/checkout/preferences', {
     items: [{
       id: 'outubro-rosa-reserva',
