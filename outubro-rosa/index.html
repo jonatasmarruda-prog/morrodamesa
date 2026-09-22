@@ -40,7 +40,7 @@
     .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
     .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
-    footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.gear{border:0;background:transparent;color:#fff;opacity:.45;font-size:24px;cursor:pointer;padding:10px}.gear:hover{opacity:1}
+    footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.admin-access{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:16px;min-height:48px;padding:10px 14px;display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.14);transition:.22s}.admin-access:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);border-color:rgba(255,255,255,.5)}.admin-gear{font-size:25px;line-height:1}.admin-label{font-size:14px}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
     .whatsapp{position:fixed;right:18px;bottom:18px;z-index:80;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#138d5a,#25c879);color:#fff;text-decoration:none;display:grid;place-items:center;padding:0;box-shadow:0 14px 30px rgba(31,157,97,.30);transition:.25s;overflow:hidden;animation:whatsPulse 2.8s ease-in-out infinite}.whatsapp svg{width:28px;height:28px;position:relative;z-index:2}
@@ -75,13 +75,14 @@
     @keyframes whatsPulse{0%,100%{box-shadow:0 16px 34px rgba(31,157,97,.32)}50%{box-shadow:0 18px 42px rgba(31,157,97,.48)}}
     @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
-    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:1fr 1fr}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
+    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:1fr 1fr}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:center;gap:12px}.admin-access{min-width:52px;padding:10px 12px}.admin-label{display:none}.whatsapp{left:auto;right:14px;bottom:14px;width:48px;height:48px}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
 </head>
 <body>
 <header>
   <div class="wrap nav">
     <button class="back-site" id="backSite" type="button" aria-label="Voltar" title="Voltar">←</button>
+    <button class="back-site" id="homeSite" type="button" aria-label="Página inicial" title="Página inicial">⌂</button>
     <img class="logo" src="https://i.postimg.cc/QMTGhj3s/LOGO-TRILHEIROS-Photoroom.png" alt="Trilheiros de Rondonópolis">
     <strong class="brand-title">Trilha Outubro Rosa</strong>
     <nav class="navlinks">
@@ -252,8 +253,8 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small></div>
-    <button class="gear" id="adminGear" aria-label="Área administrativa" title="Área administrativa">⚙️</button>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda — Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa • v20260922-1908</small></div>
+    <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
 
@@ -303,6 +304,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
+const BUILD_VERSION = '20260922-1908';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -523,6 +525,7 @@ $('#backSite').onclick=()=>{
   if(history.length>1) history.back();
   else window.location.href='/morrodamesa/';
 };
+$('#homeSite').onclick=()=>returnHome();
 $('#backHome').onclick=()=>returnHome();
 $('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
 
@@ -755,9 +758,25 @@ if('IntersectionObserver' in window){
   const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.08});
   document.querySelectorAll('section,.card,.availability,.formbox,.confirmed-shell').forEach(el=>{el.classList.add('reveal');io.observe(el)});
 }
+async function checkSiteVersion(){
+  try{
+    const res=await fetch('./version.json?ts='+Date.now(),{cache:'no-store'});
+    if(!res.ok) return;
+    const data=await res.json();
+    if(data.version && data.version!==BUILD_VERSION){
+      const url=new URL(location.href);
+      url.searchParams.set('v',data.version);
+      location.replace(url.toString());
+    }
+  }catch{}
+}
+setInterval(checkSiteVersion,45000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSiteVersion()});
+
 renderParticipants();
 refreshStats().catch(()=>{});
 scheduleStatsSync(4500);
+checkSiteVersion();
 </script>
 </body>
 </html>
