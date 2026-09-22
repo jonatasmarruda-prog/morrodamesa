@@ -16,7 +16,9 @@
     .nav{min-height:74px;display:flex;align-items:center;gap:18px}.logo{width:64px;height:64px;object-fit:contain}.navlinks{margin-left:auto;display:flex;gap:18px;align-items:center}.navlinks a{color:var(--ink);text-decoration:none;font-weight:700;font-size:16px}.btn{border:0;border-radius:14px;padding:14px 20px;min-height:50px;font-size:18px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}.btn:hover{transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;box-shadow:0 10px 30px rgba(197,47,120,.24)}.btn-light{background:#fff;color:var(--pink);border:1px solid var(--line)}.btn-dark{background:#392331;color:#fff}.btn-danger{background:#fff0f2;color:var(--danger);border:1px solid #ffc7d0}
     .hero{padding:20px 0 32px}.banner{width:100%;border-radius:24px;box-shadow:var(--shadow);background:#f8d8e6;object-fit:cover}.hero-copy{text-align:center;padding:30px 0 10px}.eyebrow{color:var(--pink);font-weight:900;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(36px,6vw,64px);line-height:1.05;margin:8px 0 14px}.lead{font-size:clamp(19px,2.4vw,24px);max-width:820px;margin:0 auto;color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}.fact,.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}.fact strong{font-size:21px;display:block;margin-top:4px}.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
     section{padding:64px 0}.section-title{text-align:center;margin:0 0 14px;font-size:clamp(30px,4vw,44px);line-height:1.15}.section-sub{max-width:780px;text-align:center;margin:0 auto 28px;color:var(--muted);font-size:19px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card h3{font-size:22px;margin:8px 0}.card p{margin:0;color:var(--muted)}
-    .availability{background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:var(--shadow)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stat{text-align:center;padding:18px;border-radius:18px;background:#fff}.stat b{font-size:40px;line-height:1;display:block;color:var(--pink)}.progress{height:14px;background:#f4dbe6;border-radius:999px;overflow:hidden;margin-top:18px}.progress>span{height:100%;display:block;background:linear-gradient(90deg,var(--pink),var(--pink2));width:0;transition:width .5s}
+    .availability{background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:var(--shadow)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stats-live{grid-template-columns:repeat(4,1fr)}.stat{text-align:center;padding:18px;border-radius:18px;background:#fff}.stat b{font-size:40px;line-height:1;display:block;color:var(--pink)}.progress{height:14px;background:#f4dbe6;border-radius:999px;overflow:hidden;margin-top:18px}.progress>span{height:100%;display:block;background:linear-gradient(90deg,var(--pink),var(--pink2));width:0;transition:width .5s}
+    .live-sync{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:14px;font-weight:700}.live-sync small{font-weight:600;opacity:.78}.live-dot{width:9px;height:9px;border-radius:50%;background:#20b474;box-shadow:0 0 0 0 rgba(32,180,116,.36);animation:livePulse 1.8s ease-out infinite}
+    @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(32,180,116,.35)}70%{box-shadow:0 0 0 9px rgba(32,180,116,0)}100%{box-shadow:0 0 0 0 rgba(32,180,116,0)}}
     .photo{border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}.photo img{width:100%;max-height:690px;object-fit:cover}
     .timeline{max-width:760px;margin:auto}.step{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:14px 0}.dot{width:50px;height:50px;border-radius:50%;background:var(--rose);display:grid;place-items:center;font-size:25px}.step h3{margin:0;font-size:21px}.step p{margin:4px 0 0;color:var(--muted)}
     .shirt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.shirt-grid img{border-radius:22px;box-shadow:var(--shadow);width:100%;background:#fff}
@@ -71,7 +73,7 @@
     @keyframes whatsPulse{0%,100%{box-shadow:0 16px 34px rgba(31,157,97,.32)}50%{box-shadow:0 18px 42px rgba(31,157,97,.48)}}
     @keyframes whatsShine{0%,62%{left:-55%}82%,100%{left:140%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
-    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:12px;right:12px;text-align:center}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
+    @media(max-width:800px){body{font-size:17px}.wrap{width:min(100% - 22px,1120px)}.nav{min-height:64px}.logo{width:52px;height:52px}.navlinks a{display:none}.navlinks .btn{display:inline-flex;font-size:16px;padding:11px 14px}.hero{padding-top:12px}.banner{border-radius:17px}.hero-copy{padding-top:22px}.facts{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats-live{grid-template-columns:1fr 1fr}.stats-live .stat:last-child{grid-column:auto}.shirt-grid,.packages{grid-template-columns:1fr}.formbox{padding:18px}.radio-row,.shirt-options{grid-template-columns:1fr}.section-title{font-size:30px}.section-sub{font-size:18px}.fact strong{font-size:19px}.footer-row{align-items:flex-end}.whatsapp{left:12px;right:12px;text-align:center}.btn{width:100%}.hero-actions .btn{width:auto}.pay-tabs{flex-direction:column}.shirt-summary{grid-template-columns:1fr}.shirt-counts{grid-template-columns:repeat(5,1fr)}.shirt-row{grid-template-columns:1fr;gap:2px;padding:13px 0}}
   </style>
 </head>
 <body>
@@ -127,12 +129,14 @@
     <div class="wrap availability">
       <h2 class="section-title">Vagas — Trilha Outubro Rosa</h2>
       <div id="apiNotice" class="notice hidden"></div>
-      <div class="stats">
+      <div class="stats stats-live">
         <div class="stat"><b>100</b><span>Total</span></div>
-        <div class="stat"><b id="reservedCount">—</b><span>Reservadas / confirmadas</span></div>
+        <div class="stat"><b id="confirmedCount">—</b><span>Confirmadas</span></div>
+        <div class="stat"><b id="reservedCount">—</b><span>Aguardando confirmação</span></div>
         <div class="stat"><b id="availableCount">—</b><span>Disponíveis</span></div>
       </div>
       <div class="progress"><span id="progressBar"></span></div>
+      <div class="live-sync"><span class="live-dot"></span><span>Vagas atualizadas automaticamente</span><small id="lastSync">Sincronizando...</small></div>
     </div>
   </section>
 
@@ -298,7 +302,7 @@ const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'B
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 function showMsg(el,msg,type='notice'){el.innerHTML='<div class="'+type+'">'+msg+'</div>'}
 async function publicApi(payload=null){
-  const opt=payload?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}:{cache:'no-store'};
+  const opt=payload?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}:{method:'GET'};
   const res=await fetch(API_BASE+'/outubro-reservas',opt);
   const data=await res.json().catch(()=>({}));
   if(!res.ok||data.ok===false) throw new Error(data.error||'Não foi possível registrar a reserva.');
@@ -363,26 +367,34 @@ async function ensureReservation(method){
   await refreshStats(true,payload.participants.length);
   return reservation;
 }
+let statsSyncBusy=false;
 async function refreshStats(animate=false,amount=0){
+  if(statsSyncBusy && !animate) return null;
+  statsSyncBusy=true;
   try{
+    const previousAvailable=Number($('#availableCount').textContent);
+    const previousConfirmed=Number($('#confirmedCount').textContent);
     const d=await publicApi();
-    $('#reservedCount').textContent=d.reserved;
+    $('#confirmedCount').textContent=d.confirmed;
+    $('#reservedCount').textContent=d.pending;
     $('#availableCount').textContent=d.available;
     $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
     $('#apiNotice').classList.add('hidden');
-    if(animate){
-      ['#reservedCount','#availableCount'].forEach(sel=>{
+    $('#lastSync').textContent='Agora • '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const changed=Number.isFinite(previousAvailable)&&(previousAvailable!==d.available||previousConfirmed!==d.confirmed);
+    if(animate||changed){
+      ['#confirmedCount','#reservedCount','#availableCount'].forEach(sel=>{
         const el=$(sel); el.classList.remove('seat-drop'); void el.offsetWidth; el.classList.add('seat-drop');
       });
-      toast((amount||1)+' vaga(s) reservada(s). Restam '+d.available+'.');
     }
+    if(animate) toast((amount||1)+' vaga(s) reservada(s). Restam '+d.available+'.');
     return d;
   }catch(e){
-    $('#reservedCount').textContent='—';
-    $('#availableCount').textContent='—';
-    $('#progressBar').style.width='0%';
-    $('#apiNotice').classList.add('hidden');
+    $('#lastSync').textContent='Reconectando automaticamente...';
+    if($('#availableCount').textContent==='—') $('#progressBar').style.width='0%';
     throw e;
+  }finally{
+    statsSyncBusy=false;
   }
 }
 function showPayment(){
@@ -480,7 +492,10 @@ $('#backHome').onclick=()=>returnHome();
 $('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
 
 $('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
-queryAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
+queryAll('[data-close]').forEach(b=>b.onclick=()=>{
+  $('#'+b.dataset.close).classList.remove('open');
+  if(b.dataset.close==='adminModal'){clearInterval(adminSyncTimer);adminSyncTimer=null}
+});
 $('#adminEnter').onclick=async()=>{
   adminPass=$('#adminPassword').value;
   try{
@@ -489,6 +504,7 @@ $('#adminEnter').onclick=async()=>{
     $('#adminLogin').classList.add('hidden');
     $('#adminPanel').classList.remove('hidden');
     renderAdmin(d);
+    startAdminAutoSync();
   }catch(e){showMsg($('#adminLoginMessage'),e.message,'error')}
 };
 
@@ -585,11 +601,56 @@ $('#pdfShirtReport').onclick=()=>{
   doc.save('relatorio-camisetas-outubro-rosa.pdf');
 };
 
+let statsSyncTimer=null;
+let adminSyncTimer=null;
+
+function scheduleStatsSync(delay){
+  clearTimeout(statsSyncTimer);
+  const base=delay ?? 4500;
+  const jitter=Math.floor(Math.random()*1400);
+  statsSyncTimer=setTimeout(async()=>{
+    if(!document.hidden){
+      try{await refreshStats()}catch{}
+    }
+    scheduleStatsSync(4500);
+  },base+jitter);
+}
+
+async function syncNow(){
+  if(document.hidden) return;
+  try{await refreshStats()}catch{}
+}
+
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){
+    syncNow();
+    scheduleStatsSync(4500);
+  }
+});
+window.addEventListener('focus',syncNow);
+window.addEventListener('online',syncNow);
+
+function startAdminAutoSync(){
+  clearInterval(adminSyncTimer);
+  adminSyncTimer=setInterval(async()=>{
+    const modalOpen=$('#adminModal').classList.contains('open');
+    const panelOpen=!$('#adminPanel').classList.contains('hidden');
+    if(!modalOpen||!panelOpen||document.hidden) return;
+    try{
+      const d=await adminApi('list');
+      renderAdmin(d);
+      await refreshStats();
+    }catch{}
+  },6000);
+}
+
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.08});
   document.querySelectorAll('section,.card,.availability,.formbox').forEach(el=>{el.classList.add('reveal');io.observe(el)});
 }
-renderParticipants();refreshStats();
+renderParticipants();
+refreshStats().catch(()=>{});
+scheduleStatsSync(4500);
 </script>
 </body>
 </html>
