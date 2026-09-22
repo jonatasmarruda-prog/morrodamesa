@@ -92,7 +92,7 @@ html,body{overflow-x:hidden}
     <strong class="brand-title">Outubro Rosa</strong>
     <nav class="navlinks">
       <a href="#experiencia">Experiência</a><a href="#local">Local</a><a href="#camiseta">Camiseta</a>
-      <a class="btn btn-primary" href="#inscricao">Garantir vaga</a>
+      <a class="btn btn-primary" id="navReserveButton" href="#inscricao">Garantir vaga</a>
     </nav>
   </div>
 </header>
@@ -128,7 +128,7 @@ html,body{overflow-x:hidden}
           <div class="fact">👥 <strong>100 vagas</strong><span>Ponto de encontro no grupo oficial</span></div>
         </div>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#inscricao">🌸 Garantir minha vaga</a>
+          <a class="btn btn-primary" id="heroReserveButton" href="#inscricao">🌸 Garantir minha vaga</a>
           <a class="btn btn-light" href="#local">📸 Conhecer o local</a>
         </div>
       </div>
@@ -211,13 +211,13 @@ html,body{overflow-x:hidden}
       <div class="formbox">
         <div class="field">
           <label>Quantas vagas você deseja?</label>
-          <div class="qty"><button type="button" id="minusQty">−</button><span id="qtyValue">1</span><button type="button" id="plusQty">+</button></div>
+          <div class="qty"><button type="button" id="minusQty">−</button><span id="qtyValue">1</span><button type="button" id="plusQty" disabled>+</button></div>
         </div>
         <div class="participant-hint" id="participantHint">Preencha o nome de cada participante. Para 2 vagas, serão necessários 2 nomes; para 3 vagas, 3 nomes, e assim por diante.</div>
           <div id="participants" class="participants"></div>
         <div id="summary" class="summary"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
-          <button class="btn btn-primary" id="continuePayment">Continuar para pagamento</button>
+          <button class="btn btn-primary" id="continuePayment" disabled>Verificando vagas...</button>
         </div>
         <div id="formMessage"></div>
       </div>
@@ -278,7 +278,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-2805</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-2915</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -299,7 +299,7 @@ html,body{overflow-x:hidden}
       </div>
       <div class="admin-tabs">
         <button class="btn btn-primary" id="adminReservationsTab">📋 Inscrições</button>
-        <button class="btn btn-light" id="adminShirtsTab">👕 Camisetas confirmadas</button>
+        <button class="btn btn-light" id="adminShirtsTab">👕 Camisetas reservadas</button>
       </div>
       <div class="admin-tools">
         <input id="adminSearch" type="search" placeholder="Buscar por nome ou reserva">
@@ -324,9 +324,10 @@ html,body{overflow-x:hidden}
             <div class="shirt-counts" id="babylookCounts"></div>
           </div>
         </div>
-        <div class="card" style="margin-top:14px"><strong>Total de camisetas confirmadas</strong><div class="price" id="totalShirts">0</div></div>
+        <div class="card" style="margin-top:14px"><strong>Total de camisetas reservadas</strong><div class="price" id="totalShirts">0</div></div>
         <div class="report-tools">
           <button class="btn btn-primary" id="copyShirtReport">📋 Copiar relatório</button>
+          <button class="btn btn-light" id="exportShirtCsv">⬇️ Exportar camisetas CSV</button>
           <button class="btn btn-whatsapp-premium" id="whatsappShirtReport">📲 Enviar no WhatsApp</button>
           <button class="btn btn-dark" id="pdfShirtReport">📄 Gerar PDF profissional</button>
         </div>
@@ -340,7 +341,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-2805';
+const BUILD_VERSION = '20260922-2915';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -459,43 +460,80 @@ async function ensureReservation(method){
   return reservation;
 }
 let statsSyncBusy=false;
+let statsSyncPromise=null;
+let lastStats=null;
+let lastStatsAt=0;
 async function refreshStats(animate=false,amount=0){
-  if(statsSyncBusy && !animate) return null;
+  if(statsSyncPromise) return statsSyncPromise;
   statsSyncBusy=true;
-  try{
-    const previousAvailable=Number($('#availableCount').textContent);
-    const previousConfirmed=Number($('#confirmedCount').textContent);
-    const d=await publicApi();
-    $('#confirmedCount').textContent=d.reserved;
-    $('#availableCount').textContent=d.available;
-    $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
-    renderPublicConfirmed(d);
-    applySoldOutState(d);
-    $('#apiNotice').classList.add('hidden');
-    $('#lastSync').textContent='Agora - '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    const changed=Number.isFinite(previousAvailable)&&(previousAvailable!==d.available||previousConfirmed!==d.confirmed);
-    if(animate||changed){
-      ['#confirmedCount','#availableCount'].forEach(sel=>{
-        const el=$(sel); el.classList.remove('seat-drop'); void el.offsetWidth; el.classList.add('seat-drop');
-      });
+  statsSyncPromise=(async()=>{
+    try{
+      const previousAvailable=Number($('#availableCount').textContent);
+      const previousReserved=Number($('#confirmedCount').textContent);
+      const d=await publicApi();
+      lastStats=d;
+      lastStatsAt=Date.now();
+      $('#confirmedCount').textContent=d.reserved;
+      $('#availableCount').textContent=d.available;
+      $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
+      renderPublicConfirmed(d);
+      applySoldOutState(d);
+      $('#apiNotice').classList.add('hidden');
+      $('#lastSync').textContent='Agora - '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const changed=Number.isFinite(previousAvailable)&&(previousAvailable!==Number(d.available)||previousReserved!==Number(d.reserved));
+      if(animate||changed){
+        ['#confirmedCount','#availableCount'].forEach(sel=>{
+          const el=$(sel); el.classList.remove('seat-drop'); void el.offsetWidth; el.classList.add('seat-drop');
+        });
+      }
+      if(animate) toast((amount||1)+' vaga(s) reservada(s). Restam '+d.available+'.');
+      return d;
+    }catch(e){
+      const cached=lastStats && (Date.now()-lastStatsAt)<20000 ? lastStats : null;
+      $('#lastSync').textContent=cached?'Última atualização válida':'Verificando disponibilidade...';
+      if(cached){
+        applySoldOutState(cached);
+        return cached;
+      }
+      if($('#availableCount').textContent==='—') $('#progressBar').style.width='0%';
+      applyAvailabilityUnknownState();
+      return null;
+    }finally{
+      statsSyncBusy=false;
+      statsSyncPromise=null;
     }
-    if(animate) toast((amount||1)+' vaga(s) reservada(s). Restam '+d.available+'.');
-    return d;
-  }catch(e){
-    $('#lastSync').textContent='Reconectando automaticamente...';
-    if($('#availableCount').textContent==='—') $('#progressBar').style.width='0%';
-    throw e;
-  }finally{
-    statsSyncBusy=false;
-  }
+  })();
+  return statsSyncPromise;
+}
+function setReserveCtasDisabled(disabled){
+  ['#heroReserveButton','#navReserveButton'].forEach(sel=>{
+    const el=$(sel);
+    if(!el) return;
+    el.setAttribute('aria-disabled',disabled?'true':'false');
+    el.style.pointerEvents=disabled?'none':'';
+    el.style.opacity=disabled?'.58':'';
+  });
+}
+function applyAvailabilityUnknownState(){
+  $('#continuePayment').disabled=true;
+  $('#plusQty').disabled=true;
+  $('#continuePayment').textContent='Verificando vagas...';
+  $('#continuePayment').classList.remove('soldout-state');
+  setReserveCtasDisabled(true);
 }
 function applySoldOutState(d){
-  const sold=Boolean(d.soldOut||Number(d.available)<=0);
+  const available=Math.max(0,Number(d?.available||0));
+  const sold=Boolean(d?.soldOut||available<=0);
   $('#soldOutBanner').classList.toggle('hidden',!sold);
   $('#continuePayment').disabled=sold;
-  $('#plusQty').disabled=sold;
+  $('#plusQty').disabled=sold||qty>=Math.min(10,available);
+  $('#minusQty').disabled=sold;
   $('#continuePayment').textContent=sold?'🌸 VAGAS ESGOTADAS':'Continuar para pagamento';
   $('#continuePayment').classList.toggle('soldout-state',sold);
+  setReserveCtasDisabled(sold);
+  queryAll('#inscricao input,#inscricao select').forEach(el=>{el.disabled=sold});
+  if(sold) showMsg($('#formMessage'),'Vagas esgotadas. Novas inscrições estão bloqueadas.','notice');
+  else if($('#formMessage').textContent.includes('Vagas esgotadas')) $('#formMessage').innerHTML='';
 }
 function renderPublicConfirmed(d){
   const names=Array.isArray(d.publicParticipants)?d.publicParticipants:
@@ -583,28 +621,11 @@ function cardRequestText(){
   return text;
 }
 
-async function beginCardPayment(){
+function beginCardPayment(){
   const cfg=cardPaymentConfig();
   if(!cfg.supported) return;
-  const button=$('#cardPayButton');
-  const feedback=$('#cardMessage');
-  const original=button.textContent;
-  button.disabled=true;
-  button.classList.add('btn-busy');
-  button.textContent='Reservando vaga...';
-  try{
-    await ensureReservation('CARTÃO');
-    await refreshStats();
-    showMsg(feedback,'Vaga(s) reservada(s). Abrindo o link oficial do cartão...','success');
-    button.textContent='Abrindo Mercado Pago...';
-    setTimeout(()=>window.location.assign(cfg.url),250);
-  }catch(e){
-    button.disabled=false;
-    button.classList.remove('btn-busy');
-    button.textContent=original;
-    showMsg(feedback,e.message,'error');
-    toast(e.message);
-  }
+  ensureReservation('CARTÃO').then(()=>refreshStats()).catch(e=>console.error('Reserva cartão:',e));
+  window.location.href=cfg.url;
 }
 async function copyTextNow(text){
   // Primeiro tenta a cópia clássica dentro do próprio clique. Isso funciona
@@ -674,35 +695,39 @@ $('#minusQty').onclick=()=>{
   }
 };
 $('#plusQty').onclick=()=>{
-  if(qty<10){
+  const available=Number(lastStats?.available ?? 0);
+  const maxAllowed=Math.min(10,available);
+  if(qty<maxAllowed){
     const current=getParticipants();
     qty++;
     $('#qtyValue').textContent=qty;
     renderParticipants(current);
+    applySoldOutState(lastStats);
   }
 };
 $('#continuePayment').onclick=async()=>{
   const e=validate();
   if(e){showMsg($('#formMessage'),e,'error');return}
   const button=$('#continuePayment');
-  const original=button.textContent;
   button.disabled=true;
   button.classList.add('btn-busy');
   button.textContent='Conferindo vagas...';
-  try{
-    const d=await refreshStats();
-    if(!d) throw new Error('Não foi possível atualizar as vagas agora.');
-    if(Number(d.available)<qty) throw new Error(d.available<=0?'Vagas esgotadas.':'Restam apenas '+d.available+' vaga(s). Ajuste a quantidade.');
-    $('#formMessage').innerHTML='';
-    showPayment();
-  }catch(err){
-    showMsg($('#formMessage'),err.message,'error');
-    toast(err.message);
-  }finally{
-    button.disabled=false;
-    button.classList.remove('btn-busy');
-    button.textContent=original;
+  const d=await refreshStats();
+  button.classList.remove('btn-busy');
+  if(!d){
+    applyAvailabilityUnknownState();
+    showMsg($('#formMessage'),'Estamos verificando a disponibilidade. O botão será liberado automaticamente.','notice');
+    return;
   }
+  if(Number(d.available)<qty){
+    applySoldOutState(d);
+    showMsg($('#formMessage'),d.available<=0?'Vagas esgotadas.':'Restam apenas '+d.available+' vaga(s). Ajuste a quantidade.','notice');
+    return;
+  }
+  $('#formMessage').innerHTML='';
+  button.disabled=false;
+  button.textContent='Continuar para pagamento';
+  showPayment();
 };
 $('#pixTab').onclick=()=>{
   $('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden');
@@ -714,6 +739,7 @@ $('#cardTab').onclick=()=>{
   $('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden');
   $('#cardTab').className='btn btn-primary pay-choice active';
   $('#pixTab').className='btn btn-light pay-choice';
+  ensureReservation('CARTÃO').then(()=>refreshStats()).catch(e=>console.error('Pré-reserva cartão:',e));
 };
 $('#pixPayButton').onclick=async()=>{
   const button=$('#pixPayButton');
@@ -785,21 +811,52 @@ $('#backSite').onclick=()=>returnHome();
 $('#backHome').onclick=()=>returnHome();
 $('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
 
-$('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
+async function loadAdminData(showLoading=true){
+  if(showLoading) $('#adminReservations').innerHTML='<div class="notice">Carregando reservas...</div>';
+  try{
+    const d=await adminApi('list');
+    adminDataCache=d;
+    renderAdmin(d);
+    return d;
+  }catch(e){
+    $('#adminReservations').innerHTML='<div class="error">'+escapeHtml(e.message)+'</div>';
+    toast(e.message);
+    return null;
+  }
+}
+$('#adminGear').onclick=()=>{
+  $('#adminModal').classList.add('open');
+  if(adminPass&&adminDataCache){
+    $('#adminLogin').classList.add('hidden');
+    $('#adminPanel').classList.remove('hidden');
+    renderAdmin(adminDataCache);
+    loadAdminData(false);
+    startAdminAutoSync();
+  }
+};
 queryAll('[data-close]').forEach(b=>b.onclick=()=>{
   $('#'+b.dataset.close).classList.remove('open');
   if(b.dataset.close==='adminModal'){clearInterval(adminSyncTimer);adminSyncTimer=null}
 });
 $('#adminEnter').onclick=async()=>{
+  const button=$('#adminEnter');
   adminPass=$('#adminPassword').value;
+  button.disabled=true;
+  button.textContent='Entrando...';
   try{
-    const d=await adminApi('list');
-    adminDataCache=d;
+    await adminApi('auth');
+    $('#adminLoginMessage').innerHTML='';
     $('#adminLogin').classList.add('hidden');
     $('#adminPanel').classList.remove('hidden');
-    renderAdmin(d);
+    $('#adminReservations').innerHTML='<div class="notice">Carregando reservas...</div>';
     startAdminAutoSync();
-  }catch(e){showMsg($('#adminLoginMessage'),e.message,'error')}
+    loadAdminData(true);
+  }catch(e){
+    showMsg($('#adminLoginMessage'),e.message,'error');
+  }finally{
+    button.disabled=false;
+    button.textContent='Entrar';
+  }
 };
 
 function statusLabel(status){
@@ -851,7 +908,7 @@ function reportText(d=adminDataCache){
     'RELATÓRIO DE CAMISETAS - OUTUBRO ROSA',
     'Data do evento: 18/10/2026',
     '',
-    'TOTAL DE CAMISETAS CONFIRMADAS: '+Number(d?.totalShirts||0),
+    'TOTAL DE CAMISETAS RESERVADAS: '+Number(d?.totalShirts||0),
     '',
     'CAMISETA TRADICIONAL',
     ...sizes.map(s=>s+': '+count('Camiseta Tradicional',s)),
@@ -861,7 +918,7 @@ function reportText(d=adminDataCache){
     '',
     'LISTA NOMINAL'
   ];
-  (d?.shirts||[]).forEach((s,i)=>lines.push((i+1)+'. '+s.name+' - '+s.model+' - '+s.size+' - Qtd. '+s.quantity));
+  (d?.shirts||[]).forEach((s,i)=>lines.push((i+1)+'. '+s.name+' - '+s.model+' - '+s.size+' - '+statusLabel(s.status)+' - Qtd. '+s.quantity));
   return lines.join('\n');
 }
 
@@ -873,11 +930,11 @@ function renderShirtReport(d){
   $('#totalShirts').textContent=d.totalShirts||0;
   const list=$('#shirtReportList');
   if(!d.shirts?.length){
-    list.innerHTML='<div class="notice">Nenhuma camiseta confirmada ainda. O relatório só inclui participantes com pagamento aprovado automaticamente.</div>';
+    list.innerHTML='<div class="notice">Nenhuma camiseta reservada até o momento.</div>';
     return;
   }
   list.innerHTML='<div class="shirt-row" style="font-weight:900"><span>NOME</span><span>MODELO</span><span>TAM.</span><span>QTD.</span></div>'+
-    d.shirts.map(s=>`<div class="shirt-row"><span>${s.name}</span><span>${s.model}</span><span>${s.size}</span><strong>${s.quantity}</strong></div>`).join('');
+    d.shirts.map(s=>`<div class="shirt-row"><span><strong>${escapeHtml(s.name)}</strong><br><small>${statusLabel(s.status)}</small></span><span>${escapeHtml(s.model)}</span><span>${escapeHtml(s.size)}</span><strong>${s.quantity}</strong></div>`).join('');
 }
 
 $('#adminSearch').addEventListener('input',()=>{if(adminDataCache)renderAdmin(adminDataCache)});
@@ -905,7 +962,17 @@ $('#adminShirtsTab').onclick=()=>{
   $('#adminShirtsTab').className='btn btn-primary';
 };
 $('#copyShirtReport').onclick=async()=>{
-  try{await navigator.clipboard.writeText(reportText());toast('Relatório de camisetas copiado!')}catch{toast('Não foi possível copiar o relatório.')}
+  try{await copyTextNow(reportText());toast('Relatório de camisetas copiado!')}catch{toast('Não foi possível copiar o relatório.')}
+};
+$('#exportShirtCsv').onclick=()=>{
+  if(!adminDataCache) return;
+  const rows=[['Nome','Modelo','Tamanho','Status','Pagamento','Reserva']];
+  (adminDataCache.shirts||[]).forEach(s=>rows.push([
+    s.name,s.model,s.size,statusLabel(s.status),s.paymentMethod||'',s.reservationId||''
+  ]));
+  const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='camisetas-outubro-rosa.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 $('#whatsappShirtReport').onclick=()=>{
   const text=reportText();
@@ -924,7 +991,7 @@ $('#pdfShirtReport').onclick=()=>{
   doc.setFontSize(18);
   doc.text('OUTUBRO ROSA',15,18);
   doc.setFontSize(12);
-  doc.text('Relatório de camisetas confirmadas',15,25);
+  doc.text('Relatório de camisetas reservadas',15,25);
   doc.setFont('helvetica','normal');
   doc.setFontSize(9);
   doc.text('Evento: 18/10/2026 - Mirante da Janela',15,31);
@@ -985,7 +1052,7 @@ $('#pdfShirtReport').onclick=()=>{
 
   if(!rows.length){
     doc.setFont('helvetica','italic');
-    doc.text('Nenhuma camiseta confirmada até o momento.',15,y);
+    doc.text('Nenhuma camiseta reservada até o momento.',15,y);
   }
 
   doc.save('relatorio-camisetas-outubro-rosa.pdf');
@@ -1027,10 +1094,10 @@ function startAdminAutoSync(){
     if(!modalOpen||!panelOpen||document.hidden) return;
     try{
       const d=await adminApi('list');
+      adminDataCache=d;
       renderAdmin(d);
-      await refreshStats();
     }catch{}
-  },6000);
+  },12000);
 }
 
 if('IntersectionObserver' in window){
@@ -1088,6 +1155,7 @@ setInterval(checkSiteVersion,45000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSiteVersion()});
 
 renderParticipants();
+applyAvailabilityUnknownState();
 refreshStats().catch(()=>{});
 scheduleStatsSync(4500);
 checkSiteVersion();
