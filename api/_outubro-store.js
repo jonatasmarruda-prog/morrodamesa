@@ -248,10 +248,18 @@ async function reservationFitsCapacity(reservationIdValue) {
 async function expirePreference(preferenceId) {
   if (!preferenceId) return;
   const now = new Date();
+  const current = await getPreference(preferenceId).catch(()=>null);
+  const metadata = {
+    ...(current?.metadata || {}),
+    admin_status:'cancelled',
+    cancelled_at:now.toISOString(),
+    updated_at:now.toISOString()
+  };
   await mpPut('/checkout/preferences/' + encodeURIComponent(preferenceId), {
     expires:true,
     expiration_date_from: now.toISOString(),
-    expiration_date_to: new Date(now.getTime()+1000).toISOString()
+    expiration_date_to: new Date(now.getTime()+1000).toISOString(),
+    metadata
   });
 }
 
