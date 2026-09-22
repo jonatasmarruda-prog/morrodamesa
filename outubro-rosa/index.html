@@ -417,7 +417,7 @@ $('#cardLink').addEventListener('click',async e=>{
     toast(err.message);
   }
 });
-$('#backEdit').onclick=()=>{reservation=null;sessionStorage.removeItem('outubroReservationClientId');$('#pagamento').classList.add('hidden');location.hash='inscricao'};
+$('#backEdit').onclick=()=>{reservation=null;$('#pagamento').classList.add('hidden');location.hash='inscricao'};
 
 $('#adminGear').onclick=()=>$('#adminModal').classList.add('open');
 queryAll('[data-close]').forEach(b=>b.onclick=()=>$('#'+b.dataset.close).classList.remove('open'));
