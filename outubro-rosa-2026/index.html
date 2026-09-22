@@ -22,6 +22,10 @@
     
     .timeline{max-width:760px;margin:auto}.step{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:14px 0}.dot{width:50px;height:50px;border-radius:50%;background:var(--rose);display:grid;place-items:center;font-size:25px}.step h3{margin:0;font-size:21px}.step p{margin:4px 0 0;color:var(--muted)}
     .shirt-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.shirt-grid img{border-radius:22px;box-shadow:var(--shadow);width:100%;background:#fff}
+    .shirt-deadline{max-width:760px;margin:0 auto 22px;padding:15px 18px;border-radius:18px;background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid #efbdd5;box-shadow:0 12px 30px rgba(197,47,120,.10);display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;font-weight:850;color:#8d2859}.shirt-deadline strong{color:var(--pink)}.shirt-deadline.closed{background:linear-gradient(135deg,#fff0f2,#fff7f8);border-color:#efb8c1;color:#8f2030}.radio-row.shirt-closed{grid-template-columns:1fr}.option-disabled{opacity:.55;pointer-events:none}#shirtPackage.closed{opacity:.66;filter:saturate(.7)}#shirtPackage.closed .tag{background:#8f2030}
+    .reservation-confirmation{max-width:680px;margin:0 auto;padding:28px;border-radius:28px;background:linear-gradient(155deg,#fff,#fff5fa 58%,#fff);border:1px solid rgba(197,47,120,.22);box-shadow:0 26px 70px rgba(106,30,70,.15);text-align:center;position:relative;overflow:hidden}.reservation-confirmation:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;top:-120px;right:-90px;background:radial-gradient(circle,rgba(230,92,156,.18),transparent 70%);pointer-events:none}.reservation-confirmation .final-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#ecfbf4;border:1px solid #a9dfc4;color:#167548;font-size:13px;font-weight:950;letter-spacing:.05em}.reservation-confirmation h3{font-size:30px;margin:14px 0 8px}.reservation-confirmation>p{color:var(--muted);max-width:540px;margin:0 auto 20px}.reservation-final-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin:18px 0}.reservation-final-item{padding:14px 15px;border-radius:16px;background:#fff;border:1px solid var(--line)}.reservation-final-item span{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#8e6b7e;font-weight:850;margin-bottom:5px}.reservation-final-item strong{font-size:16px}.reservation-code-box{padding:17px;border-radius:18px;background:#2f2130;color:#fff;margin:14px 0}.reservation-code-box span{display:block;font-size:12px;opacity:.72;text-transform:uppercase;letter-spacing:.08em}.reservation-code-box strong{display:block;font-size:21px;margin-top:4px;word-break:break-all}.final-payment-status{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin:2px auto 16px;padding:8px 13px;border-radius:999px;font-size:13px;font-weight:900}.final-payment-status.identified{background:#ebfbf3;color:#167548;border:1px solid #a9dfc4}.final-payment-status.unidentified{background:#fff6db;color:#725812;border:1px solid #efd887}.reservation-final-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.reservation-final-actions .btn{min-width:190px}
+    .admin-metrics{grid-template-columns:repeat(4,minmax(0,1fr))!important}.admin-metrics .stat{border:1px solid var(--line);box-shadow:0 10px 28px rgba(106,30,70,.07)}.admin-metrics .stat b{font-size:32px}.admin-capacity-note{text-align:center;color:var(--muted);font-size:13px;font-weight:750;margin:8px 0 4px}.admin-status-stack{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.payment-status-badge{font-size:11px;font-weight:950;border-radius:999px;padding:6px 9px;white-space:nowrap}.payment-status-badge.identified{background:#eafaf2;color:#167548;border:1px solid #a8dfc3}.payment-status-badge.unidentified{background:#fff6db;color:#725812;border:1px solid #efd887}
+    @media(max-width:768px){.shirt-deadline{font-size:14px;padding:13px 14px}.reservation-confirmation{padding:22px 15px;border-radius:22px}.reservation-final-grid{grid-template-columns:1fr}.reservation-final-actions{display:grid;grid-template-columns:1fr}.reservation-final-actions .btn{width:100%;min-width:0}.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.admin-metrics .stat b{font-size:28px}.admin-status-stack{align-items:flex-start;margin-top:8px}}
     .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}.price{font-size:42px;color:var(--pink);font-weight:900}.package{position:relative}.package.recommended{border:2px solid var(--pink)}.tag{position:absolute;top:14px;right:14px;background:var(--pink);color:#fff;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:900}
     .formbox{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}label{display:block;font-weight:800;margin-bottom:8px}.field{margin-bottom:18px}input,select{width:100%;min-height:52px;border:1px solid #e6bfd2;border-radius:14px;padding:12px 14px;font-size:18px;background:#fff;color:var(--ink)}.qty{display:flex;align-items:center;gap:14px}.qty button{width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:26px;font-weight:900}.qty span{min-width:56px;text-align:center;font-size:30px;font-weight:900}.participant-hint{margin:16px 0 8px;padding:13px 15px;border-radius:14px;background:linear-gradient(135deg,#fff4f8,#fff);border:1px solid var(--line);color:var(--muted);font-weight:750;font-size:15px}.participants{display:grid;gap:16px;margin-top:12px}.participant{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fffafd}.participant.invalid{border-color:#d84c65;box-shadow:0 0 0 3px rgba(216,76,101,.09)}.participant.invalid .pname{border-color:#d84c65}.participant h3{margin:0 0 14px}.radio-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-card{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease}.radio-card:hover{transform:translateY(-2px);border-color:#e5a4c5;box-shadow:0 10px 24px rgba(106,30,70,.08)}.radio-card:has(input:checked){border-color:var(--pink);background:linear-gradient(135deg,#fff3f8,#fff);box-shadow:0 12px 28px rgba(197,47,120,.13)}.radio-card input{width:auto;min-height:auto;margin-right:8px}.shirt-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .summary{background:#fff7fb;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}.summary-row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px dashed #e7c4d4;padding:10px 0}.summary-row:last-child{border:0}.total{font-size:30px;font-weight:900;color:var(--pink)}
@@ -223,6 +227,7 @@ html,body{overflow-x:hidden}
     <div class="wrap">
       <h2 class="section-title">Camiseta oficial</h2>
       <p class="section-sub">Escolha Camiseta Tradicional ou Babylook, do PP ao GG.</p>
+      <div class="shirt-deadline" id="shirtDeadlineBanner">👕 <span>Pedidos de camiseta até <strong>05/10 às 23h59</strong>.</span></div>
       <div class="shirt-grid">
         <img src="https://i.postimg.cc/GmgN9KnL/file-000000004b64820e94794e53ab27d326.png" alt="Camiseta oficial Outubro Rosa" loading="lazy">
         <img src="https://i.postimg.cc/m2sGGmBd/IMG-20260921-WA0581.jpg" alt="Tabela de medidas" loading="lazy">
@@ -235,7 +240,7 @@ html,body{overflow-x:hidden}
       <h2 class="section-title">Escolha como participar</h2>
       <div class="packages">
         <article class="card package"><h3>🎟️ Somente entrada</h3><div class="price">R$ 30</div><p>Por pessoa. Participação na Trilha Outubro Rosa.</p></article>
-        <article class="card package recommended"><span class="tag">COM CAMISETA</span><h3>👕 Entrada + camiseta</h3><div class="price">R$ 75</div><p>Por pessoa. Entrada + camiseta oficial, tradicional ou babylook.</p></article>
+        <article class="card package recommended" id="shirtPackage"><span class="tag" id="shirtPackageTag">COM CAMISETA</span><h3>👕 Entrada + camiseta</h3><div class="price">R$ 75</div><p>Por pessoa. Entrada + camiseta oficial, tradicional ou babylook. <strong>Pedidos somente até 05/10.</strong></p></article>
       </div>
     </div>
   </section>
@@ -293,6 +298,23 @@ html,body{overflow-x:hidden}
           <button class="btn btn-light payment-change" id="changeCardMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
         <div id="paymentStatusBox"></div>
+        <div id="reservationConfirmation" class="reservation-confirmation hidden">
+          <div class="final-badge">✓ VAGA CONFIRMADA</div>
+          <h3>Sua reserva está confirmada!</h3>
+          <p id="finalReservationMessage">Sua inscrição foi registrada com sucesso.</p>
+          <div class="reservation-final-grid">
+            <div class="reservation-final-item"><span>Participante(s)</span><strong id="finalReservationNames">—</strong></div>
+            <div class="reservation-final-item"><span>Quantidade</span><strong id="finalReservationQty">—</strong></div>
+            <div class="reservation-final-item"><span>Valor total</span><strong id="finalReservationTotal">—</strong></div>
+            <div class="reservation-final-item"><span>Forma escolhida</span><strong id="finalReservationMethod">—</strong></div>
+          </div>
+          <div class="reservation-code-box"><span>Código da reserva</span><strong id="finalReservationCode">—</strong></div>
+          <div id="finalPaymentStatus" class="final-payment-status unidentified">Pagamento ainda não identificado</div>
+          <div class="reservation-final-actions">
+            <button class="btn btn-primary" id="copyReservationCode" type="button">📋 Copiar código da reserva</button>
+            <button class="btn btn-whatsapp-premium hidden" id="finalPixWhatsapp" type="button">Enviar comprovante no WhatsApp</button>
+          </div>
+        </div>
         <div class="payment-nav-actions">
           <button class="btn btn-light" id="backEdit">← Voltar e editar</button>
           <button class="btn btn-light" id="backHome">🏠 Voltar à página inicial</button>
@@ -318,7 +340,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3045</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3130</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -332,11 +354,13 @@ html,body{overflow-x:hidden}
       <div id="adminLoginMessage"></div>
     </div>
     <div id="adminPanel" class="hidden">
-      <div class="stats" style="margin-top:18px">
+      <div class="stats admin-metrics" style="margin-top:18px">
         <div class="stat"><b id="adminConfirmed">0</b><span>Confirmadas</span></div>
-        <div class="stat"><b id="adminPending">0</b><span>Disponíveis</span></div>
-        <div class="stat"><b id="adminAvailable">100</b><span>Total</span></div>
+        <div class="stat"><b id="adminShirtsMetric">0</b><span>Camisetas</span></div>
+        <div class="stat"><b id="adminPaid">0</b><span>Pag. identificados</span></div>
+        <div class="stat"><b id="adminAvailable">100</b><span>Disponíveis</span></div>
       </div>
+      <div class="admin-capacity-note">Capacidade total do evento: 100 vagas</div>
       <div class="admin-tabs">
         <button class="btn btn-primary" id="adminReservationsTab">📋 Inscrições</button>
         <button class="btn btn-light" id="adminShirtsTab">👕 Camisetas reservadas</button>
@@ -379,13 +403,14 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-3045';
+const BUILD_VERSION = '20260922-3130';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
 const PRICE_ENTRY = 30;
 const PRICE_SHIRT = 75;
+const SHIRT_CUTOFF_TS = Date.parse('2026-10-06T03:59:59Z');
 const CARD_2_ENTRY = 'https://mpago.la/1HRu8wF';
 const CARD_1_SHIRT = 'https://mpago.la/1D9bgo3';
 const CARD_2_SHIRTS = 'https://mpago.la/1DJFjnq';
@@ -395,6 +420,35 @@ const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 function showMsg(el,msg,type='notice'){el.innerHTML='<div class="'+type+'">'+msg+'</div>'}
+function shirtOrdersOpen(){return Date.now()<=SHIRT_CUTOFF_TS}
+function applyShirtDeadlineState(){
+  const open=shirtOrdersOpen();
+  const banner=$('#shirtDeadlineBanner');
+  const pack=$('#shirtPackage');
+  const tag=$('#shirtPackageTag');
+  if(banner){
+    banner.classList.toggle('closed',!open);
+    banner.innerHTML=open
+      ?'👕 <span>Pedidos de camiseta até <strong>05/10 às 23h59</strong>. Após esse horário, a opção será encerrada automaticamente.</span>'
+      :'⚠️ <span><strong>Pedidos de camiseta encerrados.</strong> O prazo terminou em 05/10 às 23h59.</span>';
+  }
+  if(pack) pack.classList.toggle('closed',!open);
+  if(tag) tag.textContent=open?'COM CAMISETA':'PEDIDOS ENCERRADOS';
+  queryAll('.participant').forEach(p=>{
+    const shirtRadio=p.querySelector('input[type=radio][value="shirt"]');
+    const entryRadio=p.querySelector('input[type=radio][value="entry"]');
+    const label=shirtRadio?.closest('.radio-card');
+    const row=p.querySelector('.radio-row');
+    if(!shirtRadio) return;
+    shirtRadio.disabled=!open;
+    label?.classList.toggle('hidden',!open);
+    row?.classList.toggle('shirt-closed',!open);
+    if(!open&&shirtRadio.checked){
+      entryRadio.checked=true;
+      p.querySelector('.shirt-options')?.classList.add('hidden');
+    }
+  });
+}
 async function publicApi(payload=null,reservationId=''){
   const opt=payload?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}:{method:'GET',cache:'no-store'};
   const url=API_BASE+'/outubro-reservas'+(reservationId?'?reservation='+encodeURIComponent(reservationId):'');
@@ -443,6 +497,7 @@ function renderParticipants(seed=[]){
     }));
     p.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',updateSummary));
   }
+  applyShirtDeadlineState();
   updateSummary();
 }
 function getParticipants(){
@@ -588,7 +643,41 @@ function escapeHtml(value){
   return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
+function paymentIdentified(r){
+  return Boolean(r?.paymentApproved||r?.mpStatus==='approved');
+}
+function showReservationConfirmation(r,method){
+  if(!r) return;
+  reservation={...reservation,...r,paymentMethod:method||r.paymentMethod||reservation?.paymentMethod||''};
+  const ps=Array.isArray(r.participants)&&r.participants.length?r.participants:getParticipants();
+  const names=ps.map(p=>p.name).filter(Boolean).join(', ')||'Participante';
+  const total=Number(r.total||ps.reduce((sum,p)=>sum+Number(p.price||0),0)||totalValue());
+  const identified=paymentIdentified(r);
+  $('#finalReservationNames').textContent=names;
+  $('#finalReservationQty').textContent=(r.quantity||ps.length||qty)+' vaga(s)';
+  $('#finalReservationTotal').textContent=money(total);
+  $('#finalReservationMethod').textContent=method||r.paymentMethod||paymentMethod||'—';
+  $('#finalReservationCode').textContent=r.id||reservation?.id||'—';
+  $('#finalPaymentStatus').textContent=identified?'Pagamento identificado':'Pagamento ainda não identificado';
+  $('#finalPaymentStatus').className='final-payment-status '+(identified?'identified':'unidentified');
+  $('#finalReservationMessage').textContent=identified
+    ?'Sua vaga está confirmada e o pagamento foi identificado pelo sistema.'
+    :'Sua vaga está confirmada. O pagamento ainda não foi identificado automaticamente.';
+  $('#finalPixWhatsapp').classList.toggle('hidden',String(method||r.paymentMethod||'').toUpperCase()!=='PIX'||identified);
+  $('#reservationConfirmation').classList.remove('hidden');
+  $('#finalSummary').classList.add('hidden');
+  $('#paymentChoiceTitle').classList.add('hidden');
+  $('#paymentChoiceTabs').classList.add('payment-choice-hidden');
+  $('#pixPanel').classList.add('hidden');
+  $('#cardPanel').classList.add('hidden');
+  $('#backEdit').classList.add('hidden');
+  $('#backHome').textContent='🏠 Finalizar e voltar ao início';
+}
 function resetPaymentChoice(){
+  $('#reservationConfirmation').classList.add('hidden');
+  $('#finalSummary').classList.remove('hidden');
+  $('#backEdit').classList.remove('hidden');
+  $('#backHome').textContent='🏠 Voltar à página inicial';
   $('#paymentChoiceTitle').classList.remove('hidden');
   $('#paymentChoiceTabs').classList.remove('payment-choice-hidden');
   $('#pixPanel').classList.add('hidden');
@@ -815,10 +904,12 @@ $('#pixPayButton').onclick=async()=>{
 
   button.disabled=true;
   try{
-    await ensureReservation('PIX');
+    const r=await ensureReservation('PIX');
     await refreshStats();
+    showReservationConfirmation(r,'PIX');
   }catch(e){
     console.error('Reserva Pix:',e);
+    showMsg(feedback,'Pix copiado, mas não foi possível confirmar a reserva agora. Tente novamente.','error');
     refreshStats().catch(()=>{});
   }finally{
     button.disabled=false;
@@ -828,6 +919,14 @@ $('#pixPayButton').onclick=async()=>{
 $('#sendPixReceipt').onclick=()=>{
   const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
   history.replaceState(null,'',location.pathname+'#inicio');
+  window.location.href=url;
+};
+$('#copyReservationCode').onclick=async()=>{
+  const code=$('#finalReservationCode').textContent.trim();
+  try{await copyTextNow(code);toast('Código da reserva copiado!')}catch{toast('Não foi possível copiar o código.')}
+};
+$('#finalPixWhatsapp').onclick=()=>{
+  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
   window.location.href=url;
 };
 
@@ -948,9 +1047,13 @@ function buildActiveShirtData(d){
 function renderAdmin(d){
   d=buildActiveShirtData(d);
   adminDataCache=d;
-  $('#adminConfirmed').textContent=Number(d.stats.reserved ?? ((d.stats.confirmed||0)+(d.stats.pending||0)+(d.stats.review||0)));
-  $('#adminPending').textContent=d.stats.available;
-  $('#adminAvailable').textContent=d.stats.total||TOTAL_VAGAS;
+  const activeReservations=(d.reservations||[]).filter(r=>r.status!=='cancelled');
+  const confirmedQty=activeReservations.reduce((sum,r)=>sum+Number(r.quantity||0),0);
+  const paidQty=activeReservations.filter(r=>paymentIdentified(r)).reduce((sum,r)=>sum+Number(r.quantity||0),0);
+  $('#adminConfirmed').textContent=confirmedQty;
+  $('#adminShirtsMetric').textContent=Number(d.totalShirts||0);
+  $('#adminPaid').textContent=paidQty;
+  $('#adminAvailable').textContent=d.stats.available;
 
   const search=String($('#adminSearch')?.value||'').trim().toLowerCase();
   const statusFilter=$('#adminStatusFilter')?.value||'all';
@@ -966,10 +1069,12 @@ function renderAdmin(d){
   rows.forEach(r=>{
     const el=document.createElement('div'); el.className='admin-item';
     const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>${p.option==='shirt'?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
-    const paymentInfo=(r.paymentApproved||r.mpStatus==='approved')
-      ?'<br><small>Pagamento aprovado pelo Mercado Pago</small>'
-      :'<br><small>Pagamento: '+escapeHtml(r.paymentMethod)+' • controle manual se necessário</small>';
-    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) - ${money(r.total)} - ${escapeHtml(r.paymentMethod)}</small>${paymentInfo}</div><span class="status">${statusLabel(r.status)}</span></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
+    const identified=paymentIdentified(r);
+    const paymentInfo=identified
+      ?'<br><small>Pagamento identificado pelo sistema</small>'
+      :'<br><small>Forma escolhida: '+escapeHtml(r.paymentMethod)+' • pagamento ainda não identificado</small>';
+    const paymentBadge='<span class="payment-status-badge '+(identified?'identified':'unidentified')+'">'+(identified?'PAGAMENTO IDENTIFICADO':'PAGAMENTO NÃO IDENTIFICADO')+'</span>';
+    el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) - ${money(r.total)} - ${escapeHtml(r.paymentMethod)}</small>${paymentInfo}</div><div class="admin-status-stack"><span class="status">${statusLabel(r.status)}</span>${paymentBadge}</div></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
     const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Excluir esta reserva e liberar '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
     el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
@@ -1025,9 +1130,9 @@ $('#adminSearch').addEventListener('input',()=>{if(adminDataCache)renderAdmin(ad
 $('#adminStatusFilter').addEventListener('change',()=>{if(adminDataCache)renderAdmin(adminDataCache)});
 $('#exportReservationsCsv').onclick=()=>{
   if(!adminDataCache) return;
-  const rows=[['Reserva','Status','Nome','Opção','Modelo','Tamanho','Valor','Pagamento']];
+  const rows=[['Reserva','Status','Nome','Opção','Modelo','Tamanho','Valor','Forma de pagamento','Situação do pagamento']];
   (adminDataCache.reservations||[]).forEach(r=>r.participants.forEach(p=>rows.push([
-    r.id,statusLabel(r.status),p.name,p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.model||'',p.size||'',money(p.price),r.paymentMethod
+    r.id,statusLabel(r.status),p.name,p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.model||'',p.size||'',money(p.price),r.paymentMethod,paymentIdentified(r)?'IDENTIFICADO':'NÃO IDENTIFICADO'
   ])));
   const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
@@ -1193,34 +1298,20 @@ async function checkPaymentReturn(){
   const reservationId=params.get('reserva')||sessionStorage.getItem('outubroReservationId')||'';
   const retorno=params.get('retorno');
   if(!reservationId||!retorno) return;
-  const box=$('#paymentStatusBox');
-  let attempts=0;
-  const check=async()=>{
-    attempts++;
-    try{
-      const data=await publicApi(null,reservationId);
-      const r=data.reservation;
-      if(r.status==='confirmed'){
-        showMsg(box,'✅ PAGAMENTO APROVADO! Sua inscrição foi confirmada automaticamente e seu nome já está na lista de trilheiras confirmadas.','success');
-        toast('Inscrição confirmada automaticamente!');
-        await refreshStats();
-        sessionStorage.removeItem('outubroReservationClientId');
-        return;
-      }
-      if(r.status==='cancelled'){
-        showMsg(box,'O pagamento não foi concluído e a reserva não está mais ativa.','error');
-        await refreshStats();
-        return;
-      }
-      showMsg(box,'Pagamento recebido pelo sistema e aguardando aprovação do Mercado Pago. A atualização é automática.','notice');
-      if(attempts<12) setTimeout(check,4000);
-    }catch{
-      if(attempts<12) setTimeout(check,4000);
-    }
-  };
   $('#pagamento').classList.remove('hidden');
   location.hash='pagamento';
-  check();
+  try{
+    const data=await publicApi(null,reservationId);
+    const r=data.reservation;
+    if(!r) return;
+    reservation={...r,paymentMethod:r.paymentMethod||'CARTÃO'};
+    showReservationConfirmation(r,r.paymentMethod||'CARTÃO');
+    await refreshStats();
+    if(paymentIdentified(r)) toast('Pagamento identificado e vaga confirmada!');
+    else toast('Sua vaga está confirmada!');
+  }catch(e){
+    showMsg($('#paymentStatusBox'),'Sua reserva existe, mas não foi possível atualizar o status do pagamento agora.','notice');
+  }
 }
 
 async function checkSiteVersion(){
@@ -1239,6 +1330,8 @@ setInterval(checkSiteVersion,45000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSiteVersion()});
 
 renderParticipants();
+applyShirtDeadlineState();
+setInterval(applyShirtDeadlineState,60000);
 applyAvailabilityUnknownState();
 refreshStats().catch(()=>{});
 scheduleStatsSync(4500);
