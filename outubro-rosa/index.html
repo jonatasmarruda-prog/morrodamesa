@@ -90,7 +90,7 @@
   </div>
 </header>
 
-<button class="floating-back" id="backSite" type="button" aria-label="Voltar" title="Voltar">←</button>
+<button class="floating-back" id="backSite" type="button" aria-label="Voltar ao início" title="Voltar ao início">↑</button>
 
 <main id="inicio">
   <section class="hero">
@@ -513,10 +513,7 @@ $('#cardTab').onclick=()=>{
 $('#pixPayButton').onclick=()=>beginPayment('PIX',$('#pixPayButton'),$('#pixFeedback'));
 $('#cardPayButton').onclick=()=>beginPayment('CARTÃO',$('#cardPayButton'),$('#cardMessage'));
 $('#backEdit').onclick=()=>{reservation=null;$('#pagamento').classList.add('hidden');location.hash='inscricao'};
-$('#backSite').onclick=()=>{
-  if(history.length>1) history.back();
-  else returnHome();
-};
+$('#backSite').onclick=()=>returnHome();
 $('#backHome').onclick=()=>returnHome();
 $('#floatingWhatsapp').addEventListener('click',()=>{returnHome()});
 
