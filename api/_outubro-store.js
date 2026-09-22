@@ -449,11 +449,18 @@ async function adminData() {
   s.available=Math.max(0,CAPACITY-s.reserved);
 
   const shirts=[];
-  reservations.filter(r=>r.status==='confirmed').forEach(r=>{
+  reservations.filter(r=>occupies(r.status)).forEach(r=>{
     r.participants.filter(p=>p.option==='shirt').forEach(p=>shirts.push({
-      reservationId:r.id,name:p.name,model:p.model,size:p.size,quantity:1
+      reservationId:r.id,
+      name:p.name,
+      model:p.model,
+      size:p.size,
+      quantity:1,
+      status:r.status,
+      paymentMethod:r.paymentMethod
     }));
   });
+  shirts.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
   const counts={};
   shirts.forEach(sx=>{
     const k=sx.model+'|'+sx.size;
