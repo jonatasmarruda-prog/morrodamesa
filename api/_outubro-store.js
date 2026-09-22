@@ -172,28 +172,24 @@ function normalize(pref, payment = null) {
   const quantity = participants.length || Number(md.quantity || 0);
   const expected = participants.reduce((s,p)=>s+Number(p.price||0),0) || Number(md.total || 0);
   const paid = Number(payment?.transaction_amount || 0);
-  const amountMatches = !payment || Math.abs(expected-paid) < 0.01;
-  const expiresAt = legacyExpiresAt(pref);
-  let status = 'pending';
+  const paymentApproved = payment?.status === 'approved';
 
-  if (adminStatus === 'cancelled') status = 'cancelled';
-  else if (payment?.status === 'approved' && amountMatches) status = 'confirmed';
-  else if (payment?.status === 'approved' && !amountMatches && md.adjusted_after_payment === true) status = 'confirmed';
-  else if (payment?.status === 'approved' && !amountMatches) status = 'review';
-  else if (['rejected','cancelled','refunded','charged_back'].includes(payment?.status)) status = 'cancelled';
-  else if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) status = 'cancelled';
-  else if (adminStatus === 'confirmed') status = 'confirmed'; // legado
+  // Regra do evento: a vaga é confirmada assim que a reserva é criada.
+  // Ela permanece ocupada até exclusão/cancelamento manual no painel.
+  // Status/expiração do pagamento não liberam vaga automaticamente.
+  const status = adminStatus === 'cancelled' ? 'cancelled' : 'confirmed';
 
   return {
     id: String(pref.external_reference || md.reservation_id || ''),
     preferenceId: String(pref.id || ''),
     createdAt: pref.date_created || md.created_at || null,
     updatedAt: payment?.date_last_updated || md.updated_at || pref.date_created || null,
-    approvedAt: payment?.date_approved || md.confirmed_at || null,
-    expiresAt,
+    approvedAt: payment?.date_approved || null,
+    expiresAt: null,
     paymentMethod: String(md.payment_method || md.payment_choice || 'PIX').toUpperCase(),
     paymentId: payment?.id ? String(payment.id) : '',
     mpStatus: String(payment?.status || 'pending'),
+    paymentApproved,
     status,
     quantity,
     total: money(expected),
@@ -302,17 +298,16 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
     const payments=await listOutubroPayments();
     const current=normalize(existing,payments.get(id)||null);
     const active=occupies(current.status);
-    if(current.status==='confirmed') return {reservation:current,checkoutUrl:'',alreadyPaid:true};
 
     if(active){
       const sameParticipants=JSON.stringify(current.participants||[])===JSON.stringify(ps);
       const sameMethod=String(current.paymentMethod||'').toUpperCase()===method;
-      if(sameParticipants && sameMethod && existing.init_point){
-        return {reservation:current,checkoutUrl:existing.init_point,reused:true};
+      if(sameParticipants && sameMethod){
+        return {reservation:current,checkoutUrl:existing.init_point||'',reused:true,alreadyPaid:Boolean(current.paymentApproved)};
       }
 
-      // A pessoa voltou para editar ou trocou a forma de pagamento.
-      // Expira a tentativa anterior antes de criar a nova, para não prender vagas duplicadas.
+      // A pessoa editou os dados ou trocou a forma de pagamento.
+      // Cancela somente a versão anterior da mesma reserva para evitar duplicidade.
       await expirePreference(existing.id).catch(()=>{});
     }
   }
@@ -322,12 +317,11 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
 
   const total=money(ps.reduce((sum,p)=>sum+p.price,0));
   const now=new Date();
-  const expiresAt=new Date(now.getTime()+HOLD_MINUTES*60*1000);
   const audit=[{at:now.toISOString(),action:'RESERVA_CRIADA',detail:method}];
   const metadata={
     event_key:EVENT_KEY,
     reservation_id:id,
-    admin_status:'pending',
+    admin_status:'confirmed',
     payment_method:method,
     participants_b64:encodeParticipants(ps),
     quantity:ps.length,
@@ -359,9 +353,6 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
       failure:base+'?retorno=falha&reserva='+encodeURIComponent(id)
     },
     auto_return:'approved',
-    expires:true,
-    expiration_date_from:now.toISOString(),
-    expiration_date_to:expiresAt.toISOString(),
     payment_methods:{
       excluded_payment_types:excluded,
       installments:12,
@@ -378,7 +369,7 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
   // pode levar alguns instantes para refletir a reserva recém-criada, gerando
   // falso aviso de últimas vagas.
   const row=normalize(pref,null);
-  return {reservation:row,checkoutUrl:pref.init_point,expiresAt:expiresAt.toISOString()};
+  return {reservation:row,checkoutUrl:pref.init_point,expiresAt:null};
 }
 
 async function reservationById(id) {
