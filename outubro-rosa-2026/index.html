@@ -39,7 +39,43 @@
     .btn-busy{pointer-events:none;opacity:.82}.soldout-state{background:linear-gradient(135deg,#8f2030,#b4233a)!important;color:#fff!important;box-shadow:none!important;cursor:not-allowed!important}
     .btn-busy:before{content:"";width:18px;height:18px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     .seat-drop{animation:seatDrop .7s cubic-bezier(.2,.8,.2,1)}
-    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 18px}.payment-caption{font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8e6b7e;margin-top:8px}.payment-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:linear-gradient(135deg,#fff3f8,#fff);border:1px solid #efc5d9;color:var(--pink);font-size:12px;font-weight:900;letter-spacing:.08em;margin-bottom:10px}.payment-feedback{margin-top:14px}.payment-premium{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,245,250,.94));border:1px solid rgba(197,47,120,.20);box-shadow:0 24px 60px rgba(106,30,70,.13)}.payment-premium:before{content:"";position:absolute;top:-80px;right:-70px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(230,92,156,.14),transparent 70%);pointer-events:none}.payment-premium h3{font-size:28px;margin:4px 0 6px;letter-spacing:-.02em}.payment-premium .success{margin-top:12px;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(32,180,116,.08)}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
+    .pay-panel{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,rgba(255,247,251,.94));box-shadow:0 18px 46px rgba(106,30,70,.10)}.payment-note{color:var(--muted);font-size:16px;margin:0 0 18px}.payment-caption{font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8e6b7e;margin-top:8px}.payment-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:linear-gradient(135deg,#fff3f8,#fff);border:1px solid #efc5d9;color:var(--pink);font-size:12px;font-weight:900;letter-spacing:.08em;margin-bottom:10px}.payment-feedback{margin-top:14px}.payment-premium{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,245,250,.94));border:1px solid rgba(197,47,120,.20);box-shadow:0 24px 60px rgba(106,30,70,.13)}.payment-premium:before{content:"";position:absolute;top:-80px;right:-70px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(230,92,156,.14),transparent 70%);pointer-events:none}.payment-premium h3{font-size:28px;margin:4px 0 6px;letter-spacing:-.02em}.payment-premium .success{margin-top:12px;border-radius:14px;padding:12px 14px;box-shadow:0 8px 24px rgba(32,180,116,.08)}.pay-value{font-size:36px;font-weight:900;color:var(--pink);margin:6px 0 16px}
+    .payment-formbox{max-width:760px!important;margin:0 auto!important;padding:24px!important;border-radius:28px!important;background:linear-gradient(155deg,#fff 0%,#fff8fb 55%,#fff 100%)!important;box-shadow:0 24px 70px rgba(106,30,70,.13)!important;border:1px solid rgba(197,47,120,.16)!important}
+    .payment-formbox>#finalSummary{margin:0 auto 20px;max-width:680px}
+    .payment-choice-title{margin:2px 0 16px!important;font-size:18px!important}
+    .pay-tabs{max-width:680px;margin:0 auto 8px!important;gap:14px!important}
+    .pay-choice{min-height:76px!important;font-size:20px!important;border-radius:22px!important;background:linear-gradient(145deg,#fff,#fff7fb)!important;border:1px solid rgba(197,47,120,.23)!important;box-shadow:0 14px 34px rgba(88,35,65,.10)!important}
+    .pay-choice:hover{transform:translateY(-3px) scale(1.012);box-shadow:0 20px 45px rgba(197,47,120,.18)!important;border-color:rgba(197,47,120,.48)!important}
+    .pay-choice.choice-pix:hover{box-shadow:0 20px 48px rgba(22,160,98,.20)!important;border-color:rgba(22,160,98,.42)!important}
+    .pay-choice.choice-card:hover{box-shadow:0 20px 48px rgba(197,47,120,.22)!important}
+    .pay-choice-icon{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;margin-right:8px;background:rgba(255,255,255,.75);box-shadow:0 7px 18px rgba(58,28,47,.10)}
+    .payment-premium{max-width:680px;margin:0 auto!important;padding:26px!important;border-radius:26px!important}
+    .payment-premium.selected-payment{animation:selectedPaymentGlow 2.8s ease-in-out infinite;border-color:rgba(197,47,120,.34)!important}
+    #pixPanel.selected-payment{border-color:rgba(18,138,89,.35)!important;box-shadow:0 22px 65px rgba(18,138,89,.13)!important}
+    #cardPanel.selected-payment{border-color:rgba(197,47,120,.35)!important;box-shadow:0 22px 65px rgba(197,47,120,.15)!important}
+    .payment-selected-banner{display:flex;align-items:center;justify-content:center;gap:9px;min-height:42px;margin:0 auto 18px;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;width:max-content;max-width:100%;box-shadow:0 9px 25px rgba(60,28,48,.08)}
+    .payment-selected-banner.pix{background:#ecfbf4;border:1px solid #a9dfc4;color:#167548}
+    .payment-selected-banner.card{background:#fff0f7;border:1px solid #efbdd5;color:#a52462}
+    .payment-premium h3{text-align:center!important;margin:2px 0 8px!important}
+    .payment-premium .payment-caption{text-align:center!important}
+    .payment-premium .pay-value{text-align:center!important;font-size:42px!important;margin:6px 0 14px!important}
+    .payment-premium .payment-note{text-align:center!important;max-width:520px;margin:0 auto 18px!important}
+    .payment-premium>.btn-pay-pix,.payment-premium>.btn-pay-card,.payment-premium>.btn-whatsapp-premium{display:flex;align-items:center;justify-content:center;width:min(430px,100%);margin-left:auto;margin-right:auto}
+    .payment-feedback,#cardMessage{max-width:520px;margin-left:auto!important;margin-right:auto!important;text-align:center}
+    .payment-change{display:flex!important;align-items:center;justify-content:center;margin:18px auto 0!important;min-height:42px!important;padding:9px 15px!important;border-radius:14px!important;font-size:14px!important;box-shadow:none!important}
+    .payment-nav-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .payment-nav-actions .btn{min-width:190px}
+    .payment-choice-hidden{display:none!important}
+    @keyframes selectedPaymentGlow{0%,100%{transform:translateY(0);filter:brightness(1);box-shadow:0 22px 58px rgba(106,30,70,.12)}50%{transform:translateY(-2px);filter:brightness(1.015);box-shadow:0 28px 72px rgba(197,47,120,.20)}}
+    @media(max-width:768px){
+      .payment-formbox{padding:16px!important;border-radius:22px!important}
+      .pay-tabs{grid-template-columns:1fr!important;display:grid!important;gap:10px!important}
+      .pay-choice{min-height:64px!important;font-size:18px!important}
+      .payment-premium{padding:20px 16px!important;border-radius:22px!important}
+      .payment-premium .pay-value{font-size:38px!important}
+      .payment-nav-actions{display:grid;grid-template-columns:1fr;width:100%}
+      .payment-nav-actions .btn{width:100%;min-width:0}
+    }.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#2f2130;color:#fff;border-radius:14px;padding:14px 18px;z-index:100;transition:.25s;box-shadow:var(--shadow);max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0)}
     footer{padding:40px 0 26px;background:#2f2130;color:#fff}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:20px}.admin-access{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:16px;min-height:48px;padding:10px 14px;display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.14);transition:.22s}.admin-access:hover{background:rgba(255,255,255,.15);transform:translateY(-2px);border-color:rgba(255,255,255,.5)}.admin-gear{font-size:25px;line-height:1}.admin-label{font-size:14px}
     .modal{position:fixed;inset:0;background:rgba(37,18,31,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{background:#fff;width:min(920px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.close{border:0;background:#f6e7ee;width:42px;height:42px;border-radius:12px;font-size:22px;cursor:pointer}.admin-list{display:grid;gap:12px;margin-top:18px}.admin-item{border:1px solid var(--line);border-radius:16px;padding:16px}.admin-item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{font-size:13px;font-weight:900;border-radius:999px;padding:6px 10px;background:#fff0f6;color:var(--pink)}
     .notice{padding:14px 16px;border-radius:14px;background:#fff6db;border:1px solid #f1d98c;color:#654f10;margin:12px 0}.success{background:#ebfbf3;border-color:#a6ddc0;color:#205d40}.error{background:#fff0f2;border-color:#ffc3cd;color:#8f2030}
@@ -227,33 +263,37 @@ html,body{overflow-x:hidden}
   <section id="pagamento" class="hidden">
     <div class="wrap">
       <h2 class="section-title">Pagamento</h2>
-      <div class="formbox">
+      <div class="formbox payment-formbox">
         <div id="finalSummary" class="summary"></div>
-        <div class="payment-choice-title">Escolha como deseja pagar</div>
-        <div class="pay-tabs">
-          <button class="btn btn-light pay-choice" id="pixTab">💚 PIX</button>
-          <button class="btn btn-light pay-choice" id="cardTab">💳 CARTÃO</button>
+        <div class="payment-choice-title" id="paymentChoiceTitle">Escolha como deseja pagar</div>
+        <div class="pay-tabs" id="paymentChoiceTabs">
+          <button class="btn btn-light pay-choice choice-pix" id="pixTab"><span class="pay-choice-icon">💚</span>PIX</button>
+          <button class="btn btn-light pay-choice choice-card" id="cardTab"><span class="pay-choice-icon">💳</span>CARTÃO</button>
         </div>
         <div id="pixPanel" class="pay-panel payment-premium hidden">
-          <div class="payment-badge">PIX - PAGAMENTO RÁPIDO</div>
+          <div class="payment-selected-banner pix">✓ Forma escolhida: Pix</div>
           <h3>Pagamento via Pix</h3>
           <div class="payment-caption">Valor a pagar</div>
           <div class="pay-value" id="pixValue">R$ 0,00</div>
-          <p class="payment-note">Toque no botão para copiar a chave Pix automaticamente.</p>
+          <p class="payment-note">Toque no botão abaixo para copiar a chave Pix automaticamente.</p>
           <button class="btn btn-pay-pix btn-pulse" id="pixPayButton">💚 📋 Copiar Pix</button>
           <div id="pixFeedback" class="payment-feedback"></div>
           <button class="btn btn-whatsapp-premium btn-pulse-soft hidden" id="sendPixReceipt">Enviar comprovante no WhatsApp</button>
+          <button class="btn btn-light payment-change" id="changePixMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
         <div id="cardPanel" class="pay-panel payment-premium hidden">
+          <div class="payment-selected-banner card">✓ Forma escolhida: Cartão</div>
           <h3>Pagamento com cartão</h3>
+          <div class="payment-caption">Valor a pagar</div>
           <div class="pay-value" id="cardValue">R$ 0,00</div>
           <p class="payment-note" id="cardInstruction">Selecione Cartão para verificar o link disponível para esta combinação.</p>
           <button class="btn btn-pay-card hidden" id="cardPayButton">💳 Pagar com cartão</button>
           <button class="btn btn-whatsapp-premium hidden" id="requestCardLink">📲 Solicitar link ao Jonatas</button>
           <div id="cardMessage"></div>
+          <button class="btn btn-light payment-change" id="changeCardMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
         <div id="paymentStatusBox"></div>
-        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <div class="payment-nav-actions">
           <button class="btn btn-light" id="backEdit">← Voltar e editar</button>
           <button class="btn btn-light" id="backHome">🏠 Voltar à página inicial</button>
         </div>
@@ -278,7 +318,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3015</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3045</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -339,7 +379,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-3015';
+const BUILD_VERSION = '20260922-3045';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -548,18 +588,35 @@ function escapeHtml(value){
   return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
+function resetPaymentChoice(){
+  $('#paymentChoiceTitle').classList.remove('hidden');
+  $('#paymentChoiceTabs').classList.remove('payment-choice-hidden');
+  $('#pixPanel').classList.add('hidden');
+  $('#cardPanel').classList.add('hidden');
+  $('#pixPanel').classList.remove('selected-payment');
+  $('#cardPanel').classList.remove('selected-payment');
+  $('#pixTab').className='btn btn-light pay-choice choice-pix';
+  $('#cardTab').className='btn btn-light pay-choice choice-card';
+}
+function selectPaymentChoice(method){
+  $('#paymentChoiceTitle').classList.add('hidden');
+  $('#paymentChoiceTabs').classList.add('payment-choice-hidden');
+  const isPix=method==='PIX';
+  $('#pixPanel').classList.toggle('hidden',!isPix);
+  $('#cardPanel').classList.toggle('hidden',isPix);
+  $('#pixPanel').classList.toggle('selected-payment',isPix);
+  $('#cardPanel').classList.toggle('selected-payment',!isPix);
+}
 function showPayment(){
   $('#pagamento').classList.remove('hidden');
   $('#finalSummary').innerHTML=$('#summary').innerHTML;
   $('#pixValue').textContent=money(totalValue());
   $('#cardValue').textContent=money(totalValue());
-  $('#pixPanel').classList.add('hidden');
-  $('#cardPanel').classList.add('hidden');
   $('#sendPixReceipt').classList.add('hidden');
   $('#pixFeedback').innerHTML='';
-  $('#pixTab').className='btn btn-light pay-choice';
-  $('#cardTab').className='btn btn-light pay-choice';
+  $('#cardMessage').innerHTML='';
   configureCardPayment();
+  resetPaymentChoice();
   location.hash='pagamento';
 }
 
@@ -585,7 +642,7 @@ function configureCardPayment(){
     pay.classList.remove('hidden');
     request.classList.add('hidden');
     pay.textContent='💳 '+cfg.label;
-    instruction.textContent='Link oficial do Mercado Pago disponível para esta combinação. Sua vaga é reservada antes da abertura do pagamento.';
+    instruction.textContent='Link oficial do Mercado Pago disponível. Sua vaga já fica confirmada no sistema ao iniciar esta opção.';
   }else{
     pay.classList.add('hidden');
     request.classList.remove('hidden');
@@ -728,17 +785,15 @@ $('#continuePayment').onclick=async()=>{
   showPayment();
 };
 $('#pixTab').onclick=()=>{
-  $('#pixPanel').classList.remove('hidden');$('#cardPanel').classList.add('hidden');
-  $('#pixTab').className='btn btn-primary pay-choice active';
-  $('#cardTab').className='btn btn-light pay-choice';
+  selectPaymentChoice('PIX');
 };
 $('#cardTab').onclick=()=>{
   configureCardPayment();
-  $('#cardPanel').classList.remove('hidden');$('#pixPanel').classList.add('hidden');
-  $('#cardTab').className='btn btn-primary pay-choice active';
-  $('#pixTab').className='btn btn-light pay-choice';
+  selectPaymentChoice('CARTÃO');
   ensureReservation('CARTÃO').then(()=>refreshStats()).catch(e=>console.error('Pré-reserva cartão:',e));
 };
+$('#changePixMethod').onclick=()=>resetPaymentChoice();
+$('#changeCardMethod').onclick=()=>resetPaymentChoice();
 $('#pixPayButton').onclick=async()=>{
   const button=$('#pixPayButton');
   const feedback=$('#pixFeedback');
@@ -799,8 +854,7 @@ $('#requestCardLink').onclick=async()=>{
 $('#backEdit').onclick=()=>{
   reservation=null;
   $('#pagamento').classList.add('hidden');
-  $('#pixPanel').classList.add('hidden');
-  $('#cardPanel').classList.add('hidden');
+  resetPaymentChoice();
   $('#sendPixReceipt').classList.add('hidden');
   $('#pixFeedback').innerHTML='';
   location.hash='inscricao';
