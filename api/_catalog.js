@@ -29,7 +29,7 @@ const trips = [
     title: 'Outubro Rosa - Mirante da Janela',
     date: '2026-10-18',
     location: 'Rondonópolis - MT',
-    capacity: 70,
+    capacity: 100,
     level: 'Moderado',
     variants: [
       { id: 'participacao', name: 'Participação', pixPrice: 30, cardPrice: 30, seatsPerUnit: 1 },
