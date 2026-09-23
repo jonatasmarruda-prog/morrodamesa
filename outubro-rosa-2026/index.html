@@ -175,6 +175,30 @@ html,body{overflow-x:hidden}
   body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
 }
 
+
+.booking-steps{max-width:760px;margin:0 auto 20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:8px}
+.booking-step{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:9px 10px;border-radius:16px;background:#fff;border:1px solid var(--line);color:#8e6b7e;font-size:13px;font-weight:900;transition:.28s ease;box-shadow:0 7px 20px rgba(106,30,70,.05)}
+.booking-step .step-number{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#f8e8f0;color:#9d5178;font-weight:950;flex:0 0 auto;transition:.28s ease}
+.booking-step.active{color:#8f2458;border-color:#e7a4c4;background:linear-gradient(135deg,#fff2f8,#fff);box-shadow:0 12px 30px rgba(197,47,120,.13);transform:translateY(-1px)}
+.booking-step.active .step-number{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;box-shadow:0 7px 17px rgba(197,47,120,.24)}
+.booking-step.done{color:#176b49;border-color:#a8dcc2;background:#f0fbf5}
+.booking-step.done .step-number{background:#20a86c;color:#fff}
+.booking-step.done .step-number:after{content:"✓";font-size:14px}
+.booking-step.done .step-number span{display:none}
+.count-animate{font-variant-numeric:tabular-nums}
+.image-lightbox img.swipe-left{animation:lightboxSwipeLeft .24s ease}
+.image-lightbox img.swipe-right{animation:lightboxSwipeRight .24s ease}
+@keyframes lightboxSwipeLeft{0%{opacity:.45;transform:translateX(22px) scale(.985)}100%{opacity:1;transform:none}}
+@keyframes lightboxSwipeRight{0%{opacity:.45;transform:translateX(-22px) scale(.985)}100%{opacity:1;transform:none}}
+@media(max-width:768px){
+  .booking-steps{gap:5px;margin-bottom:16px}
+  .booking-step{min-height:44px;padding:7px 5px;gap:5px;font-size:11px;border-radius:13px}
+  .booking-step .step-number{width:23px;height:23px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+  .booking-step,.booking-step .step-number,.image-lightbox img.swipe-left,.image-lightbox img.swipe-right{animation:none!important;transition:none!important;transform:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -302,6 +326,11 @@ html,body{overflow-x:hidden}
     <div class="wrap">
       <h2 class="section-title">Faça sua inscrição</h2>
       <p class="section-sub">Escolha de 1 a 10 vagas. O valor é calculado automaticamente para cada participante.</p>
+      <div class="booking-steps" aria-label="Etapas da inscrição">
+        <div class="booking-step active" data-booking-step="1"><span class="step-number"><span>1</span></span><span>Dados</span></div>
+        <div class="booking-step" data-booking-step="2"><span class="step-number"><span>2</span></span><span>Pagamento</span></div>
+        <div class="booking-step" data-booking-step="3"><span class="step-number"><span>3</span></span><span>Confirmado</span></div>
+      </div>
       <div class="formbox">
         <div class="field">
           <label>Quantas vagas você deseja?</label>
@@ -321,6 +350,11 @@ html,body{overflow-x:hidden}
   <section id="pagamento" class="hidden">
     <div class="wrap">
       <h2 class="section-title">Pagamento</h2>
+      <div class="booking-steps" aria-label="Etapas da inscrição">
+        <div class="booking-step" data-booking-step="1"><span class="step-number"><span>1</span></span><span>Dados</span></div>
+        <div class="booking-step" data-booking-step="2"><span class="step-number"><span>2</span></span><span>Pagamento</span></div>
+        <div class="booking-step" data-booking-step="3"><span class="step-number"><span>3</span></span><span>Confirmado</span></div>
+      </div>
       <div class="formbox payment-formbox">
         <div id="finalSummary" class="summary"></div>
         <div class="payment-choice-title" id="paymentChoiceTitle">Escolha como deseja pagar</div>
@@ -402,7 +436,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3400</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3430</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -465,7 +499,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-3400';
+const BUILD_VERSION = '20260922-3430';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -480,6 +514,35 @@ const CARD_2_SHIRTS = 'https://mpago.la/1DJFjnq';
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
 const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+function animateNumber(el,target,duration=520){
+  if(!el) return;
+  const end=Math.max(0,Number(target||0));
+  const current=Number(String(el.textContent||'').replace(/\D/g,''));
+  if(reduceMotion||!Number.isFinite(current)||el.textContent.includes('—')||current===end){
+    el.textContent=end;
+    return;
+  }
+  const start=current;
+  const diff=end-start;
+  const startAt=performance.now();
+  el.classList.add('count-animate');
+  const tick=now=>{
+    const p=Math.min(1,(now-startAt)/duration);
+    const eased=1-Math.pow(1-p,3);
+    el.textContent=Math.round(start+diff*eased);
+    if(p<1) requestAnimationFrame(tick);
+    else el.textContent=end;
+  };
+  requestAnimationFrame(tick);
+}
+function updateBookingSteps(activeStep){
+  queryAll('.booking-step').forEach(step=>{
+    const n=Number(step.dataset.bookingStep||0);
+    step.classList.toggle('active',n===activeStep);
+    step.classList.toggle('done',n<activeStep);
+  });
+}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 function showMsg(el,msg,type='notice'){el.innerHTML='<div class="'+type+'">'+msg+'</div>'}
 function shirtOrdersOpen(){return Date.now()<=SHIRT_CUTOFF_TS}
@@ -628,8 +691,8 @@ async function refreshStats(animate=false,amount=0){
       const d=await publicApi();
       lastStats=d;
       lastStatsAt=Date.now();
-      $('#confirmedCount').textContent=d.reserved;
-      $('#availableCount').textContent=d.available;
+      animateNumber($('#confirmedCount'),d.reserved);
+      animateNumber($('#availableCount'),d.available);
       $('#progressBar').style.width=((d.reserved/TOTAL_VAGAS)*100)+'%';
       renderPublicConfirmed(d);
       applySoldOutState(d);
@@ -706,7 +769,7 @@ function applySoldOutState(d){
 function renderPublicConfirmed(d){
   const names=Array.isArray(d.publicParticipants)?d.publicParticipants:
     (Array.isArray(d.confirmedParticipants)?d.confirmedParticipants:[]);
-  $('#confirmedPublicCount').textContent=Number(d.publicCount ?? d.reserved ?? names.length);
+  animateNumber($('#confirmedPublicCount'),Number(d.publicCount ?? d.reserved ?? names.length));
   const box=$('#confirmedNames');
   if(!names.length){
     box.innerHTML='<div class="notice">As primeiras reservas aparecerão aqui.</div>';
@@ -723,6 +786,7 @@ function paymentIdentified(r){
 }
 function showReservationConfirmation(r,method){
   if(!r) return;
+  updateBookingSteps(3);
   reservation={...reservation,...r,paymentMethod:method||r.paymentMethod||reservation?.paymentMethod||''};
   const ps=Array.isArray(r.participants)&&r.participants.length?r.participants:getParticipants();
   const names=ps.map(p=>p.name).filter(Boolean).join(', ')||'Participante';
@@ -772,6 +836,7 @@ function selectPaymentChoice(method){
   $('#cardPanel').classList.toggle('selected-payment',!isPix);
 }
 function showPayment(){
+  updateBookingSteps(2);
   $('#pagamento').classList.remove('hidden');
   $('#finalSummary').innerHTML=$('#summary').innerHTML;
   $('#pixValue').textContent=money(totalValue());
@@ -1029,6 +1094,7 @@ $('#requestCardLink').onclick=async()=>{
   }
 };
 $('#backEdit').onclick=()=>{
+  updateBookingSteps(1);
   reservation=null;
   $('#pagamento').classList.add('hidden');
   resetPaymentChoice();
@@ -1456,15 +1522,37 @@ function initMiranteLightbox(){
       if(e.key==='Enter'||e.key===' '){e.preventDefault();open(index)}
     };
   });
+  const swipeShow=(direction)=>{
+    large.classList.remove('swipe-left','swipe-right');
+    show(miranteLightboxIndex+(direction==='next'?1:-1));
+    void large.offsetWidth;
+    large.classList.add(direction==='next'?'swipe-left':'swipe-right');
+  };
+  let touchStartX=0,touchStartY=0,touchStartAt=0;
+  large.addEventListener('touchstart',e=>{
+    const t=e.changedTouches?.[0];
+    if(!t) return;
+    touchStartX=t.clientX; touchStartY=t.clientY; touchStartAt=Date.now();
+  },{passive:true});
+  large.addEventListener('touchend',e=>{
+    const t=e.changedTouches?.[0];
+    if(!t) return;
+    const dx=t.clientX-touchStartX;
+    const dy=t.clientY-touchStartY;
+    const elapsed=Date.now()-touchStartAt;
+    if(elapsed<700&&Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25){
+      swipeShow(dx<0?'next':'prev');
+    }
+  },{passive:true});
   $('#miranteLightboxClose').onclick=close;
-  $('#miranteLightboxPrev').onclick=e=>{e.stopPropagation();show(miranteLightboxIndex-1)};
-  $('#miranteLightboxNext').onclick=e=>{e.stopPropagation();show(miranteLightboxIndex+1)};
+  $('#miranteLightboxPrev').onclick=e=>{e.stopPropagation();swipeShow('prev')};
+  $('#miranteLightboxNext').onclick=e=>{e.stopPropagation();swipeShow('next')};
   box.onclick=e=>{if(e.target===box) close()};
   document.addEventListener('keydown',e=>{
     if(!box.classList.contains('open')) return;
     if(e.key==='Escape') close();
-    if(e.key==='ArrowLeft') show(miranteLightboxIndex-1);
-    if(e.key==='ArrowRight') show(miranteLightboxIndex+1);
+    if(e.key==='ArrowLeft') swipeShow('prev');
+    if(e.key==='ArrowRight') swipeShow('next');
   });
 }
 function ensureMiranteImages(){
@@ -1548,6 +1636,7 @@ setInterval(checkSiteVersion,45000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkSiteVersion()});
 
 renderParticipants();
+updateBookingSteps(1);
 ensureMiranteImages();
 initMiranteLightbox();
 initMobileReserveBar();
