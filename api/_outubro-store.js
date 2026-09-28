@@ -291,6 +291,9 @@ async function expirePreference(preferenceId) {
 async function startCheckout({clientId, participants, paymentMethod, returnBaseUrl}) {
   const ps=cleanParticipants(participants);
   const method=String(paymentMethod||'PIX').toUpperCase()==='CARTÃO'?'CARTÃO':'PIX';
+  if(method==='CARTÃO' && ps.length>3){
+    throw new Error('Pagamento no cartão disponível para até 3 vagas. Para 4 ou mais vagas, utilize Pix.');
+  }
   const id=reservationId(clientId);
   const existing=await findPreferenceByExternalReference(id);
 
