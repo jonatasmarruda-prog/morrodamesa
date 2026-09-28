@@ -200,6 +200,9 @@ html,body{overflow-x:hidden}
 }
 
 .shirt-size-wrap{display:flex;flex-direction:column;gap:10px}.shirt-size-note{padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid #efbdd5;color:#6b3f56;text-align:center;font-size:14px;font-weight:750;line-height:1.4;box-shadow:0 8px 22px rgba(197,47,120,.08)}.shirt-size-note strong{color:#a52462}@media(max-width:768px){.shirt-size-note{font-size:13px;padding:11px 12px}}
+
+.participant-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.participant-head h3{margin:0!important}.participant-price{padding:7px 10px;border-radius:999px;background:#fff0f7;border:1px solid #efbdd5;color:#a52462;font-size:13px;font-weight:950;white-space:nowrap}.participant.shirt-selected{border-color:#df82af;box-shadow:0 14px 34px rgba(197,47,120,.12);background:linear-gradient(145deg,#fffafd,#fff3f8)}.order-total-highlight{margin-top:12px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#352333,#4c2b43);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:14px}.order-total-highlight span{font-weight:800}.order-total-highlight strong{font-size:24px}.payment-rule-note{max-width:680px;margin:10px auto 14px;padding:11px 14px;border-radius:14px;background:#fff6db;border:1px solid #efd887;color:#725812;text-align:center;font-size:14px;font-weight:850}.payment-rule-note strong{color:#8a5a00}@media(max-width:768px){.participant-head{align-items:flex-start}.participant-price{font-size:12px}.order-total-highlight strong{font-size:21px}.payment-rule-note{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -362,6 +365,7 @@ html,body{overflow-x:hidden}
       <div class="formbox payment-formbox">
         <div id="finalSummary" class="summary"></div>
         <div class="payment-choice-title" id="paymentChoiceTitle">Escolha como deseja pagar</div>
+        <div class="payment-rule-note" id="paymentRuleNote">💳 <strong>Cartão disponível para até 3 vagas.</strong> A partir de 4 vagas, o pagamento é somente via Pix.</div>
         <div class="pay-tabs" id="paymentChoiceTabs">
           <button class="btn btn-light pay-choice choice-pix" id="pixTab"><span class="pay-choice-icon">💚</span>PIX</button>
           <button class="btn btn-light pay-choice choice-card" id="cardTab"><span class="pay-choice-icon">💳</span>CARTÃO</button>
@@ -384,7 +388,6 @@ html,body{overflow-x:hidden}
           <div class="pay-value" id="cardValue">R$ 0,00</div>
           <p class="payment-note" id="cardInstruction">Selecione Cartão para verificar o link disponível para esta combinação.</p>
           <button class="btn btn-pay-card hidden" id="cardPayButton">💳 Pagar com cartão</button>
-          <button class="btn btn-whatsapp-premium hidden" id="requestCardLink">📲 Solicitar link ao Jonatas</button>
           <div id="cardMessage"></div>
           <button class="btn btn-light payment-change" id="changeCardMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
@@ -440,7 +443,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260927-2115</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0915</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -503,7 +506,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260927-2115';
+const BUILD_VERSION = '20260928-0915';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -511,10 +514,6 @@ const TOTAL_VAGAS = 100;
 const PRICE_ENTRY = 30;
 const PRICE_SHIRT = 75;
 const SHIRT_CUTOFF_TS = Date.parse('2026-10-06T03:59:59Z');
-const CARD_2_ENTRY = 'https://mpago.la/1HRu8wF';
-const CARD_1_SHIRT = 'https://mpago.la/1D9bgo3';
-const CARD_2_SHIRTS = 'https://mpago.la/1DJFjnq';
-
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
 const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -597,8 +596,8 @@ function renderParticipants(seed=[]){
   for(let i=0;i<qty;i++){
     const previous=seed[i]||null;
     const p=document.createElement('div'); p.className='participant'; p.dataset.i=i;
-    p.innerHTML=`<h3>Participante ${i+1}</h3>
-      <div class="field"><label>Nome completo da participante ${i+1}</label><input class="pname" placeholder="Digite o nome da participante ${i+1}" autocomplete="name" required></div>
+    p.innerHTML=`<div class="participant-head"><h3>Vaga ${i+1} — Participante ${i+1}</h3><span class="participant-price">${money(PRICE_ENTRY)}</span></div>
+      <div class="field"><label>Nome da participante ${i+1}</label><input class="pname" placeholder="Digite o nome da pessoa ${i+1}" autocomplete="name" required></div>
       <div class="field"><label>Escolha a opção</label><div class="radio-row">
         <label class="radio-card"><input type="radio" name="opt${i}" value="entry" checked> Somente entrada - R$ 30</label>
         <label class="radio-card"><input type="radio" name="opt${i}" value="shirt"> Entrada + camiseta - R$ 75</label>
@@ -622,12 +621,25 @@ function renderParticipants(seed=[]){
     p.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{
       const selected=p.querySelector('input[type=radio]:checked')?.value||'entry';
       p.querySelector('.shirt-options').classList.toggle('hidden',selected!=='shirt');
+      reservation=null;
       updateSummary();
     }));
-    p.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',updateSummary));
+    p.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{
+      reservation=null;
+      updateSummary();
+    }));
   }
   applyShirtDeadlineState();
   updateSummary();
+}
+function updateParticipantCards(){
+  queryAll('.participant').forEach(p=>{
+    const opt=p.querySelector('input[type=radio]:checked')?.value||'entry';
+    const price=opt==='shirt'?PRICE_SHIRT:PRICE_ENTRY;
+    p.classList.toggle('shirt-selected',opt==='shirt');
+    const badge=p.querySelector('.participant-price');
+    if(badge) badge.textContent=money(price);
+  });
 }
 function getParticipants(){
   return queryAll('.participant').map(p=>{
@@ -637,8 +649,11 @@ function getParticipants(){
 }
 function totalValue(){return getParticipants().reduce((s,p)=>s+p.price,0)}
 function updateSummary(){
-  const ps=getParticipants(); let html=ps.map((p,i)=>`<div class="summary-row"><span>${i+1}. ${p.name||'Participante'}<br><small>${p.option==='shirt'?'Entrada + camiseta'+(p.model?' - '+p.model:'')+(p.size?' - '+p.size:''):'Somente entrada'}</small></span><strong>${money(p.price)}</strong></div>`).join('');
-  html+=`<div class="summary-row total"><span>Total</span><span>${money(totalValue())}</span></div>`; $('#summary').innerHTML=html;
+  updateParticipantCards();
+  const ps=getParticipants();
+  let html=ps.map((p,i)=>`<div class="summary-row"><span><strong>Vaga ${i+1}</strong> — ${p.name||'Participante'}<br><small>${p.option==='shirt'?'Entrada + camiseta'+(p.model?' • '+p.model:'')+(p.size?' • Tam. '+p.size:''):'Somente entrada'}</small></span><strong>${money(p.price)}</strong></div>`).join('');
+  html+=`<div class="order-total-highlight"><span>💰 Total do pedido</span><strong>${money(totalValue())}</strong></div>`;
+  $('#summary').innerHTML=html;
 }
 function validate(){
   const ps=getParticipants();
@@ -663,20 +678,22 @@ function reservationPayload(){
 }
 async function ensureReservation(method){
   paymentMethod=method;
-  if(reservation && reservation.paymentMethod===method && reservation.checkoutUrl) return reservation;
+  const currentParticipants=getParticipants();
+  const sameParticipants=reservation&&JSON.stringify(reservation.participants||[])===JSON.stringify(currentParticipants);
+  if(reservation && reservation.paymentMethod===method && reservation.checkoutUrl && sameParticipants) return reservation;
   let clientId=sessionStorage.getItem('outubroReservationClientId');
   if(!clientId){
     clientId=(crypto.randomUUID?crypto.randomUUID():(Date.now()+'-'+Math.random()));
     sessionStorage.setItem('outubroReservationClientId',clientId);
   }
   const payload={
-    ...reservationPayload(),
+    participants:currentParticipants,
     paymentMethod:method,
     clientId,
     returnBaseUrl:location.origin+location.pathname
   };
   const data=await publicApi(payload);
-  reservation={...data.reservation,paymentMethod:method,participants:getParticipants(),checkoutUrl:data.checkoutUrl||'',expiresAt:data.expiresAt||data.reservation?.expiresAt||''};
+  reservation={...data.reservation,paymentMethod:method,participants:currentParticipants,checkoutUrl:data.checkoutUrl||'',expiresAt:data.expiresAt||data.reservation?.expiresAt||''};
   sessionStorage.setItem('outubroReservationId',reservation.id||'');
   await refreshStats(true,payload.participants.length);
   return reservation;
@@ -848,38 +865,40 @@ function showPayment(){
   $('#sendPixReceipt').classList.add('hidden');
   $('#pixFeedback').innerHTML='';
   $('#cardMessage').innerHTML='';
-  configureCardPayment();
   resetPaymentChoice();
+  configureCardPayment();
   location.hash='pagamento';
 }
 
 function cardPaymentConfig(){
   const ps=getParticipants();
-  if(ps.length===2&&ps.every(p=>p.option==='entry')){
-    return {url:CARD_2_ENTRY,label:'Pagar 2 vagas sem camiseta',supported:true};
-  }
-  if(ps.length===1&&ps.every(p=>p.option==='shirt')){
-    return {url:CARD_1_SHIRT,label:'Pagar 1 vaga com camiseta',supported:true};
-  }
-  if(ps.length===2&&ps.every(p=>p.option==='shirt')){
-    return {url:CARD_2_SHIRTS,label:'Pagar 2 vagas com camiseta',supported:true};
-  }
-  return {url:'',label:'Solicitar link ao Jonatas',supported:false};
+  const supported=ps.length>=1&&ps.length<=3;
+  return {
+    supported,
+    label:supported?'Pagar '+money(totalValue())+' no cartão':'Cartão disponível para até 3 vagas'
+  };
 }
 
 function configureCardPayment(){
   const cfg=cardPaymentConfig();
   const pay=$('#cardPayButton'),request=$('#requestCardLink'),instruction=$('#cardInstruction'),msg=$('#cardMessage');
+  const cardTab=$('#cardTab');
+  const note=$('#paymentRuleNote');
   msg.innerHTML='';
+  request?.classList.add('hidden');
+
   if(cfg.supported){
+    cardTab.classList.remove('hidden');
     pay.classList.remove('hidden');
-    request.classList.add('hidden');
+    pay.disabled=false;
     pay.textContent='💳 '+cfg.label;
-    instruction.textContent='Link oficial do Mercado Pago disponível. Sua vaga já fica confirmada no sistema ao iniciar esta opção.';
+    instruction.textContent='Pagamento pelo Mercado Pago em até 12x. Disponível para pedidos de até 3 vagas.';
+    if(note) note.innerHTML='💳 <strong>Cartão disponível para até 3 vagas.</strong> Você também pode pagar por Pix.';
   }else{
+    cardTab.classList.add('hidden');
     pay.classList.add('hidden');
-    request.classList.remove('hidden');
-    instruction.textContent='Para esta quantidade ou combinação, solicite o link de pagamento diretamente ao Jonatas.';
+    if(note) note.innerHTML='💚 <strong>Pedido com '+getParticipants().length+' vagas:</strong> pagamento disponível somente via Pix.';
+    if(!$('#cardPanel').classList.contains('hidden')) selectPaymentChoice('PIX');
   }
 }
 
@@ -916,11 +935,26 @@ function cardRequestText(){
   return text;
 }
 
-function beginCardPayment(){
+async function beginCardPayment(){
   const cfg=cardPaymentConfig();
-  if(!cfg.supported) return;
-  ensureReservation('CARTÃO').then(()=>refreshStats()).catch(e=>console.error('Reserva cartão:',e));
-  window.location.href=cfg.url;
+  if(!cfg.supported){
+    toast('Cartão disponível somente para até 3 vagas. Para este pedido, utilize Pix.');
+    return;
+  }
+  const button=$('#cardPayButton');
+  const original=button.textContent;
+  try{
+    button.disabled=true;
+    button.textContent='Preparando cartão...';
+    const r=await ensureReservation('CARTÃO');
+    if(!r?.checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
+    window.location.href=r.checkoutUrl;
+  }catch(e){
+    button.disabled=false;
+    button.textContent=original;
+    showMsg($('#cardMessage'),e.message,'error');
+    toast(e.message);
+  }
 }
 async function copyTextNow(text){
   // Primeiro tenta a cópia clássica dentro do próprio clique. Isso funciona
@@ -1029,8 +1063,23 @@ $('#pixTab').onclick=()=>{
 };
 $('#cardTab').onclick=()=>{
   configureCardPayment();
+  if(getParticipants().length>3){
+    toast('Para 4 ou mais vagas, o pagamento é somente via Pix.');
+    return;
+  }
   selectPaymentChoice('CARTÃO');
-  ensureReservation('CARTÃO').then(()=>refreshStats()).catch(e=>console.error('Pré-reserva cartão:',e));
+  const pay=$('#cardPayButton');
+  pay.disabled=true;
+  pay.textContent='Preparando link do cartão...';
+  ensureReservation('CARTÃO').then(r=>{
+    pay.disabled=false;
+    pay.textContent='💳 Pagar '+money(totalValue())+' no cartão';
+    refreshStats().catch(()=>{});
+  }).catch(e=>{
+    pay.disabled=false;
+    pay.textContent='💳 Tentar novamente';
+    showMsg($('#cardMessage'),e.message,'error');
+  });
 };
 $('#changePixMethod').onclick=()=>resetPaymentChoice();
 $('#changeCardMethod').onclick=()=>resetPaymentChoice();
@@ -1078,25 +1127,6 @@ $('#finalPixWhatsapp').onclick=()=>{
 };
 
 $('#cardPayButton').onclick=()=>beginCardPayment();
-$('#requestCardLink').onclick=async()=>{
-  const button=$('#requestCardLink');
-  const original=button.textContent;
-  button.disabled=true;
-  button.classList.add('btn-busy');
-  button.textContent='Reservando vaga...';
-  try{
-    const r=await ensureReservation('CARTÃO');
-    const text=cardRequestText();
-    button.textContent='Abrindo WhatsApp...';
-    setTimeout(()=>window.location.assign('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text)),250);
-  }catch(e){
-    button.disabled=false;
-    button.classList.remove('btn-busy');
-    button.textContent=original;
-    showMsg($('#cardMessage'),e.message,'error');
-    toast(e.message);
-  }
-};
 $('#backEdit').onclick=()=>{
   updateBookingSteps(1);
   reservation=null;
