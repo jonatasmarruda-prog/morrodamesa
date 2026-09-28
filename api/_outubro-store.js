@@ -406,6 +406,60 @@ async function updateStatus(reservationIdValue, status) {
   return normalize(updated,payments.get(reservationIdValue)||null);
 }
 
+async function updateParticipant(reservationIdValue, participantId, changes={}) {
+  const pref=await findPreferenceByExternalReference(reservationIdValue);
+  if(!pref) throw new Error('Reserva não encontrada.');
+
+  const md=pref.metadata||{};
+  const current=decodeParticipants(md.participants_b64);
+  const index=current.findIndex(p=>String(p.id)===String(participantId));
+  if(index<0) throw new Error('Participante não encontrada.');
+
+  const original=current[index];
+  const name=String(changes.name||'').trim().replace(/\s+/g,' ');
+  const contact=String(changes.contact||'').trim().replace(/\s+/g,' ');
+  const contactDigits=contact.replace(/\D/g,'');
+  if(name.length<3) throw new Error('Informe um nome válido.');
+  if(contactDigits.length<10) throw new Error('Informe um WhatsApp/contato válido.');
+
+  let model=original.option==='shirt'?String(changes.model||original.model||'').trim():'';
+  let size=original.option==='shirt'?String(changes.size||original.size||'').trim().toUpperCase():'';
+  if(original.option==='shirt'&&!['Camiseta Tradicional','Babylook'].includes(model)) throw new Error('Modelo de camiseta inválido.');
+  if(original.option==='shirt'&&!['PP','P','M','G','GG'].includes(size)) throw new Error('Tamanho de camiseta inválido.');
+
+  const updatedParticipant={
+    ...original,
+    name,
+    contact,
+    model,
+    size,
+    price:original.option==='shirt'?PRICE_SHIRT:PRICE_ENTRY
+  };
+  const next=[...current];
+  next[index]=updatedParticipant;
+
+  const audit=decodeAudit(md.audit_b64);
+  audit.push({
+    at:new Date().toISOString(),
+    action:'PARTICIPANTE_EDITADA',
+    detail:original.name+' -> '+name+(original.option==='shirt'?' | '+original.model+' '+original.size+' -> '+model+' '+size:'')
+  });
+
+  const total=money(next.reduce((s,p)=>s+Number(p.price||0),0));
+  const metadata={
+    ...md,
+    participants_b64:encodeParticipants(next),
+    quantity:next.length,
+    total,
+    audit_b64:encodeAudit(audit),
+    updated_at:new Date().toISOString()
+  };
+
+  const updated=await mpPut('/checkout/preferences/'+encodeURIComponent(pref.id),{metadata});
+  const payments=await listOutubroPayments();
+  return normalize(updated,payments.get(reservationIdValue)||null);
+}
+
 async function removeParticipant(reservationIdValue, participantId) {
   const pref=await findPreferenceByExternalReference(reservationIdValue);
   if(!pref) throw new Error('Reserva não encontrada.');
@@ -470,5 +524,5 @@ async function adminData() {
 module.exports={
   CAPACITY,HOLD_MINUTES,SHIRT_CUTOFF_UTC,
   cleanParticipants,startCheckout,reservationById,
-  stats,adminData,updateStatus,removeParticipant
+  stats,adminData,updateStatus,updateParticipant,removeParticipant
 };
