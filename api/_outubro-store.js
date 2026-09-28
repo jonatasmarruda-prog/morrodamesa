@@ -48,16 +48,20 @@ function cleanParticipants(input) {
   if (!Array.isArray(input) || input.length < 1 || input.length > 10) throw new Error('Escolha de 1 a 10 participantes.');
   return input.map((p, i) => {
     const name = String(p.name || '').trim().replace(/\s+/g, ' ');
+    const contact = String(p.contact || '').trim().replace(/\s+/g, ' ');
+    const contactDigits = contact.replace(/\D/g, '');
     const option = p.option === 'shirt' ? 'shirt' : 'entry';
     const model = option === 'shirt' ? String(p.model || '').trim() : '';
     const size = option === 'shirt' ? String(p.size || '').trim().toUpperCase() : '';
     if (name.length < 3) throw new Error('Informe o nome completo da participante ' + (i + 1) + '.');
+    if (contactDigits.length < 10) throw new Error('Informe um WhatsApp/contato válido da participante ' + (i + 1) + '.');
     if (option === 'shirt' && Date.now() > SHIRT_CUTOFF_UTC) throw new Error('O prazo para solicitar camiseta foi encerrado.');
     if (option === 'shirt' && !['Camiseta Tradicional','Babylook'].includes(model)) throw new Error('Modelo inválido na participante ' + (i + 1) + '.');
     if (option === 'shirt' && !['PP','P','M','G','GG'].includes(size)) throw new Error('Tamanho inválido na participante ' + (i + 1) + '.');
     return {
       id: 'P' + (i + 1),
       name,
+      contact,
       option,
       model,
       size,
