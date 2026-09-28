@@ -30,6 +30,7 @@ module.exports = async function handler(req,res){
     if(action==='auth') return json(res,200,{ok:true,authenticated:true});
     if(action==='confirm') await store.updateStatus(body.reservationId,'confirmed');
     else if(action==='cancel') await store.updateStatus(body.reservationId,'cancelled');
+    else if(action==='updateParticipant') await store.updateParticipant(body.reservationId,body.participantId,body.participant||{});
     else if(action==='removeParticipant') await store.removeParticipant(body.reservationId,body.participantId);
     const data=await store.adminData();
     return json(res,200,{ok:true,...data});
