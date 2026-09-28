@@ -343,7 +343,7 @@ html,body{overflow-x:hidden}
           <label>Quantas vagas você deseja?</label>
           <div class="qty"><button type="button" id="minusQty">−</button><span id="qtyValue">1</span><button type="button" id="plusQty" disabled>+</button></div>
         </div>
-        <div class="participant-hint" id="participantHint">Preencha o nome de cada participante. Para 2 vagas, serão necessários 2 nomes; para 3 vagas, 3 nomes, e assim por diante.</div>
+        <div class="participant-hint" id="participantHint">Preencha o nome e o WhatsApp de cada participante. Cada vaga terá seus próprios dados e, se escolher camiseta, também modelo e tamanho.</div>
           <div id="participants" class="participants"></div>
         <div id="summary" class="summary"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
@@ -365,7 +365,7 @@ html,body{overflow-x:hidden}
       <div class="formbox payment-formbox">
         <div id="finalSummary" class="summary"></div>
         <div class="payment-choice-title" id="paymentChoiceTitle">Escolha como deseja pagar</div>
-        <div class="payment-rule-note" id="paymentRuleNote">💳 <strong>Cartão disponível para até 3 vagas.</strong> A partir de 4 vagas, o pagamento é somente via Pix.</div>
+        <div class="payment-rule-note" id="paymentRuleNote">💳 <strong>Até 3 vagas:</strong> Pix ou cartão. <strong>A partir de 4 vagas:</strong> pagamento somente via Pix.</div>
         <div class="pay-tabs" id="paymentChoiceTabs">
           <button class="btn btn-light pay-choice choice-pix" id="pixTab"><span class="pay-choice-icon">💚</span>PIX</button>
           <button class="btn btn-light pay-choice choice-card" id="cardTab"><span class="pay-choice-icon">💳</span>CARTÃO</button>
@@ -443,7 +443,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0930</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0915</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -506,7 +506,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-0930';
+const BUILD_VERSION = '20260928-0915';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -598,6 +598,7 @@ function renderParticipants(seed=[]){
     const p=document.createElement('div'); p.className='participant'; p.dataset.i=i;
     p.innerHTML=`<div class="participant-head"><h3>Vaga ${i+1} — Participante ${i+1}</h3><span class="participant-price">${money(PRICE_ENTRY)}</span></div>
       <div class="field"><label>Nome da participante ${i+1}</label><input class="pname" placeholder="Digite o nome da pessoa ${i+1}" autocomplete="name" required></div>
+      <div class="field"><label>WhatsApp / contato da participante ${i+1}</label><input class="pcontact" type="tel" inputmode="tel" placeholder="Ex.: (66) 99999-9999" autocomplete="tel" required></div>
       <div class="field"><label>Escolha a opção</label><div class="radio-row">
         <label class="radio-card"><input type="radio" name="opt${i}" value="entry" checked> Somente entrada - R$ 30</label>
         <label class="radio-card"><input type="radio" name="opt${i}" value="shirt"> Entrada + camiseta - R$ 75</label>
@@ -610,6 +611,7 @@ function renderParticipants(seed=[]){
 
     if(previous){
       p.querySelector('.pname').value=previous.name||'';
+      p.querySelector('.pcontact').value=previous.contact||'';
       const option=previous.option==='shirt'?'shirt':'entry';
       const radio=p.querySelector('input[type=radio][value="'+option+'"]');
       if(radio) radio.checked=true;
@@ -644,14 +646,14 @@ function updateParticipantCards(){
 function getParticipants(){
   return queryAll('.participant').map(p=>{
     const opt=p.querySelector('input[type=radio]:checked').value;
-    return {name:p.querySelector('.pname').value.trim(),option:opt,model:opt==='shirt'?p.querySelector('.model').value:'',size:opt==='shirt'?p.querySelector('.size').value:'',price:opt==='shirt'?PRICE_SHIRT:PRICE_ENTRY};
+    return {name:p.querySelector('.pname').value.trim(),contact:p.querySelector('.pcontact').value.trim(),option:opt,model:opt==='shirt'?p.querySelector('.model').value:'',size:opt==='shirt'?p.querySelector('.size').value:'',price:opt==='shirt'?PRICE_SHIRT:PRICE_ENTRY};
   });
 }
 function totalValue(){return getParticipants().reduce((s,p)=>s+p.price,0)}
 function updateSummary(){
   updateParticipantCards();
   const ps=getParticipants();
-  let html=ps.map((p,i)=>`<div class="summary-row"><span><strong>Vaga ${i+1}</strong> — ${p.name||'Participante'}<br><small>${p.option==='shirt'?'Entrada + camiseta'+(p.model?' • '+p.model:'')+(p.size?' • Tam. '+p.size:''):'Somente entrada'}</small></span><strong>${money(p.price)}</strong></div>`).join('');
+  let html=ps.map((p,i)=>`<div class="summary-row"><span><strong>Vaga ${i+1}</strong> — ${p.name||'Participante'}<br><small>${p.contact?'📱 '+p.contact+' • ':''}${p.option==='shirt'?'Entrada + camiseta'+(p.model?' • '+p.model:'')+(p.size?' • Tam. '+p.size:''):'Somente entrada'}</small></span><strong>${money(p.price)}</strong></div>`).join('');
   html+=`<div class="order-total-highlight"><span>💰 Total do pedido</span><strong>${money(totalValue())}</strong></div>`;
   $('#summary').innerHTML=html;
 }
@@ -666,6 +668,13 @@ function validate(){
         card.querySelector('.pname')?.focus();
       }
       return 'Preencha o nome da participante '+(i+1)+'. São necessários '+qty+' nome(s) para '+qty+' vaga(s).';
+    }
+    const phoneDigits=String(ps[i].contact||'').replace(/\D/g,'');
+    if(phoneDigits.length<10){
+      const card=queryAll('.participant')[i];
+      card?.classList.add('invalid');
+      card?.querySelector('.pcontact')?.focus();
+      return 'Informe um WhatsApp/contato válido da participante '+(i+1)+'.';
     }
     if(ps[i].option==='shirt'&&(!ps[i].model||!ps[i].size)){
       return 'Escolha modelo e tamanho da camiseta da participante '+(i+1)+'.';
@@ -816,10 +825,9 @@ function showReservationConfirmation(r,method){
   $('#finalReservationNames').textContent=names;
   $('#finalReservationTotal').textContent=money(total);
   $('#finalReservationMethod').textContent=chosen;
-  $('#finalReservationMessage').innerHTML=chosen==='PIX'
-    ?'🌸 <strong>Sua vaga está confirmada!</strong><br>Se já realizou o Pix, envie o comprovante pelo WhatsApp. 💚'
-    :'🌸 <strong>Sua vaga está confirmada!</strong><br>Continue pelo pagamento no cartão. 💳';
-  $('#finalPixWhatsapp').classList.toggle('hidden',chosen!=='PIX');
+  $('#finalReservationMessage').innerHTML='🌸 <strong>Sua(s) vaga(s) está(ão) confirmada(s)!</strong><br>📲 Após o pagamento, envie o <strong>comprovante</strong> e os <strong>contatos das participantes</strong> para o Jonatas, para inclusão no grupo oficial.';
+  $('#finalPixWhatsapp').classList.remove('hidden');
+  $('#finalPixWhatsapp').textContent='📲 Enviar comprovante e contatos para o Jonatas';
   const confirmation=$('#reservationConfirmation');
   confirmation.classList.remove('hidden');
   confirmation.classList.remove('confirm-pop');
@@ -906,16 +914,17 @@ function pixReceiptText(){
   const ps=getParticipants();
   let text='🌸 *TRILHA OUTUBRO ROSA* 🌸\n\n';
   text+='Olá, Jonatas! 😊\n';
-  text+='Estou enviando meu *comprovante de pagamento via PIX*.\n\n';
-  text+='👤 *Participante'+(ps.length>1?'s':'')+':*\n';
+  text+='Segue meu *comprovante de pagamento via PIX* e os *contatos das participantes*.\n\n';
+  text+='👤 *PARTICIPANTES*\n';
   ps.forEach((p,i)=>{
-    text+='• *'+p.name+'*\n';
-    text+='  '+(p.option==='shirt'?'👕 Entrada + camiseta | '+p.model+' | Tam. '+p.size:'🎟️ Somente entrada')+'\n';
+    text+='\n*'+(i+1)+'. '+p.name+'*\n';
+    text+='📱 *Contato:* '+p.contact+'\n';
+    text+=(p.option==='shirt'?'👕 *Entrada + camiseta:* '+p.model+' | Tam. '+p.size:'🎟️ *Somente entrada*')+'\n';
   });
   text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
   text+='💚 *Forma de pagamento:* PIX\n\n';
-  text+='✅ *Minha vaga já está confirmada no sistema.*\n';
-  text+='Segue o comprovante para conferência. Obrigada! 🌷';
+  text+='✅ *Vaga(s) confirmada(s) no sistema.*\n';
+  text+='📲 *Por favor, adicione essas participantes ao grupo oficial.*';
   return text;
 }
 
@@ -923,15 +932,17 @@ function cardRequestText(){
   const ps=getParticipants();
   let text='🌸 *TRILHA OUTUBRO ROSA* 🌸\n\n';
   text+='Olá, Jonatas! 😊\n';
-  text+='Gostaria de receber o *link para pagamento no cartão*.\n\n';
-  text+='👤 *Participante'+(ps.length>1?'s':'')+':*\n';
+  text+='Segue o *comprovante/confirmacão do pagamento no cartão* e os *contatos das participantes*.\n\n';
+  text+='👤 *PARTICIPANTES*\n';
   ps.forEach((p,i)=>{
-    text+='• *'+p.name+'*\n';
-    text+='  '+(p.option==='shirt'?'👕 Entrada + camiseta | '+p.model+' | Tam. '+p.size:'🎟️ Somente entrada')+'\n';
+    text+='\n*'+(i+1)+'. '+p.name+'*\n';
+    text+='📱 *Contato:* '+p.contact+'\n';
+    text+=(p.option==='shirt'?'👕 *Entrada + camiseta:* '+p.model+' | Tam. '+p.size:'🎟️ *Somente entrada*')+'\n';
   });
   text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
   text+='💳 *Forma de pagamento:* CARTÃO\n\n';
-  text+='✅ *Minha vaga já está confirmada no sistema.*';
+  text+='✅ *Vaga(s) confirmada(s) no sistema.*\n';
+  text+='📲 *Por favor, adicione essas participantes ao grupo oficial.*';
   return text;
 }
 
@@ -1122,7 +1133,9 @@ $('#sendPixReceipt').onclick=()=>{
   window.location.href=url;
 };
 $('#finalPixWhatsapp').onclick=()=>{
-  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(pixReceiptText());
+  const chosen=String(reservation?.paymentMethod||paymentMethod||'PIX').toUpperCase();
+  const text=chosen==='CARTÃO'?cardRequestText():pixReceiptText();
+  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text);
   window.location.href=url;
 };
 
@@ -1239,14 +1252,14 @@ function renderAdmin(d){
     if(statusFilter==='active'&&r.status==='cancelled') return false;
     if(statusFilter==='cancelled'&&r.status!=='cancelled') return false;
     if(!search) return true;
-    return String(r.id||'').toLowerCase().includes(search)||r.participants.some(p=>String(p.name||'').toLowerCase().includes(search));
+    return String(r.id||'').toLowerCase().includes(search)||r.participants.some(p=>String(p.name||'').toLowerCase().includes(search)||String(p.contact||'').toLowerCase().includes(search));
   });
 
   const box=$('#adminReservations'); box.innerHTML='';
   if(!rows.length){box.innerHTML='<div class="notice">Nenhuma reserva encontrada neste filtro.</div>'}
   rows.forEach(r=>{
     const el=document.createElement('div'); el.className='admin-item';
-    const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>${p.option==='shirt'?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
+    const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>📱 ${escapeHtml(p.contact||'Sem contato')}<br>${p.option==='shirt'?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
     const identified=paymentIdentified(r);
     const paymentInfo=identified
       ?'<br><small>Pagamento identificado pelo sistema</small>'
@@ -1332,9 +1345,9 @@ $('#adminSearch').addEventListener('input',()=>{if(adminDataCache)renderAdmin(ad
 $('#adminStatusFilter').addEventListener('change',()=>{if(adminDataCache)renderAdmin(adminDataCache)});
 $('#exportReservationsCsv').onclick=()=>{
   if(!adminDataCache) return;
-  const rows=[['Reserva','Status','Nome','Opção','Modelo','Tamanho','Valor','Forma de pagamento','Situação do pagamento']];
+  const rows=[['Reserva','Status','Nome','Contato','Opção','Modelo','Tamanho','Valor','Forma de pagamento','Situação do pagamento']];
   (adminDataCache.reservations||[]).forEach(r=>r.participants.forEach(p=>rows.push([
-    r.id,statusLabel(r.status),p.name,p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.model||'',p.size||'',money(p.price),r.paymentMethod,paymentIdentified(r)?'IDENTIFICADO':'NÃO IDENTIFICADO'
+    r.id,statusLabel(r.status),p.name,p.contact||'',p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.model||'',p.size||'',money(p.price),r.paymentMethod,paymentIdentified(r)?'IDENTIFICADO':'NÃO IDENTIFICADO'
   ])));
   const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
