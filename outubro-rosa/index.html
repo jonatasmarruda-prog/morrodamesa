@@ -199,6 +199,7 @@ html,body{overflow-x:hidden}
   .booking-step,.booking-step .step-number,.image-lightbox img.swipe-left,.image-lightbox img.swipe-right{animation:none!important;transition:none!important;transform:none!important}
 }
 
+.shirt-size-wrap{display:flex;flex-direction:column;gap:10px}.shirt-size-note{padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid #efbdd5;color:#6b3f56;text-align:center;font-size:14px;font-weight:750;line-height:1.4;box-shadow:0 8px 22px rgba(197,47,120,.08)}.shirt-size-note strong{color:#a52462}@media(max-width:768px){.shirt-size-note{font-size:13px;padding:11px 12px}}
 </style>
 </head>
 <body>
@@ -307,7 +308,10 @@ html,body{overflow-x:hidden}
       <div class="shirt-deadline" id="shirtDeadlineBanner">👕 <span>Pedidos de camiseta até <strong>05/10 às 23h59</strong>.</span></div>
       <div class="shirt-grid">
         <img src="https://i.postimg.cc/GmgN9KnL/file-000000004b64820e94794e53ab27d326.png" alt="Camiseta oficial Outubro Rosa" loading="lazy">
-        <img src="https://i.postimg.cc/m2sGGmBd/IMG-20260921-WA0581.jpg" alt="Tabela de medidas" loading="lazy">
+        <div class="shirt-size-wrap">
+          <img src="https://i.postimg.cc/m2sGGmBd/IMG-20260921-WA0581.jpg" alt="Tabela de medidas" loading="lazy">
+          <div class="shirt-size-note">📏 <strong>ATENÇÃO AOS TAMANHOS:</strong> <strong>BL</strong> = Babylook • <strong>Normal</strong> = Camiseta Tradicional</div>
+        </div>
       </div>
     </div>
   </section>
@@ -436,7 +440,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260922-3430</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260927-2055</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -499,7 +503,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260922-3430';
+const BUILD_VERSION = '20260927-2055';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
