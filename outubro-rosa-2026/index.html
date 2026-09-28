@@ -332,7 +332,7 @@ html,body{overflow-x:hidden}
   <section id="inscricao">
     <div class="wrap">
       <h2 class="section-title">Faça sua inscrição</h2>
-      <p class="section-sub">Escolha de 1 a 10 vagas. O valor é calculado automaticamente para cada participante.</p>
+      <p class="section-sub">Escolha de 1 a 10 vagas. Cada vaga abre um bloco separado para informar o nome e, se houver camiseta, o modelo e o tamanho. O total é somado automaticamente.</p>
       <div class="booking-steps" aria-label="Etapas da inscrição">
         <div class="booking-step active" data-booking-step="1"><span class="step-number"><span>1</span></span><span>Dados</span></div>
         <div class="booking-step" data-booking-step="2"><span class="step-number"><span>2</span></span><span>Pagamento</span></div>
@@ -443,7 +443,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0915</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0930</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -506,7 +506,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-0915';
+const BUILD_VERSION = '20260928-0930';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -867,6 +867,7 @@ function showPayment(){
   $('#cardMessage').innerHTML='';
   resetPaymentChoice();
   configureCardPayment();
+  if(getParticipants().length>3) selectPaymentChoice('PIX');
   location.hash='pagamento';
 }
 
@@ -881,11 +882,10 @@ function cardPaymentConfig(){
 
 function configureCardPayment(){
   const cfg=cardPaymentConfig();
-  const pay=$('#cardPayButton'),request=$('#requestCardLink'),instruction=$('#cardInstruction'),msg=$('#cardMessage');
+  const pay=$('#cardPayButton'),instruction=$('#cardInstruction'),msg=$('#cardMessage');
   const cardTab=$('#cardTab');
   const note=$('#paymentRuleNote');
   msg.innerHTML='';
-  request?.classList.add('hidden');
 
   if(cfg.supported){
     cardTab.classList.remove('hidden');
