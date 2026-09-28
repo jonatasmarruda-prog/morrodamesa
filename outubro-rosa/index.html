@@ -203,6 +203,9 @@ html,body{overflow-x:hidden}
 
 .participant-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.participant-head h3{margin:0!important}.participant-price{padding:7px 10px;border-radius:999px;background:#fff0f7;border:1px solid #efbdd5;color:#a52462;font-size:13px;font-weight:950;white-space:nowrap}.participant.shirt-selected{border-color:#df82af;box-shadow:0 14px 34px rgba(197,47,120,.12);background:linear-gradient(145deg,#fffafd,#fff3f8)}.order-total-highlight{margin-top:12px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#352333,#4c2b43);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:14px}.order-total-highlight span{font-weight:800}.order-total-highlight strong{font-size:24px}.payment-rule-note{max-width:680px;margin:10px auto 14px;padding:11px 14px;border-radius:14px;background:#fff6db;border:1px solid #efd887;color:#725812;text-align:center;font-size:14px;font-weight:850}.payment-rule-note strong{color:#8a5a00}@media(max-width:768px){.participant-head{align-items:flex-start}.participant-price{font-size:12px}.order-total-highlight strong{font-size:21px}.payment-rule-note{font-size:13px}}
 
+
+.contact-rule-note{margin-top:9px!important;background:linear-gradient(135deg,#eefbf5,#fff)!important;border-color:#b8e3cb!important;color:#245e45!important}
+.contact-rule-note strong{color:#167548}
 </style>
 </head>
 <body>
@@ -332,7 +335,7 @@ html,body{overflow-x:hidden}
   <section id="inscricao">
     <div class="wrap">
       <h2 class="section-title">Faça sua inscrição</h2>
-      <p class="section-sub">Escolha de 1 a 10 vagas. Cada vaga abre um bloco separado para informar o nome e, se houver camiseta, o modelo e o tamanho. O total é somado automaticamente.</p>
+      <p class="section-sub">Escolha de 1 a 10 vagas. Cada vaga abre um bloco separado para informar o nome da participante e escolher individualmente somente entrada ou entrada + camiseta, com modelo e tamanho. O total é somado automaticamente.</p>
       <div class="booking-steps" aria-label="Etapas da inscrição">
         <div class="booking-step active" data-booking-step="1"><span class="step-number"><span>1</span></span><span>Dados</span></div>
         <div class="booking-step" data-booking-step="2"><span class="step-number"><span>2</span></span><span>Pagamento</span></div>
@@ -366,6 +369,7 @@ html,body{overflow-x:hidden}
         <div id="finalSummary" class="summary"></div>
         <div class="payment-choice-title" id="paymentChoiceTitle">Escolha como deseja pagar</div>
         <div class="payment-rule-note" id="paymentRuleNote">💳 <strong>Até 3 vagas:</strong> Pix ou cartão. <strong>A partir de 4 vagas:</strong> pagamento somente via Pix.</div>
+        <div class="payment-rule-note contact-rule-note">📲 <strong>Após o pagamento:</strong> envie o comprovante e o WhatsApp/contato de cada participante para o Jonatas incluir todas no grupo.</div>
         <div class="pay-tabs" id="paymentChoiceTabs">
           <button class="btn btn-light pay-choice choice-pix" id="pixTab"><span class="pay-choice-icon">💚</span>PIX</button>
           <button class="btn btn-light pay-choice choice-card" id="cardTab"><span class="pay-choice-icon">💳</span>CARTÃO</button>
@@ -378,7 +382,7 @@ html,body{overflow-x:hidden}
           <p class="payment-note">Toque no botão abaixo para copiar a chave Pix automaticamente.</p>
           <button class="btn btn-pay-pix btn-pulse" id="pixPayButton">💚 📋 Copiar Pix</button>
           <div id="pixFeedback" class="payment-feedback"></div>
-          <button class="btn btn-whatsapp-premium btn-pulse-soft hidden" id="sendPixReceipt">Enviar comprovante no WhatsApp</button>
+          <button class="btn btn-whatsapp-premium btn-pulse-soft hidden" id="sendPixReceipt">📲 Enviar comprovante + contatos</button>
           <button class="btn btn-light payment-change" id="changePixMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
         <div id="cardPanel" class="pay-panel payment-premium hidden">
@@ -403,7 +407,7 @@ html,body{overflow-x:hidden}
             <div class="reservation-final-item"><span>Pagamento</span><strong id="finalReservationMethod">—</strong></div>
           </div>
           <div class="reservation-final-actions">
-            <button class="btn btn-whatsapp-premium hidden" id="finalPixWhatsapp" type="button">📲 Enviar comprovante no WhatsApp</button>
+            <button class="btn btn-whatsapp-premium hidden" id="finalPixWhatsapp" type="button">📲 Enviar comprovante + contatos</button>
           </div>
         </div>
         <div class="payment-nav-actions">
@@ -443,7 +447,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0915</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-1025</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -506,7 +510,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-0915';
+const BUILD_VERSION = '20260928-1025';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -910,40 +914,31 @@ function configureCardPayment(){
   }
 }
 
-function pixReceiptText(){
+function participantContactText(method='PIX'){
   const ps=getParticipants();
+  const chosen=String(method||'PIX').toUpperCase();
   let text='🌸 *TRILHA OUTUBRO ROSA* 🌸\n\n';
   text+='Olá, Jonatas! 😊\n';
-  text+='Segue meu *comprovante de pagamento via PIX* e os *contatos das participantes*.\n\n';
-  text+='👤 *PARTICIPANTES*\n';
+  text+='Segue meu *comprovante de pagamento* e os *contatos das participantes* para inclusão no grupo.\n';
   ps.forEach((p,i)=>{
     text+='\n*'+(i+1)+'. '+p.name+'*\n';
-    text+='📱 *Contato:* '+p.contact+'\n';
-    text+=(p.option==='shirt'?'👕 *Entrada + camiseta:* '+p.model+' | Tam. '+p.size:'🎟️ *Somente entrada*')+'\n';
+    text+=(p.option==='shirt'
+      ?'👕 Entrada + camiseta | '+p.model+' | Tam. '+p.size
+      :'🎟️ Somente entrada')+'\n';
+    text+='📱 *WhatsApp/contato:* \n';
   });
   text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
-  text+='💚 *Forma de pagamento:* PIX\n\n';
+  text+=(chosen==='CARTÃO'?'💳':'💚')+' *Forma de pagamento:* '+chosen+'\n\n';
   text+='✅ *Vaga(s) confirmada(s) no sistema.*\n';
-  text+='📲 *Por favor, adicione essas participantes ao grupo oficial.*';
+  text+='📎 Vou anexar o comprovante nesta conversa.';
   return text;
+}
+function pixReceiptText(){
+  return participantContactText('PIX');
 }
 
 function cardRequestText(){
-  const ps=getParticipants();
-  let text='🌸 *TRILHA OUTUBRO ROSA* 🌸\n\n';
-  text+='Olá, Jonatas! 😊\n';
-  text+='Segue o *comprovante/confirmacão do pagamento no cartão* e os *contatos das participantes*.\n\n';
-  text+='👤 *PARTICIPANTES*\n';
-  ps.forEach((p,i)=>{
-    text+='\n*'+(i+1)+'. '+p.name+'*\n';
-    text+='📱 *Contato:* '+p.contact+'\n';
-    text+=(p.option==='shirt'?'👕 *Entrada + camiseta:* '+p.model+' | Tam. '+p.size:'🎟️ *Somente entrada*')+'\n';
-  });
-  text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
-  text+='💳 *Forma de pagamento:* CARTÃO\n\n';
-  text+='✅ *Vaga(s) confirmada(s) no sistema.*\n';
-  text+='📲 *Por favor, adicione essas participantes ao grupo oficial.*';
-  return text;
+  return participantContactText('CARTÃO');
 }
 
 async function beginCardPayment(){
@@ -1133,9 +1128,8 @@ $('#sendPixReceipt').onclick=()=>{
   window.location.href=url;
 };
 $('#finalPixWhatsapp').onclick=()=>{
-  const chosen=String(reservation?.paymentMethod||paymentMethod||'PIX').toUpperCase();
-  const text=chosen==='CARTÃO'?cardRequestText():pixReceiptText();
-  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text);
+  const method=$('#finalPixWhatsapp').dataset.method||paymentMethod||'PIX';
+  const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(participantContactText(method));
   window.location.href=url;
 };
 
