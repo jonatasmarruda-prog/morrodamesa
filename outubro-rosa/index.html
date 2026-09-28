@@ -396,6 +396,7 @@ html,body{overflow-x:hidden}
           <button class="btn btn-light payment-change" id="changeCardMethod" type="button">↔ Trocar forma de pagamento</button>
         </div>
         <div id="paymentStatusBox"></div>
+        <div class="payment-rule-note" id="afterPaymentContactNote">📲 <strong>Após o pagamento:</strong> envie o comprovante e o contato/WhatsApp de todas as participantes para o Jonatas, para inclusão no grupo oficial.</div>
         <div id="reservationConfirmation" class="reservation-confirmation hidden">
           <div class="confirm-check" aria-hidden="true">✓</div>
           <div class="final-badge">✓ VAGA CONFIRMADA</div>
@@ -447,7 +448,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-1025</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0945</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -510,7 +511,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-1025';
+const BUILD_VERSION = '20260928-0945';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -831,6 +832,7 @@ function showReservationConfirmation(r,method){
   $('#finalReservationMethod').textContent=chosen;
   $('#finalReservationMessage').innerHTML='🌸 <strong>Sua(s) vaga(s) está(ão) confirmada(s)!</strong><br>📲 Após o pagamento, envie o <strong>comprovante</strong> e os <strong>contatos das participantes</strong> para o Jonatas, para inclusão no grupo oficial.';
   $('#finalPixWhatsapp').classList.remove('hidden');
+  $('#finalPixWhatsapp').dataset.method=chosen;
   $('#finalPixWhatsapp').textContent='📲 Enviar comprovante e contatos para o Jonatas';
   const confirmation=$('#reservationConfirmation');
   confirmation.classList.remove('hidden');
@@ -925,7 +927,7 @@ function participantContactText(method='PIX'){
     text+=(p.option==='shirt'
       ?'👕 Entrada + camiseta | '+p.model+' | Tam. '+p.size
       :'🎟️ Somente entrada')+'\n';
-    text+='📱 *WhatsApp/contato:* \n';
+    text+='📱 *WhatsApp/contato:* '+(p.contact||'')+'\n';
   });
   text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
   text+=(chosen==='CARTÃO'?'💳':'💚')+' *Forma de pagamento:* '+chosen+'\n\n';
