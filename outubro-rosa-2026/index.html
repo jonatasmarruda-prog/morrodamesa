@@ -468,7 +468,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-1455</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-1910</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -531,13 +531,14 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-1455';
+const BUILD_VERSION = '20260928-1910';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
 const TOTAL_VAGAS = 100;
 const PRICE_ENTRY = 30;
 const PRICE_SHIRT = 75;
+const CARD_1_ENTRY = 'https://mpago.la/2DJDk66';
 const SHIRT_CUTOFF_TS = Date.parse('2026-10-06T03:59:59Z');
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
 const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
@@ -908,8 +909,10 @@ function showPayment(){
 function cardPaymentConfig(){
   const ps=getParticipants();
   const supported=ps.length>=1&&ps.length<=3;
+  const oneEntry=ps.length===1&&ps[0]?.option==='entry';
   return {
     supported,
+    directUrl:oneEntry?CARD_1_ENTRY:'',
     label:supported?'Pagar '+money(totalValue())+' no cartão':'Cartão disponível para até 3 vagas'
   };
 }
@@ -969,6 +972,13 @@ async function beginCardPayment(){
     toast('Cartão disponível somente para até 3 vagas. Para este pedido, utilize Pix.');
     return;
   }
+
+  if(cfg.directUrl){
+    ensureReservation('CARTÃO').catch(e=>console.error('Reserva cartão:',e));
+    window.location.href=cfg.directUrl;
+    return;
+  }
+
   const button=$('#cardPayButton');
   const original=button.textContent;
   try{
