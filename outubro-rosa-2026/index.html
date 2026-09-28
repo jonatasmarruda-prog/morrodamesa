@@ -206,6 +206,26 @@ html,body{overflow-x:hidden}
 
 .contact-rule-note{margin-top:9px!important;background:linear-gradient(135deg,#eefbf5,#fff)!important;border-color:#b8e3cb!important;color:#245e45!important}
 .contact-rule-note strong{color:#167548}
+
+.admin-person{padding:10px 0;border-top:1px dashed #ead1dd}
+.admin-person-main{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.admin-person-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.admin-person-actions .btn{min-height:38px;padding:8px 11px;font-size:13px}
+.admin-edit-form{margin-top:10px;padding:14px;border-radius:15px;background:linear-gradient(135deg,#fff6fa,#fff);border:1px solid #efc8da;box-shadow:0 8px 22px rgba(106,30,70,.06)}
+.admin-edit-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:9px;align-items:end}
+.admin-edit-grid .field{margin:0}
+.admin-edit-grid label{font-size:12px;margin-bottom:5px}
+.admin-edit-grid input,.admin-edit-grid select{min-height:42px;font-size:14px;padding:8px 10px}
+.admin-edit-footer{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:11px}
+.admin-edit-footer .btn{min-height:40px;padding:9px 13px;font-size:14px}
+@media(max-width:768px){
+  .admin-person-main{align-items:flex-start;flex-direction:column}
+  .admin-person-actions{width:100%;justify-content:flex-start}
+  .admin-edit-grid{grid-template-columns:1fr}
+  .admin-edit-footer{display:grid;grid-template-columns:1fr 1fr}
+  .admin-edit-footer .btn{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -448,7 +468,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-0945</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260928-1455</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -511,7 +531,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260928-0945';
+const BUILD_VERSION = '20260928-1455';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -1255,7 +1275,18 @@ function renderAdmin(d){
   if(!rows.length){box.innerHTML='<div class="notice">Nenhuma reserva encontrada neste filtro.</div>'}
   rows.forEach(r=>{
     const el=document.createElement('div'); el.className='admin-item';
-    const people=r.participants.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:7px 0;border-top:1px dashed #ead1dd"><span><strong>${escapeHtml(p.name)}</strong><br><small>📱 ${escapeHtml(p.contact||'Sem contato')}<br>${p.option==='shirt'?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>${r.status!=='cancelled'?'<button class="btn btn-light remove-person" data-pid="'+p.id+'" style="min-height:38px;padding:8px 10px;font-size:14px">Excluir</button>':''}</div>`).join('');
+    const people=r.participants.map(p=>{
+      const shirt=p.option==='shirt';
+      const modelOptions=['Camiseta Tradicional','Babylook'].map(v=>'<option value="'+v+'" '+(p.model===v?'selected':'')+'>'+v+'</option>').join('');
+      const sizeOptions=['PP','P','M','G','GG'].map(v=>'<option value="'+v+'" '+(p.size===v?'selected':'')+'>'+v+'</option>').join('');
+      return `<div class="admin-person" data-pid="${escapeHtml(p.id)}">
+        <div class="admin-person-main">
+          <span><strong>${escapeHtml(p.name)}</strong><br><small>📱 ${escapeHtml(p.contact||'Sem contato')}<br>${shirt?escapeHtml(p.model)+' - '+escapeHtml(p.size):'Somente entrada'} - ${money(p.price)}</small></span>
+          ${r.status!=='cancelled'?'<div class="admin-person-actions"><button class="btn btn-light edit-person" data-pid="'+escapeHtml(p.id)+'">✏️ Editar</button><button class="btn btn-light remove-person" data-pid="'+escapeHtml(p.id)+'">🗑️ Excluir</button></div>':''}
+        </div>
+        ${r.status!=='cancelled'?'<div class="admin-edit-form hidden" data-editor="'+escapeHtml(p.id)+'"><div class="admin-edit-grid"><div class="field"><label>Nome</label><input class="edit-name" value="'+escapeHtml(p.name)+'"></div><div class="field"><label>WhatsApp / contato</label><input class="edit-contact" type="tel" value="'+escapeHtml(p.contact||'')+'"></div>'+(shirt?'<div class="field"><label>Modelo</label><select class="edit-model">'+modelOptions+'</select></div><div class="field"><label>Tamanho</label><select class="edit-size">'+sizeOptions+'</select></div>':'')+'</div><div class="admin-edit-footer"><button class="btn btn-light cancel-edit" type="button">Cancelar</button><button class="btn btn-primary save-edit" type="button">💾 Salvar alteração</button></div></div>':''}
+      </div>`;
+    }).join('');
     const identified=paymentIdentified(r);
     const paymentInfo=identified
       ?'<br><small>Pagamento identificado pelo sistema</small>'
@@ -1263,6 +1294,50 @@ function renderAdmin(d){
     const paymentBadge='<span class="payment-status-badge '+(identified?'identified':'unidentified')+'">'+(identified?'PAGAMENTO IDENTIFICADO':'PAGAMENTO NÃO IDENTIFICADO')+'</span>';
     el.innerHTML=`<div class="admin-item-head"><div><strong>${escapeHtml(r.id)}</strong><br><small>${r.quantity} vaga(s) - ${money(r.total)} - ${escapeHtml(r.paymentMethod)}</small>${paymentInfo}</div><div class="admin-status-stack"><span class="status">${statusLabel(r.status)}</span>${paymentBadge}</div></div><div style="margin-top:10px">${people}</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${r.status!=='cancelled'?'<button class="btn btn-danger cancel">🗑️ Excluir / cancelar reserva</button>':''}</div>`;
     const cancelBtn=el.querySelector('.cancel'); if(cancelBtn) cancelBtn.onclick=()=>{if(confirm('Excluir esta reserva e liberar '+r.quantity+' vaga(s)?'))adminAction('cancel',{reservationId:r.id})};
+
+    el.querySelectorAll('.edit-person').forEach(btn=>btn.onclick=()=>{
+      const editor=el.querySelector('.admin-edit-form[data-editor="'+CSS.escape(btn.dataset.pid)+'"]');
+      if(!editor) return;
+      el.querySelectorAll('.admin-edit-form').forEach(x=>{if(x!==editor)x.classList.add('hidden')});
+      editor.classList.toggle('hidden');
+      if(!editor.classList.contains('hidden')) editor.querySelector('.edit-name')?.focus();
+    });
+
+    el.querySelectorAll('.cancel-edit').forEach(btn=>btn.onclick=()=>{
+      btn.closest('.admin-edit-form')?.classList.add('hidden');
+    });
+
+    el.querySelectorAll('.save-edit').forEach(btn=>btn.onclick=async()=>{
+      const editor=btn.closest('.admin-edit-form');
+      const person=editor?.closest('.admin-person');
+      const pid=person?.dataset.pid||'';
+      if(!editor||!pid) return;
+
+      const participant={
+        name:editor.querySelector('.edit-name')?.value.trim()||'',
+        contact:editor.querySelector('.edit-contact')?.value.trim()||'',
+        model:editor.querySelector('.edit-model')?.value||'',
+        size:editor.querySelector('.edit-size')?.value||''
+      };
+      if(participant.name.length<3){toast('Informe um nome válido.');editor.querySelector('.edit-name')?.focus();return}
+      if(participant.contact.replace(/\D/g,'').length<10){toast('Informe um WhatsApp/contato válido.');editor.querySelector('.edit-contact')?.focus();return}
+      if(editor.querySelector('.edit-model')&&(!participant.model||!participant.size)){toast('Selecione modelo e tamanho da camiseta.');return}
+
+      const original=btn.textContent;
+      btn.disabled=true;
+      btn.textContent='Salvando...';
+      try{
+        const d=await adminApi('updateParticipant',{reservationId:r.id,participantId:pid,participant});
+        toast('✅ Participante atualizada com sucesso.');
+        renderAdmin(d);
+        refreshStats();
+      }catch(e){
+        btn.disabled=false;
+        btn.textContent=original;
+        toast(e.message);
+      }
+    });
+
     el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
   });
