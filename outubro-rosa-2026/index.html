@@ -994,15 +994,16 @@ function prepareCardCheckout(){
   const signature=cardOrderSignature();
 
   if(cfg.directUrl){
+    if(cardPreparedSignature===signature&&cardPreparedUrl) return Promise.resolve(cardPreparedUrl);
+    if(cardPreparedSignature===signature&&cardPreparePromise) return cardPreparePromise;
     cardPreparedSignature=signature;
-    cardPreparedUrl=cfg.directUrl;
-    rememberReservationSnapshot({
-      participants:getParticipants(),
-      total:totalValue(),
-      paymentMethod:'CARTÃO'
-    });
-    backgroundSaveCardReservation();
-    return Promise.resolve(cfg.directUrl);
+    cardPreparedUrl='';
+    cardPreparePromise=ensureReservation('CARTÃO').then(r=>{
+      rememberReservationSnapshot({...r,paymentMethod:'CARTÃO'});
+      cardPreparedUrl=cfg.directUrl;
+      return cfg.directUrl;
+    }).finally(()=>{cardPreparePromise=null});
+    return cardPreparePromise;
   }
 
   if(cardPreparedSignature===signature&&cardPreparedUrl) return Promise.resolve(cardPreparedUrl);
