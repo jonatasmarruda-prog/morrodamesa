@@ -226,6 +226,23 @@ html,body{overflow-x:hidden}
   .admin-edit-footer .btn{width:100%}
 }
 
+
+.people-report-card{margin-top:16px}
+.people-report-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.people-report-head h3{margin:8px 0 4px;font-size:24px}
+.people-report-head p{margin:0;color:var(--muted)}
+.people-total{min-width:120px;text-align:center;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#fff0f7,#fff);border:1px solid var(--line)}
+.people-total strong{display:block;font-size:38px;line-height:1;color:var(--pink)}
+.people-total span{display:block;margin-top:5px;font-size:13px;font-weight:850;color:var(--muted)}
+.people-report-list{display:grid;gap:8px;margin-top:14px}
+.people-report-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:13px;background:#fffafd;border:1px solid var(--line);font-weight:800}
+.people-report-row .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f8e8f0;color:var(--pink);font-size:12px;font-weight:950;flex:0 0 auto}
+@media(max-width:768px){
+  .people-report-head{align-items:stretch}
+  .people-total{width:100%}
+  .admin-tabs .btn{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -468,7 +485,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0645</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-1215</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -491,6 +508,7 @@ html,body{overflow-x:hidden}
       <div class="admin-capacity-note">Capacidade total do evento: 100 vagas</div>
       <div class="admin-tabs">
         <button class="btn btn-primary" id="adminReservationsTab">📋 Inscrições</button>
+        <button class="btn btn-light" id="adminPeopleTab">👥 Inscritos</button>
         <button class="btn btn-light" id="adminShirtsTab">👕 Camisetas reservadas</button>
       </div>
       <div class="admin-tools">
@@ -503,6 +521,25 @@ html,body{overflow-x:hidden}
         <button class="btn btn-light" id="exportReservationsCsv">⬇️ Exportar CSV</button>
       </div>
       <div id="adminReservations" class="admin-list"></div>
+
+      <div id="peopleReport" class="hidden">
+        <div class="card people-report-card">
+          <div class="people-report-head">
+            <div>
+              <div class="eyebrow">👥 LISTA DE INSCRITOS</div>
+              <h3>Participantes confirmados</h3>
+              <p>Lista simples com todos os nomes ativos no evento.</p>
+            </div>
+            <div class="people-total"><strong id="totalPeopleReport">0</strong><span>inscritos</span></div>
+          </div>
+          <div class="report-tools">
+            <button class="btn btn-primary" id="copyPeopleReport">📋 Copiar lista</button>
+            <button class="btn btn-whatsapp-premium" id="whatsappPeopleReport">📲 Enviar no WhatsApp</button>
+          </div>
+          <div id="peopleReportList" class="people-report-list"></div>
+        </div>
+      </div>
+
       <div id="shirtReport" class="hidden">
         <div class="shirt-summary">
           <div class="shirt-group">
@@ -531,7 +568,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260930-0645';
+const BUILD_VERSION = '20260930-1215';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -1463,6 +1500,7 @@ function renderAdmin(d){
     el.querySelectorAll('.remove-person').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir esta participante? A vaga será devolvida.'))adminAction('removeParticipant',{reservationId:r.id,participantId:btn.dataset.pid})});
     box.appendChild(el);
   });
+  renderPeopleReport(d);
   renderShirtReport(d);
 }
 async function adminAction(action,payload){
@@ -1472,6 +1510,49 @@ async function adminAction(action,payload){
     renderAdmin(d);
     refreshStats();
   }catch(e){toast(e.message)}
+}
+
+function activePeople(d=adminDataCache){
+  const names=[];
+  (d?.reservations||[]).filter(r=>r.status!=='cancelled').forEach(r=>{
+    (r.participants||[]).forEach(p=>{
+      const name=String(p.name||'').trim();
+      if(name) names.push(name);
+    });
+  });
+  return names.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
+
+function peopleReportText(d=adminDataCache){
+  const names=activePeople(d);
+  const lines=[
+    '🌸 *RELATÓRIO DE INSCRITAS — OUTUBRO ROSA* 🌸',
+    '',
+    '📅 *18/10/2026*',
+    '📍 *Mirante da Janela*',
+    '',
+    '👥 *TOTAL DE INSCRITAS: '+names.length+'*',
+    '',
+    '📋 *LISTA DE NOMES*',
+    ''
+  ];
+  if(!names.length){
+    lines.push('_Nenhuma inscrita ativa no momento._');
+  }else{
+    names.forEach((name,i)=>lines.push('*'+(i+1)+'.* '+name));
+  }
+  return lines.join('\n');
+}
+
+function renderPeopleReport(d){
+  const names=activePeople(d);
+  $('#totalPeopleReport').textContent=names.length;
+  const list=$('#peopleReportList');
+  if(!names.length){
+    list.innerHTML='<div class="notice">Nenhuma inscrita ativa no momento.</div>';
+    return;
+  }
+  list.innerHTML=names.map((name,i)=>'<div class="people-report-row"><span class="num">'+(i+1)+'</span><span>'+escapeHtml(name)+'</span></div>').join('');
 }
 
 function reportText(d=adminDataCache){
@@ -1548,16 +1629,42 @@ $('#exportReservationsCsv').onclick=()=>{
 };
 $('#adminReservationsTab').onclick=()=>{
   $('#adminReservations').classList.remove('hidden');
+  $('#peopleReport').classList.add('hidden');
   $('#shirtReport').classList.add('hidden');
   $('#adminReservationsTab').className='btn btn-primary';
+  $('#adminPeopleTab').className='btn btn-light';
   $('#adminShirtsTab').className='btn btn-light';
+};
+$('#adminPeopleTab').onclick=()=>{
+  $('#adminReservations').classList.add('hidden');
+  $('#peopleReport').classList.remove('hidden');
+  $('#shirtReport').classList.add('hidden');
+  $('#adminReservationsTab').className='btn btn-light';
+  $('#adminPeopleTab').className='btn btn-primary';
+  $('#adminShirtsTab').className='btn btn-light';
+  if(adminDataCache) renderPeopleReport(adminDataCache);
 };
 $('#adminShirtsTab').onclick=()=>{
   $('#adminReservations').classList.add('hidden');
+  $('#peopleReport').classList.add('hidden');
   $('#shirtReport').classList.remove('hidden');
   $('#adminReservationsTab').className='btn btn-light';
+  $('#adminPeopleTab').className='btn btn-light';
   $('#adminShirtsTab').className='btn btn-primary';
 };
+$('#copyPeopleReport').onclick=async()=>{
+  try{
+    await copyTextNow(peopleReportText());
+    toast('Lista de inscritos copiada!');
+  }catch{
+    toast('Não foi possível copiar a lista.');
+  }
+};
+$('#whatsappPeopleReport').onclick=()=>{
+  const text=peopleReportText();
+  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(text),'_blank','noopener');
+};
+
 $('#copyShirtReport').onclick=async()=>{
   try{await copyTextNow(reportText());toast('Relatório de camisetas copiado!')}catch{toast('Não foi possível copiar o relatório.')}
 };
