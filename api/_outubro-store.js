@@ -95,7 +95,7 @@ function assertUniqueNamesInList(participants) {
   }
 }
 
-async function assertNoDuplicateNames(participants, excludeReservationId='') {
+async function assertNoDuplicateNames(participants, excludeReservationId='', sourceRows=null) {
   assertUniqueNamesInList(participants);
   const requested=new Map();
   (participants||[]).forEach(p=>{
@@ -104,7 +104,8 @@ async function assertNoDuplicateNames(participants, excludeReservationId='') {
   });
   if(!requested.size) return;
 
-  const rows=(await allRows()).filter(r=>occupies(r.status)&&String(r.id)!==String(excludeReservationId||''));
+  const all=Array.isArray(sourceRows)?sourceRows:await allRows();
+  const rows=all.filter(r=>occupies(r.status)&&String(r.id)!==String(excludeReservationId||''));
   for(const row of rows){
     for(const p of row.participants||[]){
       const key=participantNameKey(p.name);
@@ -346,9 +347,10 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
   const id=reservationId(clientId);
   const existing=await findPreferenceByExternalReference(id);
 
-  // Bloqueia nomes já usados em qualquer outra reserva ativa.
-  // A própria reserva atual é excluída da comparação para permitir edição.
-  await assertNoDuplicateNames(ps,id);
+  // Usa uma única leitura para validar nomes e capacidade, evitando
+  // consultas duplicadas ao Mercado Pago no mesmo clique.
+  const rowsSnapshot=await allRows();
+  await assertNoDuplicateNames(ps,id,rowsSnapshot);
 
   if(existing){
     const payments=await listOutubroPayments();
@@ -368,8 +370,11 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
     }
   }
 
-  const before=await stats();
-  if(ps.length>before.available) throw new Error(before.available<=0?'Vagas esgotadas.':'Não há vagas suficientes disponíveis.');
+  const reservedNow=rowsSnapshot
+    .filter(r=>occupies(r.status)&&String(r.id)!==String(id))
+    .reduce((sum,r)=>sum+Number(r.quantity||0),0);
+  const availableNow=Math.max(0,CAPACITY-reservedNow);
+  if(ps.length>availableNow) throw new Error(availableNow<=0?'Vagas esgotadas.':'Não há vagas suficientes disponíveis.');
 
   const total=money(ps.reduce((sum,p)=>sum+p.price,0));
   const now=new Date();
