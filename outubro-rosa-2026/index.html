@@ -724,26 +724,41 @@ function updateSummary(){
   html+=`<div class="order-total-highlight"><span>💰 Total do pedido</span><strong>${money(totalValue())}</strong></div>`;
   $('#summary').innerHTML=html;
 }
+function participantNameKeyClient(value){
+  return String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
 function validate(){
   const ps=getParticipants();
-  queryAll('.participant').forEach(p=>p.classList.remove('invalid'));
+  const cards=queryAll('.participant');
+  cards.forEach(p=>p.classList.remove('invalid'));
   for(let i=0;i<ps.length;i++){
     if(ps[i].name.trim().length<3){
-      const card=queryAll('.participant')[i];
-      if(card){
-        card.classList.add('invalid');
-        card.querySelector('.pname')?.focus();
-      }
+      cards[i]?.classList.add('invalid');
+      cards[i]?.querySelector('.pname')?.focus();
       return 'Preencha o nome da participante '+(i+1)+'. São necessários '+qty+' nome(s) para '+qty+' vaga(s).';
     }
+  }
+  const seen=new Map();
+  for(let i=0;i<ps.length;i++){
+    const key=participantNameKeyClient(ps[i].name);
+    if(seen.has(key)){
+      const first=seen.get(key);
+      cards[first]?.classList.add('invalid');
+      cards[i]?.classList.add('invalid');
+      cards[i]?.querySelector('.pname')?.focus();
+      return 'Nome duplicado: '+ps[i].name+'. Cada vaga precisa ter uma participante diferente.';
+    }
+    seen.set(key,i);
+  }
+  for(let i=0;i<ps.length;i++){
     const phoneDigits=String(ps[i].contact||'').replace(/\D/g,'');
     if(phoneDigits.length<10){
-      const card=queryAll('.participant')[i];
-      card?.classList.add('invalid');
-      card?.querySelector('.pcontact')?.focus();
+      cards[i]?.classList.add('invalid');
+      cards[i]?.querySelector('.pcontact')?.focus();
       return 'Informe um WhatsApp/contato válido da participante '+(i+1)+'.';
     }
     if(ps[i].option==='shirt'&&(!ps[i].model||!ps[i].size)){
+      cards[i]?.classList.add('invalid');
       return 'Escolha modelo e tamanho da camiseta da participante '+(i+1)+'.';
     }
   }
