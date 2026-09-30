@@ -468,7 +468,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0630</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0645</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -531,7 +531,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260930-0630';
+const BUILD_VERSION = '20260930-0645';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -544,6 +544,7 @@ const CARD_1_SHIRT = 'https://mpago.la/1D9bgo3';
 const CARD_2_SHIRTS = 'https://mpago.la/1DJFjnq';
 const SHIRT_CUTOFF_TS = Date.parse('2026-10-06T03:59:59Z');
 let qty=1, reservation=null, paymentMethod='PIX', adminPass='', adminDataCache=null;
+let cardPreparePromise=null, cardPreparedUrl='', cardPreparedSignature='';
 const $=s=>document.querySelector(s), queryAll=s=>[...document.querySelectorAll(s)];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -911,6 +912,61 @@ function showPayment(){
   location.hash='pagamento';
 }
 
+function cardOrderSignature(){
+  return JSON.stringify(getParticipants().map(p=>({
+    name:p.name,contact:p.contact,option:p.option,model:p.model,size:p.size,price:p.price
+  })))+'|'+totalValue();
+}
+function backgroundSaveCardReservation(){
+  let clientId=sessionStorage.getItem('outubroReservationClientId');
+  if(!clientId){
+    clientId=(crypto.randomUUID?crypto.randomUUID():(Date.now()+'-'+Math.random()));
+    sessionStorage.setItem('outubroReservationClientId',clientId);
+  }
+  const payload={
+    participants:getParticipants(),
+    paymentMethod:'CARTÃO',
+    clientId,
+    returnBaseUrl:location.origin+location.pathname
+  };
+  fetch(API_BASE+'/outubro-reservas',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload),
+    keepalive:true
+  }).catch(()=>{});
+}
+function prepareCardCheckout(){
+  const cfg=cardPaymentConfig();
+  if(!cfg.supported) return Promise.reject(new Error('Cartão disponível somente para até 3 vagas.'));
+  const signature=cardOrderSignature();
+
+  if(cfg.directUrl){
+    cardPreparedSignature=signature;
+    cardPreparedUrl=cfg.directUrl;
+    rememberReservationSnapshot({
+      participants:getParticipants(),
+      total:totalValue(),
+      paymentMethod:'CARTÃO'
+    });
+    backgroundSaveCardReservation();
+    return Promise.resolve(cfg.directUrl);
+  }
+
+  if(cardPreparedSignature===signature&&cardPreparedUrl) return Promise.resolve(cardPreparedUrl);
+  if(cardPreparedSignature===signature&&cardPreparePromise) return cardPreparePromise;
+
+  cardPreparedSignature=signature;
+  cardPreparedUrl='';
+  cardPreparePromise=ensureReservation('CARTÃO').then(r=>{
+    rememberReservationSnapshot({...r,paymentMethod:'CARTÃO'});
+    const url=r?.checkoutUrl||'';
+    if(!url) throw new Error('Não foi possível gerar o link do cartão.');
+    cardPreparedUrl=url;
+    return url;
+  }).finally(()=>{cardPreparePromise=null});
+  return cardPreparePromise;
+}
 function cardPaymentConfig(){
   const ps=getParticipants();
   const supported=ps.length>=1&&ps.length<=3;
@@ -1039,15 +1095,24 @@ async function beginCardPayment(){
 
   const button=$('#cardPayButton');
   const original=button.textContent;
+  rememberReservationSnapshot({
+    participants:getParticipants(),
+    total:totalValue(),
+    paymentMethod:'CARTÃO'
+  });
+  sessionStorage.setItem('outubroCardReturnPending','1');
+
+  if(cfg.directUrl){
+    backgroundSaveCardReservation();
+    window.location.href=cfg.directUrl;
+    return;
+  }
+
   try{
     button.disabled=true;
-    button.textContent='Salvando reserva...';
-    const r=await ensureReservation('CARTÃO');
-    rememberReservationSnapshot({...r,paymentMethod:'CARTÃO'});
-    sessionStorage.setItem('outubroCardReturnPending','1');
-    const checkoutUrl=cfg.directUrl||r?.checkoutUrl||'';
+    button.textContent=cardPreparedUrl?'Abrindo Mercado Pago...':'Preparando link...';
+    const checkoutUrl=await prepareCardCheckout();
     if(!checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
-    button.textContent='Abrindo Mercado Pago...';
     window.location.href=checkoutUrl;
   }catch(e){
     sessionStorage.removeItem('outubroCardReturnPending');
@@ -1143,10 +1208,19 @@ $('#cardTab').onclick=()=>{
     return;
   }
   selectPaymentChoice('CARTÃO');
+  const cfg=cardPaymentConfig();
   const pay=$('#cardPayButton');
+
+  if(cfg.directUrl){
+    pay.disabled=false;
+    pay.textContent='💳 Pagar '+money(totalValue())+' no cartão';
+    prepareCardCheckout().then(()=>refreshStats()).catch(()=>{});
+    return;
+  }
+
   pay.disabled=true;
   pay.textContent='Preparando link do cartão...';
-  ensureReservation('CARTÃO').then(r=>{
+  prepareCardCheckout().then(()=>{
     pay.disabled=false;
     pay.textContent='💳 Pagar '+money(totalValue())+' no cartão';
     refreshStats().catch(()=>{});
