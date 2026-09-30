@@ -44,7 +44,7 @@ module.exports = async function handler(req,res){
   }catch(error){
     console.error(error);
     const msg=error.message||'Erro interno.';
-    const status=/esgotadas|suficientes|últimas vagas/i.test(msg)?409:500;
+    const status=/esgotadas|suficientes|últimas vagas|duplicado|já está inscrito|mesmo nome/i.test(msg)?409:500;
     return json(res,status,{ok:false,error:msg});
   }
 };
