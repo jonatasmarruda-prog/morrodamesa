@@ -1261,9 +1261,19 @@ $('#cardTab').onclick=()=>{
   const pay=$('#cardPayButton');
 
   if(cfg.directUrl){
-    pay.disabled=false;
-    pay.textContent='💳 Pagar '+money(totalValue())+' no cartão';
-    prepareCardCheckout().then(()=>refreshStats()).catch(()=>{});
+    pay.disabled=true;
+    pay.textContent='Validando nomes e vagas...';
+    prepareCardCheckout().then(()=>{
+      pay.disabled=false;
+      pay.textContent='💳 Pagar '+money(totalValue())+' no cartão';
+      $('#cardMessage').innerHTML='';
+      refreshStats().catch(()=>{});
+    }).catch(e=>{
+      pay.disabled=true;
+      pay.textContent='💳 Corrija os dados para continuar';
+      showMsg($('#cardMessage'),e.message,'error');
+      toast(e.message);
+    });
     return;
   }
 
