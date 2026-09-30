@@ -468,7 +468,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0600</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0630</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -531,7 +531,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260930-0600';
+const BUILD_VERSION = '20260930-0630';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -977,6 +977,13 @@ function rememberReservationSnapshot(data){
   }catch{}
 }
 function reservationContactSource(){
+  if(sessionStorage.getItem('outubroCardReturnPending')==='1'){
+    try{
+      const raw=sessionStorage.getItem('outubroReservationSnapshot');
+      const saved=raw?JSON.parse(raw):null;
+      if(saved&&Array.isArray(saved.participants)&&saved.participants.length) return saved;
+    }catch{}
+  }
   if(reservation&&Array.isArray(reservation.participants)&&reservation.participants.length){
     return reservation;
   }
@@ -1036,12 +1043,14 @@ async function beginCardPayment(){
     button.disabled=true;
     button.textContent='Salvando reserva...';
     const r=await ensureReservation('CARTÃO');
-    rememberReservationSnapshot(r);
+    rememberReservationSnapshot({...r,paymentMethod:'CARTÃO'});
+    sessionStorage.setItem('outubroCardReturnPending','1');
     const checkoutUrl=cfg.directUrl||r?.checkoutUrl||'';
     if(!checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
     button.textContent='Abrindo Mercado Pago...';
     window.location.href=checkoutUrl;
   }catch(e){
+    sessionStorage.removeItem('outubroCardReturnPending');
     button.disabled=false;
     button.textContent=original;
     showMsg($('#cardMessage'),e.message,'error');
@@ -1075,32 +1084,6 @@ async function copyTextNow(text){
   throw new Error('Não foi possível copiar automaticamente.');
 }
 
-async function beginPayment(method,button,feedback){
-  const original=button.textContent;
-  button.disabled=true;
-  button.classList.add('btn-busy');
-  button.textContent='Preparando pagamento...';
-  try{
-    const r=await ensureReservation(method);
-    if(r.status==='confirmed'){
-      button.classList.remove('btn-busy');
-      button.textContent='✅ PAGAMENTO CONFIRMADO';
-      showMsg(feedback,'✅ Pagamento já confirmado. Seu nome já está na lista de trilheiras confirmadas.','success');
-      await refreshStats();
-      return;
-    }
-    if(!r.checkoutUrl) throw new Error('Não foi possível abrir o pagamento.');
-    showMsg(feedback,'Sua(s) vaga(s) já estão confirmadas. Abrindo o Mercado Pago...','success');
-    button.textContent='Abrindo Mercado Pago...';
-    setTimeout(()=>{window.location.assign(r.checkoutUrl)},250);
-  }catch(e){
-    button.disabled=false;
-    button.classList.remove('btn-busy');
-    button.textContent=original;
-    showMsg(feedback,e.message,'error');
-    toast(e.message);
-  }
-}
 function returnHome(){
   $('#pagamento').classList.add('hidden');
   history.replaceState(null,'',location.pathname+'#inicio');
@@ -1215,6 +1198,7 @@ $('#sendPixReceipt').onclick=()=>{
 };
 $('#finalPixWhatsapp').onclick=()=>{
   const method=$('#finalPixWhatsapp').dataset.method||paymentMethod||'PIX';
+  sessionStorage.removeItem('outubroCardReturnPending');
   const url='https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(participantContactText(method));
   window.location.href=url;
 };
@@ -1643,6 +1627,34 @@ if('IntersectionObserver' in window){
   const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.08});
   document.querySelectorAll('section,.card,.availability,.formbox,.confirmed-shell').forEach(el=>{el.classList.add('reveal');io.observe(el)});
 }
+function restoreCardReturnSnapshot(){
+  if(sessionStorage.getItem('outubroCardReturnPending')!=='1') return false;
+  let saved=null;
+  try{
+    const raw=sessionStorage.getItem('outubroReservationSnapshot');
+    saved=raw?JSON.parse(raw):null;
+  }catch{}
+  if(!saved||!Array.isArray(saved.participants)||!saved.participants.length) return false;
+
+  reservation={
+    id:saved.id||'',
+    participants:saved.participants,
+    total:Number(saved.total||0),
+    quantity:saved.participants.length,
+    paymentMethod:'CARTÃO',
+    status:'confirmed'
+  };
+  paymentMethod='CARTÃO';
+  $('#pagamento').classList.remove('hidden');
+  showReservationConfirmation(reservation,'CARTÃO');
+  $('#finalReservationMessage').innerHTML='🌸 <strong>Sua(s) vaga(s) está(ão) confirmada(s)!</strong><br>💳 Se concluiu o pagamento no cartão, envie o <strong>comprovante</strong> e os <strong>contatos das participantes</strong> para o Jonatas.';
+  $('#finalPixWhatsapp').classList.remove('hidden');
+  $('#finalPixWhatsapp').dataset.method='CARTÃO';
+  $('#finalPixWhatsapp').textContent='📲 Enviar comprovante e contatos para o Jonatas';
+  location.hash='pagamento';
+  return true;
+}
+
 async function checkPaymentReturn(){
   const params=new URLSearchParams(location.search);
   const reservationId=params.get('reserva')||sessionStorage.getItem('outubroReservationId')||'';
@@ -1822,7 +1834,7 @@ updateBookingSteps(1);
 ensureMiranteImages();
 initMiranteLightbox();
 initMobileReserveBar();
-window.addEventListener('pageshow',ensureMiranteImages);
+window.addEventListener('pageshow',()=>{ensureMiranteImages();restoreCardReturnSnapshot()});
 window.addEventListener('online',ensureMiranteImages);
 applyShirtDeadlineState();
 setInterval(applyShirtDeadlineState,60000);
@@ -1831,6 +1843,7 @@ refreshStats().catch(()=>{});
 scheduleStatsSync(4500);
 checkSiteVersion();
 checkPaymentReturn();
+restoreCardReturnSnapshot();
 </script>
 </body>
 </html>
