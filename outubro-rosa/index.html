@@ -1146,26 +1146,22 @@ async function beginCardPayment(){
     return;
   }
 
-  const button=$('#cardPayButton');
-  const original=button.textContent;
-  rememberReservationSnapshot({
-    participants:getParticipants(),
-    total:totalValue(),
-    paymentMethod:'CARTÃO'
-  });
-  sessionStorage.setItem('outubroCardReturnPending','1');
-
-  if(cfg.directUrl){
-    backgroundSaveCardReservation();
-    window.location.href=cfg.directUrl;
+  const localError=validate();
+  if(localError){
+    showMsg($('#cardMessage'),localError,'error');
+    toast(localError);
     return;
   }
 
+  const button=$('#cardPayButton');
+  const original=button.textContent;
+  sessionStorage.setItem('outubroCardReturnPending','1');
+
   try{
     button.disabled=true;
-    button.textContent=cardPreparedUrl?'Abrindo Mercado Pago...':'Preparando link...';
+    button.textContent=cardPreparedUrl?'Abrindo Mercado Pago...':'Validando reserva...';
     const checkoutUrl=await prepareCardCheckout();
-    if(!checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
+    if(!checkoutUrl) throw new Error('Não foi possível abrir o pagamento no cartão.');
     window.location.href=checkoutUrl;
   }catch(e){
     sessionStorage.removeItem('outubroCardReturnPending');
