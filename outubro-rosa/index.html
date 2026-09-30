@@ -468,7 +468,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260929-2155</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-0600</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -531,7 +531,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260929-2155';
+const BUILD_VERSION = '20260930-0600';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -733,6 +733,7 @@ async function ensureReservation(method){
   const data=await publicApi(payload);
   reservation={...data.reservation,paymentMethod:method,participants:currentParticipants,checkoutUrl:data.checkoutUrl||'',expiresAt:data.expiresAt||data.reservation?.expiresAt||''};
   sessionStorage.setItem('outubroReservationId',reservation.id||'');
+  rememberReservationSnapshot(reservation);
   await refreshStats(true,payload.participants.length);
   return reservation;
 }
@@ -846,11 +847,12 @@ function paymentIdentified(r){
 function showReservationConfirmation(r,method){
   if(!r) return;
   updateBookingSteps(3);
-  reservation={...reservation,...r,paymentMethod:method||r.paymentMethod||reservation?.paymentMethod||''};
   const ps=Array.isArray(r.participants)&&r.participants.length?r.participants:getParticipants();
   const names=ps.map(p=>p.name).filter(Boolean).join(', ')||'Participante';
   const total=Number(r.total||ps.reduce((sum,p)=>sum+Number(p.price||0),0)||totalValue());
   const chosen=String(method||r.paymentMethod||paymentMethod||'—').toUpperCase();
+  reservation={...reservation,...r,participants:ps,total,paymentMethod:chosen};
+  rememberReservationSnapshot(reservation);
   $('#finalReservationNames').textContent=names;
   $('#finalReservationTotal').textContent=money(total);
   $('#finalReservationMethod').textContent=chosen;
@@ -952,20 +954,66 @@ function configureCardPayment(){
   }
 }
 
+function rememberReservationSnapshot(data){
+  if(!data||!Array.isArray(data.participants)||!data.participants.length) return;
+  const participants=data.participants.map(p=>({
+    id:p.id||'',
+    name:String(p.name||''),
+    contact:String(p.contact||''),
+    option:p.option==='shirt'?'shirt':'entry',
+    model:String(p.model||''),
+    size:String(p.size||''),
+    price:Number(p.price||(p.option==='shirt'?PRICE_SHIRT:PRICE_ENTRY))
+  }));
+  const total=Number(data.total||participants.reduce((sum,p)=>sum+Number(p.price||0),0));
+  try{
+    sessionStorage.setItem('outubroReservationSnapshot',JSON.stringify({
+      id:data.id||'',
+      participants,
+      total,
+      paymentMethod:data.paymentMethod||paymentMethod||'',
+      savedAt:Date.now()
+    }));
+  }catch{}
+}
+function reservationContactSource(){
+  if(reservation&&Array.isArray(reservation.participants)&&reservation.participants.length){
+    return reservation;
+  }
+  try{
+    const raw=sessionStorage.getItem('outubroReservationSnapshot');
+    const saved=raw?JSON.parse(raw):null;
+    if(saved&&Array.isArray(saved.participants)&&saved.participants.length) return saved;
+  }catch{}
+  const participants=getParticipants();
+  return {
+    participants,
+    total:participants.reduce((sum,p)=>sum+Number(p.price||0),0),
+    paymentMethod:paymentMethod||'PIX'
+  };
+}
 function participantContactText(method='PIX'){
-  const ps=getParticipants();
-  const chosen=String(method||'PIX').toUpperCase();
+  const source=reservationContactSource();
+  const ps=source.participants||[];
+  const chosen=String(method||source.paymentMethod||'PIX').toUpperCase();
+  const total=Number(source.total||ps.reduce((sum,p)=>sum+Number(p.price||(p.option==='shirt'?PRICE_SHIRT:PRICE_ENTRY)),0));
   let text='🌸 *TRILHA OUTUBRO ROSA* 🌸\n\n';
   text+='Olá, Jonatas! 😊\n';
   text+='Segue meu *comprovante de pagamento* e os *contatos das participantes* para inclusão no grupo.\n';
   ps.forEach((p,i)=>{
-    text+='\n*'+(i+1)+'. '+p.name+'*\n';
-    text+=(p.option==='shirt'
-      ?'👕 Entrada + camiseta | '+p.model+' | Tam. '+p.size
-      :'🎟️ Somente entrada')+'\n';
-    text+='📱 *WhatsApp/contato:* '+(p.contact||'')+'\n';
+    const price=Number(p.price||(p.option==='shirt'?PRICE_SHIRT:PRICE_ENTRY));
+    text+='\n*'+(i+1)+'. '+String(p.name||'Participante')+'*\n';
+    if(p.option==='shirt'){
+      text+='👕 *Entrada + camiseta*\n';
+      text+='👚 *Modelo:* '+String(p.model||'Não informado')+'\n';
+      text+='📏 *Tamanho:* '+String(p.size||'Não informado')+'\n';
+    }else{
+      text+='🎟️ *Somente entrada*\n';
+    }
+    text+='💵 *Valor:* '+money(price)+'\n';
+    text+='📱 *WhatsApp/contato:* '+String(p.contact||'')+'\n';
   });
-  text+='\n💰 *Valor total:* '+money(totalValue())+'\n';
+  text+='\n💰 *Valor total:* '+money(total)+'\n';
   text+=(chosen==='CARTÃO'?'💳':'💚')+' *Forma de pagamento:* '+chosen+'\n\n';
   text+='✅ *Vaga(s) confirmada(s) no sistema.*\n';
   text+='📎 Vou anexar o comprovante nesta conversa.';
@@ -982,20 +1030,17 @@ async function beginCardPayment(){
     return;
   }
 
-  if(cfg.directUrl){
-    ensureReservation('CARTÃO').catch(e=>console.error('Reserva cartão:',e));
-    window.location.href=cfg.directUrl;
-    return;
-  }
-
   const button=$('#cardPayButton');
   const original=button.textContent;
   try{
     button.disabled=true;
-    button.textContent='Preparando cartão...';
+    button.textContent='Salvando reserva...';
     const r=await ensureReservation('CARTÃO');
-    if(!r?.checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
-    window.location.href=r.checkoutUrl;
+    rememberReservationSnapshot(r);
+    const checkoutUrl=cfg.directUrl||r?.checkoutUrl||'';
+    if(!checkoutUrl) throw new Error('Não foi possível gerar o link do cartão.');
+    button.textContent='Abrindo Mercado Pago...';
+    window.location.href=checkoutUrl;
   }catch(e){
     button.disabled=false;
     button.textContent=original;
