@@ -46,7 +46,7 @@ function reservationId(clientId) {
 
 function cleanParticipants(input) {
   if (!Array.isArray(input) || input.length < 1 || input.length > 10) throw new Error('Escolha de 1 a 10 participantes.');
-  return input.map((p, i) => {
+  const cleaned=input.map((p, i) => {
     const name = String(p.name || '').trim().replace(/\s+/g, ' ');
     const contact = String(p.contact || '').trim().replace(/\s+/g, ' ');
     const contactDigits = contact.replace(/\D/g, '');
@@ -68,6 +68,51 @@ function cleanParticipants(input) {
       price: option === 'shirt' ? PRICE_SHIRT : PRICE_ENTRY
     };
   });
+  assertUniqueNamesInList(cleaned);
+  return cleaned;
+}
+
+function participantNameKey(value) {
+  return String(value||'')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim()
+    .replace(/\s+/g,' ');
+}
+
+function assertUniqueNamesInList(participants) {
+  const seen=new Map();
+  for(const p of participants||[]){
+    const key=participantNameKey(p.name);
+    if(!key) continue;
+    if(seen.has(key)) {
+      throw new Error('Nome duplicado no mesmo pedido: '+p.name+'. Cada vaga precisa ter uma participante diferente.');
+    }
+    seen.set(key,p.name);
+  }
+}
+
+async function assertNoDuplicateNames(participants, excludeReservationId='') {
+  assertUniqueNamesInList(participants);
+  const requested=new Map();
+  (participants||[]).forEach(p=>{
+    const key=participantNameKey(p.name);
+    if(key) requested.set(key,p.name);
+  });
+  if(!requested.size) return;
+
+  const rows=(await allRows()).filter(r=>occupies(r.status)&&String(r.id)!==String(excludeReservationId||''));
+  for(const row of rows){
+    for(const p of row.participants||[]){
+      const key=participantNameKey(p.name);
+      if(key&&requested.has(key)){
+        throw new Error('Este nome já está inscrito: '+requested.get(key)+'. Não é possível reservar o mesmo nome duas vezes.');
+      }
+    }
+  }
 }
 
 function encodeParticipants(ps) {
@@ -301,6 +346,10 @@ async function startCheckout({clientId, participants, paymentMethod, returnBaseU
   const id=reservationId(clientId);
   const existing=await findPreferenceByExternalReference(id);
 
+  // Bloqueia nomes já usados em qualquer outra reserva ativa.
+  // A própria reserva atual é excluída da comparação para permitir edição.
+  await assertNoDuplicateNames(ps,id);
+
   if(existing){
     const payments=await listOutubroPayments();
     const current=normalize(existing,payments.get(id)||null);
@@ -437,6 +486,9 @@ async function updateParticipant(reservationIdValue, participantId, changes={}) 
   };
   const next=[...current];
   next[index]=updatedParticipant;
+
+  // Impede que uma edição administrativa crie nome duplicado.
+  await assertNoDuplicateNames(next,reservationIdValue);
 
   const audit=decodeAudit(md.audit_b64);
   audit.push({
