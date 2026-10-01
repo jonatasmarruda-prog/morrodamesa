@@ -44,6 +44,42 @@ function reservationId(clientId) {
   return 'OR-2026-' + suffix;
 }
 
+function canonicalShirtModel(value) {
+  const raw=String(value||'').trim();
+  const key=raw
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+
+  if (!key) return '';
+  if (
+    key === 'babylook' ||
+    key === 'baby look' ||
+    key === 'bl' ||
+    key.startsWith('baby look ') ||
+    key.startsWith('babylook ')
+  ) return 'Baby Look';
+
+  if (
+    key === 'normal' ||
+    key === 'camiseta normal' ||
+    key === 'tradicional' ||
+    key === 'camiseta tradicional' ||
+    key === 'camiseta' ||
+    key.startsWith('camiseta tradicional ') ||
+    key.startsWith('camiseta normal ')
+  ) return 'Camiseta Tradicional';
+
+  return raw;
+}
+
+function normalizeParticipantModel(p) {
+  if (!p || p.option !== 'shirt') return p;
+  return {...p,model:canonicalShirtModel(p.model)};
+}
+
 function cleanParticipants(input) {
   if (!Array.isArray(input) || input.length < 1 || input.length > 10) throw new Error('Escolha de 1 a 10 participantes.');
   const cleaned=input.map((p, i) => {
@@ -51,12 +87,12 @@ function cleanParticipants(input) {
     const contact = String(p.contact || '').trim().replace(/\s+/g, ' ');
     const contactDigits = contact.replace(/\D/g, '');
     const option = p.option === 'shirt' ? 'shirt' : 'entry';
-    const model = option === 'shirt' ? String(p.model || '').trim() : '';
+    const model = option === 'shirt' ? canonicalShirtModel(p.model) : '';
     const size = option === 'shirt' ? String(p.size || '').trim().toUpperCase() : '';
     if (name.length < 3) throw new Error('Informe o nome completo da participante ' + (i + 1) + '.');
     if (contactDigits.length < 10) throw new Error('Informe um WhatsApp/contato válido da participante ' + (i + 1) + '.');
     if (option === 'shirt' && Date.now() > SHIRT_CUTOFF_UTC) throw new Error('O prazo para solicitar camiseta foi encerrado.');
-    if (option === 'shirt' && !['Camiseta Tradicional','Babylook'].includes(model)) throw new Error('Modelo inválido na participante ' + (i + 1) + '.');
+    if (option === 'shirt' && !['Camiseta Tradicional','Baby Look'].includes(model)) throw new Error('Modelo inválido na participante ' + (i + 1) + '.');
     if (option === 'shirt' && !['PP','P','M','G','GG'].includes(size)) throw new Error('Tamanho inválido na participante ' + (i + 1) + '.');
     return {
       id: 'P' + (i + 1),
@@ -121,7 +157,10 @@ function encodeParticipants(ps) {
 }
 
 function decodeParticipants(value) {
-  try { return JSON.parse(Buffer.from(String(value || ''), 'base64url').toString('utf8')); }
+  try {
+    const rows=JSON.parse(Buffer.from(String(value || ''), 'base64url').toString('utf8'));
+    return Array.isArray(rows)?rows.map(normalizeParticipantModel):[];
+  }
   catch { return []; }
 }
 
@@ -476,9 +515,9 @@ async function updateParticipant(reservationIdValue, participantId, changes={}) 
   if(name.length<3) throw new Error('Informe um nome válido.');
   if(contactDigits.length<10) throw new Error('Informe um WhatsApp/contato válido.');
 
-  let model=original.option==='shirt'?String(changes.model||original.model||'').trim():'';
+  let model=original.option==='shirt'?canonicalShirtModel(changes.model||original.model||''):'';
   let size=original.option==='shirt'?String(changes.size||original.size||'').trim().toUpperCase():'';
-  if(original.option==='shirt'&&!['Camiseta Tradicional','Babylook'].includes(model)) throw new Error('Modelo de camiseta inválido.');
+  if(original.option==='shirt'&&!['Camiseta Tradicional','Baby Look'].includes(model)) throw new Error('Modelo de camiseta inválido.');
   if(original.option==='shirt'&&!['PP','P','M','G','GG'].includes(size)) throw new Error('Tamanho de camiseta inválido.');
 
   const updatedParticipant={
@@ -562,7 +601,7 @@ async function adminData() {
     r.participants.filter(p=>p.option==='shirt').forEach(p=>shirts.push({
       reservationId:r.id,
       name:p.name,
-      model:p.model,
+      model:canonicalShirtModel(p.model),
       size:p.size,
       quantity:1,
       status:r.status,
