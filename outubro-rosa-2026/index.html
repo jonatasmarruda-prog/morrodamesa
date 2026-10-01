@@ -485,7 +485,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20261001-0930</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20261001-0945</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -568,7 +568,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20261001-0930';
+const BUILD_VERSION = '20261001-0945';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -1598,7 +1598,6 @@ function reportText(d=adminDataCache){
   const rows=d?.shirts||[];
   const count=(model,size)=>Number(d?.shirtCounts?.[model+'|'+size]||0);
   const totalModel=model=>sizes.reduce((sum,size)=>sum+count(model,size),0);
-  const totalSize=size=>count('Camiseta Tradicional',size)+count('Baby Look',size);
   const lines=[
     '🌸 *RELATÓRIO DAS CAMISETAS — OUTUBRO ROSA* 🌸',
     '',
@@ -1613,25 +1612,23 @@ function reportText(d=adminDataCache){
     lines.push('_Nenhuma camiseta reservada até o momento._');
   }else{
     rows.forEach((s,i)=>{
+      const model=s.model==='Baby Look'?'Babylook':'Camiseta Tradicional';
       lines.push('*'+(i+1)+'. '+s.name+'*');
-      lines.push('• *Modelo:* '+s.model);
+      lines.push('• *Modelo:* '+model);
       lines.push('• *Tamanho:* '+s.size);
       lines.push('');
     });
   }
 
-  lines.push('📊 *RESUMO POR MODELO*');
+  lines.push('📊 *RESUMO FINAL POR MODELO E TAMANHO*');
   lines.push('');
   lines.push('👕 *CAMISETA TRADICIONAL*');
   sizes.forEach(size=>lines.push('• *'+size+':* '+count('Camiseta Tradicional',size)));
-  lines.push('*Total Tradicional:* '+totalModel('Camiseta Tradicional'));
+  lines.push('*Total Camiseta Tradicional:* '+totalModel('Camiseta Tradicional'));
   lines.push('');
   lines.push('💕 *BABYLOOK*');
   sizes.forEach(size=>lines.push('• *'+size+':* '+count('Baby Look',size)));
-  lines.push('*Total Baby Look:* '+totalModel('Baby Look'));
-  lines.push('');
-  lines.push('📦 *TOTAL POR TAMANHO*');
-  sizes.forEach(size=>lines.push('• *'+size+':* '+totalSize(size)));
+  lines.push('*Total Babylook:* '+totalModel('Baby Look'));
   lines.push('');
   lines.push('✅ *TOTAL GERAL: '+Number(d?.totalShirts||rows.length)+' CAMISETA(S)*');
 
