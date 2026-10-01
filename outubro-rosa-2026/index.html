@@ -347,7 +347,7 @@ html,body{overflow-x:hidden}
   <section id="camiseta">
     <div class="wrap">
       <h2 class="section-title">Camiseta oficial</h2>
-      <p class="section-sub">Escolha Camiseta Tradicional ou Babylook, do PP ao GG.</p>
+      <p class="section-sub">Escolha Camiseta Tradicional ou Baby Look, do PP ao GG.</p>
       <div class="shirt-deadline" id="shirtDeadlineBanner">👕 <span>Pedidos de camiseta até <strong>05/10 às 23h59</strong>.</span></div>
       <div class="shirt-grid">
         <img src="https://i.postimg.cc/GmgN9KnL/file-000000004b64820e94794e53ab27d326.png" alt="Camiseta oficial Outubro Rosa" loading="lazy">
@@ -485,7 +485,7 @@ html,body{overflow-x:hidden}
 
 <footer>
   <div class="wrap footer-row">
-    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20260930-1305</small></div>
+    <div><strong>Trilheiros de Rondonópolis</strong><br><small>Jonatas Marruda - Guia de Turismo</small><br><small style="opacity:.55">Sistema Outubro Rosa - v20261001-0930</small></div>
     <button class="admin-access" id="adminGear" aria-label="Área administrativa" title="Área administrativa"><span class="admin-gear">⚙️</span><span class="admin-label">Área administrativa</span></button>
   </div>
 </footer>
@@ -547,7 +547,7 @@ html,body{overflow-x:hidden}
             <div class="shirt-counts" id="traditionalCounts"></div>
           </div>
           <div class="shirt-group">
-            <h3>💕 Babylook</h3>
+            <h3>💕 Baby Look</h3>
             <div class="shirt-counts" id="babylookCounts"></div>
           </div>
         </div>
@@ -568,7 +568,7 @@ html,body{overflow-x:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
-const BUILD_VERSION = '20260930-1305';
+const BUILD_VERSION = '20261001-0930';
 const API_BASE = 'https://trilheiros-reservas.vercel.app/api';
 const PIX_KEY = 'trilheiros.roomt@gmail.com';
 const WHATSAPP = '5566996926174';
@@ -671,7 +671,7 @@ function renderParticipants(seed=[]){
         <label class="radio-card"><input type="radio" name="opt${i}" value="shirt"> Entrada + camiseta - R$ 75</label>
       </div></div>
       <div class="shirt-options hidden">
-        <div><label>Modelo</label><select class="model"><option value="">Selecione</option><option>Camiseta Tradicional</option><option>Babylook</option></select></div>
+        <div><label>Modelo</label><select class="model"><option value="">Selecione</option><option>Camiseta Tradicional</option><option>Baby Look</option></select></div>
         <div><label>Tamanho</label><select class="size"><option value="">Selecione</option><option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option></select></div>
       </div>`;
     box.appendChild(p);
@@ -1409,6 +1409,21 @@ function statusLabel(status){
   return status==='cancelled'?'CANCELADA':'CONFIRMADA';
 }
 
+function canonicalShirtModelLabel(value){
+  const raw=String(value||'').trim();
+  const key=raw
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+
+  if(!key) return '';
+  if(key==='babylook'||key==='baby look'||key==='bl'||key.startsWith('baby look ')||key.startsWith('babylook ')) return 'Baby Look';
+  if(key==='normal'||key==='camiseta normal'||key==='tradicional'||key==='camiseta tradicional'||key==='camiseta'||key.startsWith('camiseta tradicional ')||key.startsWith('camiseta normal ')) return 'Camiseta Tradicional';
+  return raw;
+}
+
 function buildActiveShirtData(d){
   const active=new Set(['pending','confirmed','review']);
   const shirts=[];
@@ -1416,7 +1431,7 @@ function buildActiveShirtData(d){
     (r.participants||[]).filter(p=>p.option==='shirt').forEach(p=>shirts.push({
       reservationId:r.id,
       name:p.name,
-      model:p.model,
+      model:canonicalShirtModelLabel(p.model),
       size:p.size,
       quantity:1,
       status:r.status,
@@ -1457,8 +1472,9 @@ function renderAdmin(d){
   rows.forEach(r=>{
     const el=document.createElement('div'); el.className='admin-item';
     const people=r.participants.map(p=>{
+      if(p.option==='shirt') p={...p,model:canonicalShirtModelLabel(p.model)};
       const shirt=p.option==='shirt';
-      const modelOptions=['Camiseta Tradicional','Babylook'].map(v=>'<option value="'+v+'" '+(p.model===v?'selected':'')+'>'+v+'</option>').join('');
+      const modelOptions=['Camiseta Tradicional','Baby Look'].map(v=>'<option value="'+v+'" '+(p.model===v?'selected':'')+'>'+v+'</option>').join('');
       const sizeOptions=['PP','P','M','G','GG'].map(v=>'<option value="'+v+'" '+(p.size===v?'selected':'')+'>'+v+'</option>').join('');
       return `<div class="admin-person" data-pid="${escapeHtml(p.id)}">
         <div class="admin-person-main">
@@ -1582,7 +1598,7 @@ function reportText(d=adminDataCache){
   const rows=d?.shirts||[];
   const count=(model,size)=>Number(d?.shirtCounts?.[model+'|'+size]||0);
   const totalModel=model=>sizes.reduce((sum,size)=>sum+count(model,size),0);
-  const totalSize=size=>count('Camiseta Tradicional',size)+count('Babylook',size);
+  const totalSize=size=>count('Camiseta Tradicional',size)+count('Baby Look',size);
   const lines=[
     '🌸 *RELATÓRIO DAS CAMISETAS — OUTUBRO ROSA* 🌸',
     '',
@@ -1611,8 +1627,8 @@ function reportText(d=adminDataCache){
   lines.push('*Total Tradicional:* '+totalModel('Camiseta Tradicional'));
   lines.push('');
   lines.push('💕 *BABYLOOK*');
-  sizes.forEach(size=>lines.push('• *'+size+':* '+count('Babylook',size)));
-  lines.push('*Total Babylook:* '+totalModel('Babylook'));
+  sizes.forEach(size=>lines.push('• *'+size+':* '+count('Baby Look',size)));
+  lines.push('*Total Baby Look:* '+totalModel('Baby Look'));
   lines.push('');
   lines.push('📦 *TOTAL POR TAMANHO*');
   sizes.forEach(size=>lines.push('• *'+size+':* '+totalSize(size)));
@@ -1626,7 +1642,7 @@ function renderShirtReport(d){
   const sizes=['PP','P','M','G','GG'];
   const build=model=>sizes.map(s=>`<div class="shirt-count"><span>${s}</span><b>${Number(d.shirtCounts?.[model+'|'+s]||0)}</b></div>`).join('');
   $('#traditionalCounts').innerHTML=build('Camiseta Tradicional');
-  $('#babylookCounts').innerHTML=build('Babylook');
+  $('#babylookCounts').innerHTML=build('Baby Look');
   $('#totalShirts').textContent=d.totalShirts||0;
   const list=$('#shirtReportList');
   if(!d.shirts?.length){
@@ -1643,7 +1659,7 @@ $('#exportReservationsCsv').onclick=()=>{
   if(!adminDataCache) return;
   const rows=[['Reserva','Status','Nome','Contato','Opção','Modelo','Tamanho','Valor','Forma de pagamento','Situação do pagamento']];
   (adminDataCache.reservations||[]).forEach(r=>r.participants.forEach(p=>rows.push([
-    r.id,statusLabel(r.status),p.name,p.contact||'',p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.model||'',p.size||'',money(p.price),r.paymentMethod,paymentIdentified(r)?'IDENTIFICADO':'NÃO IDENTIFICADO'
+    r.id,statusLabel(r.status),p.name,p.contact||'',p.option==='shirt'?'Entrada + camiseta':'Somente entrada',p.option==='shirt'?canonicalShirtModelLabel(p.model):'',p.size||'',money(p.price),r.paymentMethod,paymentIdentified(r)?'IDENTIFICADO':'NÃO IDENTIFICADO'
   ])));
   const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
@@ -1732,7 +1748,7 @@ $('#pdfShirtReport').onclick=()=>{
   doc.text('Total de camisetas: '+Number(adminDataCache.totalShirts||0),15,56);
   doc.setFont('helvetica','normal');
   let y=63;
-  ['Camiseta Tradicional','Babylook'].forEach(model=>{
+  ['Camiseta Tradicional','Baby Look'].forEach(model=>{
     doc.setFont('helvetica','bold');
     doc.text(model,15,y);
     doc.setFont('helvetica','normal');
